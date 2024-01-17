@@ -1,12 +1,13 @@
 SRCS =  main.cpp \
-		servsocket.cpp\
+		./src/server/servsocket.cpp\
+		./src/commands/join.cpp\
 		
-FLAGS = -Wall -Wextra -Werror -std=c++98
+FLAGS = -Wall -Wextra -Werror -std=c++98 #-g -fsanitize=address
 
 NAME = ircserv
 OBJ =  $(SRCS:.cpp=.o)
 
-%.o : %.cpp servsocket.hpp
+%.o : %.cpp ./inc/servsocket.hpp ./inc/channel.hpp ./inc/client.hpp
 	@c++ $(FLAGS) -c $< -o $@
 
 $(NAME) : $(OBJ)
