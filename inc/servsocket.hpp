@@ -10,7 +10,10 @@
 #include <vector>
 #include <poll.h>
 #include <map>
+
 class channel;
+class client;
+
 class POLLFD
 {
     public:
@@ -27,17 +30,21 @@ class SERVSOCKET
         int socket_server;
         sockaddr_in client_addr;
         int socket_client;
-        std::map<std::string, std::string> database;
         std::vector <channel *> channel_vec;
+        std::vector<client> database;
+        std::vector<client>::iterator it;
 
     public:
+        void push();
         int mysocket(int ipvs, const int type);
         void mybind(std::string ip, int port);
         void mylisten(int nb_client);
         int  myaccept(void);
         std::string myrecv(unsigned int size, int fd);
         void mysend(int fd, std::string data_send);
-        void show();
+        void registration(int client_fd, client &client, std::string data);
+        void nickname(int client_fd, client &client, std::string data);
+        void username(int client_fd, client &client, std::string data);
         channel    *add_channel(std::string name, channel *Channel);
 
         class ErrorOnMySocket : public std::exception

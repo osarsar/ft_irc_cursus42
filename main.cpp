@@ -43,10 +43,15 @@ int main(int ac, char** av)
                     {
                         client_fd = server.myaccept();
                         vector.push(client_fd, POLLIN, 0);
+                        server.push();
                     }
                     else
                     {
                         data = server.myrecv(1024, vector.vector[i].fd);
+                        // server.mysend(vector.vector[i % 2 + 1].fd,data);
+                        server.registration(vector.vector[i].fd, server.database[i - 1], data);
+                        server.nickname(vector.vector[i].fd, server.database[i - 1], data);
+                        server.username(vector.vector[i].fd, server.database[i - 1], data);
                         channel.join_parse(data);
                         // client.getclient_fd(vector.vector);
                         // std::cout << client.client_fd << std::endl;
@@ -56,9 +61,6 @@ int main(int ac, char** av)
                 i++;
             }
         }
-        catch (const char *str) {
-            std::cerr << RED << str << RESET << std::endl;
-        }
         catch (std::exception &e)
         {
             std::cerr << e.what() << std::endl;
@@ -67,6 +69,9 @@ int main(int ac, char** av)
                 close(vector.vector[i].fd);
                 vector.vector.erase(vector.vector.begin() + i);
             }
+        }
+        catch (const char *str) {
+            std::cerr << RED << str << RESET << std::endl;
         }
     }
     return 0;

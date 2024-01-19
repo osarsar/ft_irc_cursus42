@@ -57,7 +57,7 @@ void SERVSOCKET::mybind(std::string ip, int port)
     if (bind(socket_server, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1)
     {
         close(socket_server);
-        throw ErrorOnMyBind();
+        throw ErrorOnMyBind();//exit()
     }
 }
 
@@ -72,9 +72,7 @@ void SERVSOCKET::mylisten(int nb_client)
 
 int SERVSOCKET::myaccept()
 {
-    std::string username;
     std::string password;
-    std::string nickname;
 
     socklen_t clientAddressSize = sizeof(client_addr);
     socket_client = accept(socket_server, (struct sockaddr*)&client_addr, &clientAddressSize);
@@ -83,20 +81,6 @@ int SERVSOCKET::myaccept()
         close(socket_server);
         throw ErrorOnMyAccept();
     }
-    mysend(socket_client, "USERNAME: ");
-    username = myrecv(1024, socket_client);
-    mysend(socket_client, "NICKNAME: ");
-    nickname = myrecv(1024, socket_client);
-    mysend(socket_client, "PASSWORD: ");
-    password = myrecv(1024, socket_client);
-    database[username] = password;
-    // if (password != servpass)
-    // {
-    //     mysend(socket_client, RED"INCORRECT PASSWORD"RESET);
-    //     close(socket_client);
-    //     throw ErrorOnPassword();
-    // }
-
     mysend(socket_client, GREEN"------- WELCOME TO THE SERVER ------\n"RESET);
     return socket_client;
 }
@@ -107,7 +91,7 @@ std::string SERVSOCKET::myrecv(unsigned int size, int fd)
     ssize_t num_read;
 
     num_read = recv(fd, buffer, sizeof(buffer), 0);
-    buffer[num_read] = '\0';
+    buffer[num_read - 1] = '\0';
     if (num_read <= 0)
         throw ErrorOnMyRecv();
     std::string str(buffer);
@@ -118,17 +102,6 @@ void SERVSOCKET::mysend(int fd, std::string data)
 {
     if (send(fd, data.c_str(), data.length(), 0) == -1)
         throw ErrorOnMySend();
-}
-
-void SERVSOCKET::show()
-{
-    std::map<std::string, std::string>::iterator it;
-
-    for (it = database.begin(); it != database.end() ;it++)
-    {
-        std::cout << "username = " << it->first;
-        std::cout << "password = " << it->second;
-    }
 }
 
 
@@ -154,4 +127,97 @@ std::vector<int> POLLFD::getFds() const {
         fds.push_back(it->fd);
     }
     return fds;
+}
+
+void SERVSOCKET::registration(int client_fd, client &client, std::string data)
+{
+    std::string str;
+    if (data.substr(0, 5) == "PASS ")
+    {
+        if (client.pass_bool == true)
+        {
+            mysend(client_fd, ORANGE"YOU ALREADY ENTER THE PASSWORD\n"RESET);
+        }
+        str = data.erase(0, 5);
+        if (str.empty())
+            return;
+        const char *ptr = str.c_str();
+        while (std::isspace(*ptr))
+            ptr++;
+        if (!*ptr)
+            return;
+        str = std::strtok(const_cast<char *>(str.c_str()), " ");
+        if (str != servpass)
+        {
+            mysend(client_fd, RED"INCORRECT PASSWORD\n"RESET);
+            return;
+        }
+        client.pass_bool = true;
+        mysend(client_fd, GREEN"PASSWORD REGISTRED SUCCESSFULLY\n"RESET);
+    }
+}
+
+void SERVSOCKET::nickname(int client_fd, client &client, std::string data)
+{
+    std::string str;
+    if (data.substr(0, 5) == "NICK ")
+    {
+        if (client.nick_bool == true)
+        {
+            mysend(client_fd, ORANGE"YOU ALREADY ENTER THE NICKNAME\n"RESET);
+            return;
+        }
+        str = data.erase(0, 5);
+        if (str.empty())
+            return;
+        const char *ptr = str.c_str();
+        while (std::isspace(*ptr))
+            ptr++;
+        if (!*ptr)
+            return;
+        str = std::strtok(const_cast<char *>(str.c_str()), " ");
+        for (it = database.begin(); it != database.end() ; it++)
+        {
+            if (it->nickname == str)
+            {
+                mysend(client_fd, RED"NICKNAME ALREADY USED\n"RESET);
+                return;
+            }
+        }
+        client.nick_bool = true;
+        client.nickname = str;
+        mysend(client_fd, GREEN"NICKNAME REGISTRED SUCCESSFULLY\n"RESET);
+    }
+}
+
+void SERVSOCKET::username(int client_fd, client &client, std::string data)
+{
+    std::string str;
+    if (data.substr(0, 5) == "USER ")
+    {
+        if (client.user_bool == true)
+        {
+            mysend(client_fd, ORANGE"YOU ALREADY ENTER THE USERNAME\n"RESET);
+            return;
+        }
+        str = data.erase(0, 5);
+        if (str.empty())
+            return;
+        const char *ptr = str.c_str();
+        while (std::isspace(*ptr))
+            ptr++;
+        if (!*ptr)
+            return;
+        str = std::strtok(const_cast<char *>(str.c_str()), " ");
+        client.user_bool = true;
+        client.username = str;
+        mysend(client_fd, GREEN"USERNAME REGISTRED SUCCESSFULLY\n"RESET);
+        mysend(client_fd, PURPLE"---- WELCOME TO THE CHANNEL ----\n"RESET);
+    }
+}
+
+void SERVSOCKET::push()
+{
+    client client;
+    database.push_back(client);
 }
