@@ -148,8 +148,6 @@ void SERVSOCKET::registration(int client_fd, client &client, std::string data)
         if (!*ptr)
             return;
         str = std::strtok(const_cast<char *>(str.c_str()), " ");
-        std::cout << "servpass = " << servpass << std::endl;
-        std::cout << "str = " << str << std::endl;
         if (str != servpass)
         {
             mysend(client_fd, RED"INCORRECT PASSWORD\n"RESET);

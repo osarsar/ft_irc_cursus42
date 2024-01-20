@@ -5,6 +5,7 @@
 #include "servsocket.hpp"
 #include "channel.hpp"
 class channel;
+class SERVSOCKET;
 class client
 {
 	public :
@@ -16,7 +17,7 @@ class client
 		bool user_bool;
 		bool nick_bool;
 		client();
-		void	AddClientToChannel(channel &Channel);
+		void	AddClientToChannel(channel &Channel, SERVSOCKET &server);
 };
 
 #endif

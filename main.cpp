@@ -17,18 +17,16 @@ int main(int ac, char** av)
     server.servpass = av[2];
     int server_fd = server.mysocket(AF_INET, SOCK_STREAM);
     int value = f_stoi(port);
-    server.mybind("127.0.0.1", value);
+    server.mybind("10.12.6.3", value);
     server.mylisten(5);
-
     std::cout << GREEN << "------- MY SERVER ------" << RESET << std::endl;
     std::cout << PURPLE << "Server Listening on port " << port << " ..." << RESET << std::endl;
-
+    
     POLLFD vector;
     int client_fd;
     size_t i = 0;
 
     vector.push(server_fd, POLLIN, 0);
-
     while (true)
     {
         try 
@@ -49,10 +47,11 @@ int main(int ac, char** av)
                     {
                         data = server.myrecv(1024, vector.vector[i].fd);
                         // server.mysend(vector.vector[i % 2 + 1].fd,data);
-                        server.registration(vector.vector[i].fd, server.database[i - 1],    data);
+                        server.registration(vector.vector[i].fd, server.database[i - 1], data);
                         server.nickname(vector.vector[i].fd, server.database[i - 1], data);
                         server.username(vector.vector[i].fd, server.database[i - 1], data);
-                        channel.join(data, client, server);
+                        if (server.database[i - 1].registration_check)
+                            channel.join(data, server.database[i - 1], server);
                         // client.getclient_fd(vector.vector);
                         // std::cout << client.client_fd << std::endl;
                         // std::cout << data << std::endl;

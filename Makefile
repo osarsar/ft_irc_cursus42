@@ -3,7 +3,7 @@ SRCS =  main.cpp \
 		./src/classes/client.cpp\
 		./src/commands/join.cpp\
 		
-FLAGS = -Wall -Wextra -Werror -std=c++98 #-g -fsanitize=address
+FLAGS = #-Wall -Wextra -Werror -std=c++98 #-g -fsanitize=address
 
 NAME = ircserv
 OBJ =  $(SRCS:.cpp=.o)
