@@ -17,7 +17,7 @@ int main(int ac, char** av)
     server.servpass = av[2];
     int server_fd = server.mysocket(AF_INET, SOCK_STREAM);
     int value = f_stoi(port);
-    server.mybind("127.0.0.1", value);
+    server.mybind("10.11.13.2", value);
     server.mylisten(5);
 
     std::cout << GREEN << "------- MY SERVER ------" << RESET << std::endl;
@@ -68,6 +68,7 @@ int main(int ac, char** av)
             {
                 close(vector.vector[i].fd);
                 vector.vector.erase(vector.vector.begin() + i);
+                server.database.erase(server.database.begin() + i - 1);
             }
         }
         catch (const char *str) {

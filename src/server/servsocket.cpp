@@ -137,6 +137,7 @@ void SERVSOCKET::registration(int client_fd, client &client, std::string data)
         if (client.pass_bool == true)
         {
             mysend(client_fd, ORANGE"YOU ALREADY ENTER THE PASSWORD\n"RESET);
+            return;
         }
         str = data.erase(0, 5);
         if (str.empty())
@@ -147,6 +148,8 @@ void SERVSOCKET::registration(int client_fd, client &client, std::string data)
         if (!*ptr)
             return;
         str = std::strtok(const_cast<char *>(str.c_str()), " ");
+        std::cout << "servpass = " << servpass << std::endl;
+        std::cout << "str = " << str << std::endl;
         if (str != servpass)
         {
             mysend(client_fd, RED"INCORRECT PASSWORD\n"RESET);
@@ -162,6 +165,11 @@ void SERVSOCKET::nickname(int client_fd, client &client, std::string data)
     std::string str;
     if (data.substr(0, 5) == "NICK ")
     {
+        if (client.pass_bool != 1)
+        {
+            mysend(client_fd, ORANGE"PLEASE ENTER THE PASSWORD FIRST\n"RESET);
+            return;
+        }
         if (client.nick_bool == true)
         {
             mysend(client_fd, ORANGE"YOU ALREADY ENTER THE NICKNAME\n"RESET);
@@ -195,6 +203,16 @@ void SERVSOCKET::username(int client_fd, client &client, std::string data)
     std::string str;
     if (data.substr(0, 5) == "USER ")
     {
+        if (client.pass_bool != 1)
+        {
+            mysend(client_fd, ORANGE"PLEASE ENTER THE PASSWORD FIRST\n"RESET);
+            return;
+        }
+        if (client.nick_bool != 1)
+        {
+            mysend(client_fd, ORANGE"PLEASE ENTER THE NICKNAME FIRST\n"RESET);
+            return;
+        }
         if (client.user_bool == true)
         {
             mysend(client_fd, ORANGE"YOU ALREADY ENTER THE USERNAME\n"RESET);
@@ -212,7 +230,7 @@ void SERVSOCKET::username(int client_fd, client &client, std::string data)
         client.user_bool = true;
         client.username = str;
         mysend(client_fd, GREEN"USERNAME REGISTRED SUCCESSFULLY\n"RESET);
-        mysend(client_fd, PURPLE"---- WELCOME TO THE CHANNEL ----\n"RESET);
+        mysend(client_fd, PURPLE"---- YOU HAVE BEEN REGISTRED SUCCESSFULLY ----\n"RESET);
     }
 }
 
