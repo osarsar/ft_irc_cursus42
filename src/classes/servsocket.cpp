@@ -115,11 +115,11 @@ void POLLFD::push(int fd, short events, short revents)
     vector.push_back(sock_fd);
 }
 
-channel *SERVSOCKET::add_channel(std::string name, channel *Channel) {
-    Channel = new channel(name);
-        channel_vec.push_back(Channel);
-    return Channel;
+void    SERVSOCKET::add_channel(std::string name, channel &Channel) {
+    Channel.channelName = name;
+    channel_map[name] = Channel;
 }
+
 
 std::vector<int> POLLFD::getFds() const {
     std::vector<int> fds;

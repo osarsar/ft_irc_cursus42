@@ -1,5 +1,6 @@
 SRCS =  main.cpp \
-		./src/server/servsocket.cpp\
+		./src/classes/servsocket.cpp\
+		./src/classes/client.cpp\
 		./src/commands/join.cpp\
 		
 FLAGS = -Wall -Wextra -Werror -std=c++98 #-g -fsanitize=address

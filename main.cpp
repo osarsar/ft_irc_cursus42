@@ -52,8 +52,7 @@ int main(int ac, char** av)
                         server.registration(vector.vector[i].fd, server.database[i - 1],    data);
                         server.nickname(vector.vector[i].fd, server.database[i - 1], data);
                         server.username(vector.vector[i].fd, server.database[i - 1], data);
-                        server.show();
-                        channel.join_parse(data);
+                        channel.join(data, client, server);
                         // client.getclient_fd(vector.vector);
                         // std::cout << client.client_fd << std::endl;
                         // std::cout << data << std::endl;

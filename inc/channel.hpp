@@ -21,22 +21,21 @@
 #define POS_KEY '+'
 #define NEG_KEY '-'
 class client;
+class SERVSOCKET;
 class channel
 {
 	public :
 		std::string channelName;
+		std::string channel_pass;
 		std::string topic;
-		std::vector < std::string > channel_name;
-		std::vector < std::string > channel_pass;
 		std::vector < std::string > kicked_users;
 		std::vector < std::string > banned_users;
 		std::vector < std::string > operators;
-		std::vector < client *> client_list;
-		channel(void);
+		std::vector <client> client_list;
+		channel();
 		channel(const std::string& name) : channelName(name) {}
-		std::string getName() const { return channelName;}
 		~channel();
-		void	join_parse(std::string str);
+		void	join(std::string str, client &Client, SERVSOCKET &server);
 		void	add_client(client *client);
 		void	mode_parse(std::string str);
 };

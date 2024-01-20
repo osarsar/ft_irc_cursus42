@@ -12,13 +12,8 @@ int	f_stoi( std::string numb ) {
 	return ret;
 }
 
-void	channel::add_client(client *client) {
-	client_list.push_back(client);
-}
-
-void	channel::join_parse(std::string str) {
-	SERVSOCKET *server = new SERVSOCKET();
-	channel *Channel = NULL;
+void	channel::join(std::string str, client &Client, 	SERVSOCKET &server) {
+	channel Channel;
 	char *p;
 	std::string command = str.substr(0, str.find(" "));
 	if (str.substr(0, std::string(JOIN).length()) == JOIN)
@@ -28,26 +23,24 @@ void	channel::join_parse(std::string str) {
 	// 	mode_parse(str);
 	// 	return ;
 	// }
-	else
-		throw ("Unknown command\n");
+	// else
+		// throw ("Unknown command\n");
 	int i = 0;
 	p = std::strtok(const_cast<char *>(str.c_str()), ", \r\n");
 	while (p != NULL) {
 		if (p[0] == '#') {
-			std::vector < std::string >::iterator pos = std::find(channel_name.begin(), channel_name.end(), p);
-			if (pos != channel_name.end())
-				throw ("Duplicate channel");
-			channel_name.push_back(p);
+			channelName = p;
 			i++;
 		}
 		else
-			channel_pass.push_back(p);
+			channel_pass = p;
 		p = std::strtok(NULL, ", \n");
 	}
-	// if (channel_name.empty() || i == 0)
-	// 	throw ("command alone can't function");
-	std::vector<std::string>::iterator it = channel_name.begin();
-	for (;it != channel_name.end();it++) {
-		Channel = server->add_channel(*it, Channel);
-	}
+	server.add_channel(channelName, Channel);
+	// std::map<std::string, channel>::iterator it = server.channel_map.begin();
+	// for (; it != server.channel_map.end();it++) {
+	// 	std::cout << it->second.channelName << std::endl;
+	// }
+	Client.AddClientToChannel(Channel);
+	server.show();
 }

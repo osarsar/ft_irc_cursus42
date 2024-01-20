@@ -30,7 +30,7 @@ class SERVSOCKET
         int socket_server;
         sockaddr_in client_addr;
         int socket_client;
-        std::vector <channel *> channel_vec;
+        std::map <std::string, channel> channel_map;
         std::vector<client> database;
         std::vector<client>::iterator it;
 
@@ -45,7 +45,7 @@ class SERVSOCKET
         void registration(int client_fd, client &client, std::string data);
         void nickname(int client_fd, client &client, std::string data);
         void username(int client_fd, client &client, std::string data);
-        channel    *add_channel(std::string name, channel *Channel);
+        void add_channel(std::string name, channel &Channel);
         void show();
 
         class ErrorOnMySocket : public std::exception
@@ -84,4 +84,3 @@ class SERVSOCKET
                 virtual const char* what() const throw();
         };
 };
-
