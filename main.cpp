@@ -17,7 +17,7 @@ int main(int ac, char** av)
     server.servpass = av[2];
     int server_fd = server.mysocket(AF_INET, SOCK_STREAM);
     int value = f_stoi(port);
-    server.mybind("10.11.13.2", value);
+    server.mybind("127.0.0.1", value);
     server.mylisten(5);
 
     std::cout << GREEN << "------- MY SERVER ------" << RESET << std::endl;
@@ -49,9 +49,10 @@ int main(int ac, char** av)
                     {
                         data = server.myrecv(1024, vector.vector[i].fd);
                         // server.mysend(vector.vector[i % 2 + 1].fd,data);
-                        server.registration(vector.vector[i].fd, server.database[i - 1], data);
+                        server.registration(vector.vector[i].fd, server.database[i - 1],    data);
                         server.nickname(vector.vector[i].fd, server.database[i - 1], data);
                         server.username(vector.vector[i].fd, server.database[i - 1], data);
+                        server.show();
                         channel.join_parse(data);
                         // client.getclient_fd(vector.vector);
                         // std::cout << client.client_fd << std::endl;
@@ -72,7 +73,7 @@ int main(int ac, char** av)
             }
         }
         catch (const char *str) {
-            std::cerr << RED << str << RESET << std::endl;
+            server.mysend(vector.vector[i].fd, str);
         }
     }
     return 0;

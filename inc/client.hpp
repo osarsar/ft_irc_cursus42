@@ -12,13 +12,13 @@ class client
 		std::string nickname;
         // std::vector<client> database;
 
-		int client_fd;
+		int  fd;
 		bool registration_check;
 		bool pass_bool;
 		bool user_bool;
 		bool nick_bool;
 		// void push(std::string nickname);
-		client() {registration_check = false, pass_bool = false, user_bool = false, nick_bool = false;}
+		client() {registration_check = false, pass_bool = false, user_bool = false, nick_bool = false, fd = -1;}
 };
 
 #endif

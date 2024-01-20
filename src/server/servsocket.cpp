@@ -195,6 +195,13 @@ void SERVSOCKET::nickname(int client_fd, client &client, std::string data)
         client.nick_bool = true;
         client.nickname = str;
         mysend(client_fd, GREEN"NICKNAME REGISTRED SUCCESSFULLY\n"RESET);
+        if (client.user_bool == 1)
+        {
+            mysend(client_fd, PURPLE"---- YOU HAVE BEEN REGISTRED SUCCESSFULLY ----\n"RESET);
+            client.registration_check = true;
+            client.fd = client_fd;
+        }
+
     }
 }
 
@@ -206,11 +213,6 @@ void SERVSOCKET::username(int client_fd, client &client, std::string data)
         if (client.pass_bool != 1)
         {
             mysend(client_fd, ORANGE"PLEASE ENTER THE PASSWORD FIRST\n"RESET);
-            return;
-        }
-        if (client.nick_bool != 1)
-        {
-            mysend(client_fd, ORANGE"PLEASE ENTER THE NICKNAME FIRST\n"RESET);
             return;
         }
         if (client.user_bool == true)
@@ -230,7 +232,12 @@ void SERVSOCKET::username(int client_fd, client &client, std::string data)
         client.user_bool = true;
         client.username = str;
         mysend(client_fd, GREEN"USERNAME REGISTRED SUCCESSFULLY\n"RESET);
-        mysend(client_fd, PURPLE"---- YOU HAVE BEEN REGISTRED SUCCESSFULLY ----\n"RESET);
+        if (client.nick_bool == 1)
+        {
+            mysend(client_fd, PURPLE"---- YOU HAVE BEEN REGISTRED SUCCESSFULLY ----\n"RESET);
+            client.registration_check = true;
+            client.fd = client_fd;
+        }
     }
 }
 
@@ -238,4 +245,17 @@ void SERVSOCKET::push()
 {
     client client;
     database.push_back(client);
+}
+
+void SERVSOCKET::show()
+{
+    std::vector<client>::iterator it;
+
+    for (it = database.begin(); it != database.end(); it++)
+    {
+        std::cout << "---DATABASE--- "<< std::endl;
+        std::cout << "username: " << it->username << std::endl;
+        std::cout << "nickname: " << it->nickname << std::endl;
+        std::cout << "client_fd: " << it->fd << std::endl;
+    }
 }

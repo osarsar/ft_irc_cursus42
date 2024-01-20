@@ -29,7 +29,7 @@ void	channel::join_parse(std::string str) {
 	// 	return ;
 	// }
 	else
-		throw ("Unknown command");
+		throw ("Unknown command\n");
 	int i = 0;
 	p = std::strtok(const_cast<char *>(str.c_str()), ", \r\n");
 	while (p != NULL) {
@@ -44,8 +44,8 @@ void	channel::join_parse(std::string str) {
 			channel_pass.push_back(p);
 		p = std::strtok(NULL, ", \n");
 	}
-	if (channel_name.empty() || i == 0)
-		throw ("command alone can't function");
+	// if (channel_name.empty() || i == 0)
+	// 	throw ("command alone can't function");
 	std::vector<std::string>::iterator it = channel_name.begin();
 	for (;it != channel_name.end();it++) {
 		Channel = server->add_channel(*it, Channel);
