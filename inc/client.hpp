@@ -17,7 +17,7 @@ class client
 		bool user_bool;
 		bool nick_bool;
 		client();
-		void	AddClientToChannel(channel &Channel, SERVSOCKET &server);
+		void	AddClientToChannel(channel &Channel);
 };
 
 #endif

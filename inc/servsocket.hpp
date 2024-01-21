@@ -45,7 +45,7 @@ class SERVSOCKET
         void registration(int client_fd, client &client, std::string data);
         void nickname(int client_fd, client &client, std::string data);
         void username(int client_fd, client &client, std::string data);
-        void add_channel(std::string name, channel &Channel);
+        channel &add_channel(std::string name, channel &Channel);
         void show();
 
         class ErrorOnMySocket : public std::exception

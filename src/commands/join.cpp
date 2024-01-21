@@ -1,4 +1,5 @@
 #include "../../inc/channel.hpp"
+#include "../../inc/manage.hpp"
 
 channel::channel(void) {}
 
@@ -25,6 +26,8 @@ void	channel::join(std::string str, client &Client, 	SERVSOCKET &server) {
 	// }
 	// else
 		// throw ("Unknown command\n");
+
+		
 	int i = 0;
 	p = std::strtok(const_cast<char *>(str.c_str()), ", \r\n");
 	while (p != NULL) {
@@ -36,24 +39,24 @@ void	channel::join(std::string str, client &Client, 	SERVSOCKET &server) {
 			channel_pass = p;
 		p = std::strtok(NULL, ", \n");
 	}
-	if (!channelName.empty()) {
-		server.add_channel(channelName, *this);
-		Client.AddClientToChannel(*this, server);
-	}
+	// server.add_channel(channelName, *this);
+
+	manage manage(server);
+	manage.addChannel(channelName);
+	manage.addClienttoChannel(channelName, Client);
+
+	// std::map<std::string, channel>::iterator iti = server.channel_map.begin();
+	// std::cout << iti->first << std::endl;
+	// exit(0);
+	// server.channel_map[channelName] = channel(channelName);
+	// Client.AddClientToChannel(*this);
 	std::map<std::string, channel>::iterator it = server.channel_map.begin();
 	for (; it != server.channel_map.end();it++) {
-		std::cout << "------> hahua dkhal" << std::endl;
-		std::vector<client>::iterator iter = it->second.client_list.begin();
-		for (int i = 0; i < this->client_list.size(); i++)
-		{
-		std::cout << "------+|" << this->client_list[i].nickname << std::endl;
-
-		}
-		// for (; iter != it->second.client_list.end(); iter++) {
-			// std::cout << "------> hahua dkhal 2" << std::endl;
-			// std::cout << (iter)->nickname << std::endl;
-		// }
+		for (unsigned int i = 0; i < it->second.client_list.size(); i++)
+			std::cout << "------+|" << it->second.client_list[i].nickname << std::endl;
 		std::cout << it->second.channelName << std::endl;
 	}
-	// server.show();
+	std::cout << "---------------->>>>" << std::endl;
+	std::cout << "End of channels" << std::endl;
+	std::cout << "------------------" << std::endl;
 }
