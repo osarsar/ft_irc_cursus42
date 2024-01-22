@@ -1,5 +1,6 @@
 #include "./inc/servsocket.hpp"
 #include "./inc/channel.hpp"
+#include "./inc/privmsg.hpp"
 
 int main(int ac, char** av) 
 {
@@ -8,6 +9,7 @@ int main(int ac, char** av)
         exit (1);
     }
     client client;
+    privmsg Privmsg;
     SERVSOCKET server;
     channel Channel;
     std::string data;
@@ -17,7 +19,7 @@ int main(int ac, char** av)
     server.servpass = av[2];
     int server_fd = server.mysocket(AF_INET, SOCK_STREAM);
     int value = f_stoi(port);
-    server.mybind("10.12.7.7", value);
+    server.mybind("10.12.6.7", value);
     server.mylisten(5);
     std::cout << GREEN << "------- MY SERVER ------" << RESET << std::endl;
     std::cout << PURPLE << "Server Listening on port " << port << " ..." << RESET << std::endl;
@@ -50,22 +52,20 @@ int main(int ac, char** av)
                         server.registration(vector.vector[i].fd, server.database[i - 1], data);
                         server.nickname(vector.vector[i].fd, server.database[i - 1], data);
                         server.username(vector.vector[i].fd, server.database[i - 1], data);
-
-                        if (server.database[i - 1].registration_check) {
-	                        std::string command = data.substr(0, data.find(" "));
-                            if (command == JOIN)
-                                Channel.join(data, server.database[i - 1], server);
-                        }
+	                    std::string command = data.substr(0, data.find(" "));
+                        if (!server.database[i - 1].registration_check && (command == JOIN && command == PRIVMSG))
+                            throw (RED"Khasek lwra9 a m3alem sir tal gheda oji\n"RESET);
+                        if (command == JOIN)
+                            Channel.join(data, server.database[i - 1], server);
+                        if (command == PRIVMSG)
+                            Privmsg.parse_msg(data, server);
+                        std::cout << Privmsg.channel << std::endl;
+                        std::cout << Privmsg.receiver << std::endl;
+                        std::cout << Privmsg.message << std::endl;
                         // client.getclient_fd(vector.vector);
                         // std::cout << client.client_fd << std::endl;
                         // std::cout << data << std::endl;
                     }
-                }
-                std::map <std::string, channel>::iterator it = server.channel_map.begin();
-                while(it != server.channel_map.end())
-                {
-                    std::cout << "haaaahua : " << it->first << std::endl;
-                    it++;
                 }
                 i++;
             }

@@ -1,7 +1,7 @@
-PASS password
+PASS p
 NICK obese
 USER othman
-join #general
+privmsg obese :asiopdjasiodjaiosd
 
 PASS password
 NICK obesini

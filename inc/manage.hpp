@@ -16,6 +16,6 @@ public:
 	manage();
 	~manage();
 	void addChannel(const std::string &name);
-	void addClienttoChannel(const std::string &name, client &client);
+	void addClientoChannel(const std::string &name, client &client);
 
 };

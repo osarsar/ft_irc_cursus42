@@ -11,6 +11,8 @@
 #define MODE "mode"
 #define PASS "PASS"
 
+// #define map std::map<std::string, channel>
+
 #define BLUE      "\x1b[34m"
 #define ORANGE    "\x1b[33m"
 #define RESET     "\x1b[0m"
@@ -20,8 +22,10 @@
 #define CHANNEL '#'
 #define POS_KEY '+'
 #define NEG_KEY '-'
+
 class client;
 class SERVSOCKET;
+
 class channel
 {
 	public :
@@ -37,7 +41,8 @@ class channel
 		~channel();
 		void	join(std::string str, client &Client, SERVSOCKET &server);
 		void	add_client(client *client);
-		void	mode_parse(std::string str);
+		void	mode(std::string str);
+		void	sendmessage(client &Client);
 };
 int	f_stoi(std::string numb);
 std::ostream& operator<<(std::ostream& os, const channel& c);
