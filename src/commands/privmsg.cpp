@@ -1,6 +1,5 @@
 #include "../../inc/privmsg.hpp"
-#include <algorithm>
-#include <cctype>
+
 privmsg::privmsg() {}
 
 privmsg::~privmsg() {}
@@ -52,6 +51,7 @@ void    privmsg::parse_msg(std::string str, SERVSOCKET &server) {
 	}
 	if (it == server.database.end())
 		throw ("Client not found\n");
+	message += '\n';
 	send(fd, message.c_str(), message.length(), 0);
 }
 
