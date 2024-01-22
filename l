@@ -3,7 +3,7 @@ NICK obese
 USER othman
 privmsg obese :asiopdjasiodjaiosd
 
-PASS password
+PASS p
 NICK obesini
 USER othmanini
 join #generalini

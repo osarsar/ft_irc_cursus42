@@ -15,4 +15,6 @@ class privmsg {
         privmsg();
         ~privmsg();
         void    parse_msg(std::string str, SERVSOCKET &server);
+        void    send_msg(std::string str, SERVSOCKET &server);
+        int     client_fd(std::string str, SERVSOCKET &server);
 };
