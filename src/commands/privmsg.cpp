@@ -63,7 +63,8 @@ void    privmsg::parse_msg(std::string str, SERVSOCKET &server, client &Client) 
 	message += '\n';
 	unsigned long i = 0;
 	for (iti = fds_vector.begin(); i++ < fds_vector.size() && iti != fds_vector.end(); iti++) {
-			send(*iti, message.c_str(), message.length(), 0);
+			if (*iti != Client.fd)
+				send(*iti, message.c_str(), message.length(), 0);
 		}
 	if (it == server.database.end() && channel_receive.empty())
 		throw ("Client not found\n");

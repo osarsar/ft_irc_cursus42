@@ -55,9 +55,9 @@ int main(int ac, char** av)
 	                    std::string command = data.substr(0, data.find(" "));
                         if (!server.database[i - 1].registration_check && (command == JOIN && command == PRIVMSG))
                             throw (RED"Khasek lwra9 a m3alem sir tal gheda oji\n"RESET);
-                        if (command == JOIN)
+                        else if (command == JOIN && server.database[i - 1].registration_check)
                             Channel.join(data, server.database[i - 1], server);
-                        else if (command == PRIVMSG)
+                        else if (command == PRIVMSG && server.database[i - 1].registration_check)
                             Privmsg.parse_msg(data, server, server.database[i - 1]);
                         // client.getclient_fd(vector.vector);
                         // std::cout << client.client_fd << std::endl;

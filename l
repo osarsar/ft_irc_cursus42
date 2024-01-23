@@ -15,3 +15,5 @@ USER sancholini
 join #frapucini
 
  
+
+privmsg #general : 🤓

@@ -35,7 +35,7 @@ void	channel::join(std::string str, client &Client, SERVSOCKET &server) {
         manage.addChannel(channelName);
     }
 	if (manage.isClientInChannel(channelName, server, Client))
-		throw ("client is already in channel\n");
+		throw (RED"client is already in channel\n"RESET);
     manage.addClientoChannel(channelName, Client);
 	std::map<std::string, channel>::iterator it = server.channel_map.begin();
 	for (; it != server.channel_map.end();it++) {
