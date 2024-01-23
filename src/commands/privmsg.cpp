@@ -29,6 +29,8 @@ std::string& trim(std::string& str) {
 }
 
 void    privmsg::parse_msg(std::string str, SERVSOCKET &server, client &Client) {
+	std::string channel_receive;
+	std::string receiver;
 	size_t	pos;
 	int 	fd;
 	std::vector<int> fds_vector;
@@ -47,6 +49,7 @@ void    privmsg::parse_msg(std::string str, SERVSOCKET &server, client &Client) 
 	}
 	receiver = trim(receiver);
 	channel_receive = trim(channel_receive);
+	message += '\n';
  	std::vector<client>::iterator it = server.database.begin();
 	for (;it != server.database.end();it++) {
 		if (receiver == it->nickname) {
@@ -54,22 +57,26 @@ void    privmsg::parse_msg(std::string str, SERVSOCKET &server, client &Client) 
 			break ;
 		}
 	}
-	for (iter = server.channel_map.begin(); iter != server.channel_map.end(); iter++) {
-		if (iter->first == channel_receive)
-			for (vec_it = iter->second.client_list.begin(); vec_it != iter->second.client_list.end();vec_it++) {
-				fds_vector.push_back(vec_it->fd);
+	std::cout << "this is channel name -->>> " << channel_receive << std::endl;
+	std::cout << "this is receiver name -->>> " << receiver << std::endl;
+	if (!channel_receive.empty())
+	{
+		for (iter = server.channel_map.begin(); iter != server.channel_map.end(); iter++) {
+			if (iter->first == channel_receive)
+				for (vec_it = iter->second.client_list.begin(); vec_it != iter->second.client_list.end();vec_it++) {
+					fds_vector.push_back(vec_it->fd);
+				}
+		}
+		unsigned long i = 0;
+		for (iti = fds_vector.begin(); i++ < fds_vector.size() && iti != fds_vector.end(); iti++) {
+				if (*iti != Client.fd)
+					send(*iti, message.c_str(), message.length(), 0);
 			}
 	}
-	message += '\n';
-	unsigned long i = 0;
-	for (iti = fds_vector.begin(); i++ < fds_vector.size() && iti != fds_vector.end(); iti++) {
-			if (*iti != Client.fd)
-				send(*iti, message.c_str(), message.length(), 0);
-		}
 	if (it == server.database.end() && channel_receive.empty())
 		throw ("Client not found\n");
 	if (!receiver.empty())
-		msg_to_client(fd, message, Client);
+		msg_to_client(fd, message, receiver, Client);
 }
 
 int	privmsg::client_fd(std::string str, SERVSOCKET &server) {
@@ -81,7 +88,7 @@ int	privmsg::client_fd(std::string str, SERVSOCKET &server) {
 	return (0);
 }
 
-void	privmsg::msg_to_client(int fd, std::string message, client &Client) {
+void	privmsg::msg_to_client(int fd, std::string message, std::string receiver, client &Client) {
 	std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
     std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
     std::string timeString = std::ctime(&currentTime);
