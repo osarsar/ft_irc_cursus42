@@ -4,7 +4,7 @@
 #include "client.hpp"
 #include "servsocket.hpp"
 
-
+class client;
 class manage
 {
 	private:
@@ -12,10 +12,9 @@ class manage
 
 public:
 	manage(SERVSOCKET &server);
-
 	manage();
 	~manage();
 	void addChannel(const std::string &name);
 	void addClientoChannel(const std::string &name, client &client);
-
+	bool isClientInChannel(std::string ChannelName, SERVSOCKET &server, client &Client);
 };

@@ -57,8 +57,8 @@ int main(int ac, char** av)
                             throw (RED"Khasek lwra9 a m3alem sir tal gheda oji\n"RESET);
                         if (command == JOIN)
                             Channel.join(data, server.database[i - 1], server);
-                        if (command == PRIVMSG)
-                            Privmsg.parse_msg(data, server, server.database[i - 1], Channel);
+                        else if (command == PRIVMSG)
+                            Privmsg.parse_msg(data, server, server.database[i - 1]);
                         // client.getclient_fd(vector.vector);
                         // std::cout << client.client_fd << std::endl;
                         // std::cout << data << std::endl;

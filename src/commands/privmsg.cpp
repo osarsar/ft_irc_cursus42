@@ -28,8 +28,7 @@ std::string& trim(std::string& str) {
     return ltrim(rtrim(str));
 }
 
-void    privmsg::parse_msg(std::string str, SERVSOCKET &server, client &Client, channel &Channel) {
-	(void)Channel;
+void    privmsg::parse_msg(std::string str, SERVSOCKET &server, client &Client) {
 	size_t	pos;
 	int 	fd;
 	std::vector<int> fds_vector;
@@ -48,7 +47,6 @@ void    privmsg::parse_msg(std::string str, SERVSOCKET &server, client &Client, 
 	}
 	receiver = trim(receiver);
 	channel_receive = trim(channel_receive);
-	message += '\n';
  	std::vector<client>::iterator it = server.database.begin();
 	for (;it != server.database.end();it++) {
 		if (receiver == it->nickname) {
@@ -62,18 +60,15 @@ void    privmsg::parse_msg(std::string str, SERVSOCKET &server, client &Client, 
 				fds_vector.push_back(vec_it->fd);
 			}
 	}
+	message += '\n';
 	unsigned long i = 0;
-	while (i++ < fds_vector.size()) {
-		for (iti = fds_vector.begin(); iti != fds_vector.end(); iti++) {
+	for (iti = fds_vector.begin(); i++ < fds_vector.size() && iti != fds_vector.end(); iti++) {
 			send(*iti, message.c_str(), message.length(), 0);
 		}
-	}
-	// if (it == server.database.end())
-	// 	throw ("Client not found\n");
-	if (!receiver.empty()) {
-		std::cout << "hh" << std::endl;
+	if (it == server.database.end() && channel_receive.empty())
+		throw ("Client not found\n");
+	if (!receiver.empty())
 		msg_to_client(fd, message, Client);
-	}
 }
 
 int	privmsg::client_fd(std::string str, SERVSOCKET &server) {
@@ -90,7 +85,7 @@ void	privmsg::msg_to_client(int fd, std::string message, client &Client) {
     std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
     std::string timeString = std::ctime(&currentTime);
     timeString.pop_back();
-	std::ofstream file("./logs/logs.spyware", std::ios::app);
 	send(fd, message.c_str(), message.length(), 0);
+	std::ofstream file("./logs/logs.spyware", std::ios::app);
 	file << timeString << " [" << Client.nickname << "] sent"<<" to [" << receiver << "] ~~ " << message;
 }
