@@ -4,30 +4,6 @@ privmsg::privmsg() {}
 
 privmsg::~privmsg() {}
 
-std::string& ltrim(std::string& str) {
-    size_t start = str.find_first_not_of(" \t\n\r");
-    if (start != std::string::npos) {
-        str.erase(0, start);
-    } else {
-        str.clear();
-    }
-    return str;
-}
-
-std::string& rtrim(std::string& str) {
-    size_t end = str.find_last_not_of(" \t\n\r");
-    if (end != std::string::npos) {
-        str.erase(end + 1);
-    } else {
-        str.clear();
-    }
-    return str;
-}
-
-std::string& trim(std::string& str) {
-    return ltrim(rtrim(str));
-}
-
 void    privmsg::parse_msg(std::string str, SERVSOCKET &server, client &Client) {
 	std::string channel_receive;
 	std::string receiver;
@@ -47,8 +23,8 @@ void    privmsg::parse_msg(std::string str, SERVSOCKET &server, client &Client) 
 			receiver = which;
 		message = str.substr(pos + 1);
 	}
-	receiver = trim(receiver);
-	channel_receive = trim(channel_receive);
+	receiver = server.trim(receiver);
+	channel_receive = server.trim(channel_receive);
 	message += '\n';
  	std::vector<client>::iterator it = server.database.begin();
 	for (;it != server.database.end();it++) {

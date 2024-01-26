@@ -10,11 +10,12 @@ class manage
 	private:
 		SERVSOCKET &Server;
 
-public:
+	public:
 	manage(SERVSOCKET &server);
 	manage();
 	~manage();
-	void addChannel(const std::string &name);
+	void addChannel(const std::string &name, client &client);
+	void give_privilege(SERVSOCKET &server, std::string clientName, std::string name);
 	void addClientoChannel(const std::string &name, client &client);
 	bool isClientInChannel(std::string ChannelName, SERVSOCKET &server, client &Client);
 };
