@@ -6,19 +6,15 @@ manage::manage(SERVSOCKET &server) : Server(server) {
 manage::~manage() {
 }
 
-void  manage::give_privilege(SERVSOCKET &server, std::string clientName, std::string name) {
-	std::map<std::string, channel>::iterator it = server.channel_map.find(name);
-	std::vector<client>::iterator cli;
-	if (it != server.channel_map.end())
-	{
-		for (cli = it->second.client_list.begin(); cli != it->second.client_list.end(); cli++) {
-			if (cli->nickname == clientName) {
-				cli->adminOf = name;
-				break ;
-			}
+void manage::give_privilege(std::string clientName, std::string name) {
+	const char *str = "Hey Wake up, You have been granted the Administrator status\n";
+	for (size_t index = 0; index < Server.database.size(); index++) {
+		if (Server.database[index].nickname == clientName) {
+			if (Server.database[index].adminOf == name)
+				throw(RED"Client already an admin\n"RESET);
+			Server.database[index].adminOf = name;
+			send(Server.database[index].fd, str, std::string(str).length(), 0);
 		}
-		if (cli != it->second.client_list.end())
-			throw (RED"Client is already an admin\n"RESET);
 	}
 }
 
