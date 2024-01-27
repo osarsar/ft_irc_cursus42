@@ -36,6 +36,7 @@ void	channel::mode(std::string str, SERVSOCKET &server, client &Client) {
 		channel_pass = "";
 	else if (Client.adminOf == channel_name && key == "+o") {
 		manage manage(server);
-		manage.give_privilege(mode_pass, channel_name);
+		if (!manage.give_privilege(mode_pass, channel_name))
+			throw(RED"Client not found\n"RESET);
 	}
 }
