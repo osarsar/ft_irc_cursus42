@@ -9,10 +9,7 @@ void    privmsg::parse_msg(std::string str, SERVSOCKET &server, client &Client) 
 	std::string receiver;
 	size_t	pos;
 	int 	fd;
-	std::vector<int> fds_vector;
-	std::vector<client>::iterator vec_it;
-	std::vector<int>::iterator iti;
-	std::map<std::string, channel>::iterator iter;
+
     if (str.substr(0, std::string(PRIVMSG).length()) == PRIVMSG)
         str.erase(0, std::string(PRIVMSG).length() + 1);
 	if ((pos = str.find(":")) != std::string::npos) {
@@ -33,24 +30,10 @@ void    privmsg::parse_msg(std::string str, SERVSOCKET &server, client &Client) 
 			break ;
 		}
 	}
-	std::cout << "this is channel name -->>> " << channel_receive << std::endl;
-	std::cout << "this is receiver name -->>> " << receiver << std::endl;
-	if (!channel_receive.empty())
-	{
-		for (iter = server.channel_map.begin(); iter != server.channel_map.end(); iter++) {
-			if (iter->first == channel_receive)
-				for (vec_it = iter->second.client_list.begin(); vec_it != iter->second.client_list.end();vec_it++) {
-					fds_vector.push_back(vec_it->fd);
-				}
-		}
-		unsigned long i = 0;
-		for (iti = fds_vector.begin(); i++ < fds_vector.size() && iti != fds_vector.end(); iti++) {
-				if (*iti != Client.fd)
-					send(*iti, message.c_str(), message.length(), 0);
-			}
-	}
 	if (it == server.database.end() && channel_receive.empty())
 		throw ("Client not found\n");
+	if (!channel_receive.empty())
+		msg_to_channel(server, message, channel_receive, Client);
 	if (!receiver.empty())
 		msg_to_client(fd, message, receiver, Client);
 }
@@ -62,6 +45,27 @@ int	privmsg::client_fd(std::string str, SERVSOCKET &server) {
 			return (it->fd);
 	}
 	return (0);
+}
+
+void	privmsg::msg_to_channel(SERVSOCKET &server, std::string message, std::string receiver, client &Client)
+{
+	std::vector<int> fds_vector;
+	std::vector<client>::iterator vec_it;
+	std::vector<int>::iterator iti;
+	std::map<std::string, channel>::iterator iter;
+
+	for (iter = server.channel_map.begin(); iter != server.channel_map.end(); iter++) {
+		if (iter->first == receiver)
+			for (vec_it = iter->second.client_list.begin(); vec_it != iter->second.client_list.end();vec_it++) {
+				fds_vector.push_back(vec_it->fd);
+			}
+	}
+	unsigned long i = 0;
+	for (iti = fds_vector.begin(); i++ < fds_vector.size() && iti != fds_vector.end(); iti++) {
+			if (*iti != Client.fd)
+				send(*iti, message.c_str(), message.length(), 0);
+		}
+
 }
 
 void	privmsg::msg_to_client(int fd, std::string message, std::string receiver, client &Client) {

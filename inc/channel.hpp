@@ -2,6 +2,7 @@
 # define CHANNEL_HPP
 
 #include "servsocket.hpp"
+#include "privmsg.hpp"
 #include "client.hpp"
 #include <iostream>
 #include <vector>

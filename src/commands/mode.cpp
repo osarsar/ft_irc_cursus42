@@ -7,6 +7,7 @@ void	channel::mode(std::string str, SERVSOCKET &server, client &Client) {
 	std::string mode_pass;
 	std::string key;
 	std::string channel_name;
+	privmsg 	priv;
 
 	if (str.substr(0, std::string(MODE).length()) == MODE)
 		str.erase(0, std::string(MODE).length() + 1);
@@ -31,21 +32,25 @@ void	channel::mode(std::string str, SERVSOCKET &server, client &Client) {
 	if (i == 0)
 		throw ("mode key is necessary\n");
 	if (Client.adminOf == channel_name) {
-		if (key == "+k")
+		if (key == "+k") {
 			channel_pass = mode_pass;
-		else if (!channel_pass.empty() && key == "-k")
+			priv.msg_to_channel(server, GREEN"This channel is now in Password Mode\n"RESET, channel_name, Client);
+		}
+		else if (!channel_pass.empty() && key == "-k") {
 			channel_pass = "";
+			priv.msg_to_channel(server, RED"This channel is no longer in Password Mode\n"RESET, channel_name, Client);
+		}
 		else if (key == "+o") {
 			manage manage(server);
-			if (!manage.give_privilege(mode_pass, channel_name, 0))
+			if (!manage.give_privilege(mode_pass, channel_name, false))
 				throw(RED"Client not found\n"RESET);
 		}
 		else if (key == "-o") {
 			manage manage(server);
-			if (!manage.give_privilege(mode_pass, channel_name, 1))
+			if (!manage.give_privilege(mode_pass, channel_name, true))
 				throw(RED"Client not found\n"RESET);
 		}
 	}
 	else
-		throw (RED"Client is not an admin\n");	
+		throw (RED"You are not an admin\n"RESET);	
 }

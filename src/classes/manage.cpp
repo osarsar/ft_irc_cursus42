@@ -22,6 +22,8 @@ bool manage::give_privilege(std::string clientName, std::string name, bool flag)
 						return true;
 					}
 					else if (flag) {
+						if (Server.database[index].adminOf == "")
+							throw (RED"Client already lost his privileges\n"RESET);
 						Server.database[index].adminOf = "";
 						send(Server.database[index].fd, seize, std::string(seize).length(), 0);
 						return true;
@@ -38,6 +40,7 @@ void  manage::addChannel(const std::string &name, client &client) {
 	if (it == Server.channel_map.end())
 		client.adminOf = name;
 	Server.channel_map[name] = channel(name);
+	std::cout << GREEN << "an IRC channel " << name << " was created By User " << client.nickname << RESET << std::endl; 
 }
 
 void manage::addClientoChannel(const std::string &name, client &client) {
