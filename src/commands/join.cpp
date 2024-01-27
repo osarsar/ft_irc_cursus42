@@ -40,9 +40,8 @@ void channel::join(std::string str, client &Client, SERVSOCKET &server)
 		throw (RED"Join commmand can't function alone\n"RESET);
 	std::map<std::string, channel>::iterator iter = server.channel_map.find(channelName);
 	manage manage(server);
-	if (iter == server.channel_map.end()) {
+	if (iter == server.channel_map.end())
 		manage.addChannel(channelName, Client);
-	}
 	if (manage.isClientInChannel(channelName, server, Client))
 		throw(RED "client is already in channel\n" RESET);
  	if (!channel_pass.empty() && Client.adminOf != channelName) {

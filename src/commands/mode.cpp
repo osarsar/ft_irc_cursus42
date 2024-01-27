@@ -30,13 +30,22 @@ void	channel::mode(std::string str, SERVSOCKET &server, client &Client) {
 		throw ("Channel not found\n");
 	if (i == 0)
 		throw ("mode key is necessary\n");
-	if (key == "+k" && Client.adminOf == channel_name)
-		channel_pass = mode_pass;
-	else if (!channel_pass.empty() && key == "-k" && Client.adminOf == channel_name)
-		channel_pass = "";
-	else if (Client.adminOf == channel_name && key == "+o") {
-		manage manage(server);
-		if (!manage.give_privilege(mode_pass, channel_name))
-			throw(RED"Client not found\n"RESET);
+	if (Client.adminOf == channel_name) {
+		if (key == "+k")
+			channel_pass = mode_pass;
+		else if (!channel_pass.empty() && key == "-k")
+			channel_pass = "";
+		else if (key == "+o") {
+			manage manage(server);
+			if (!manage.give_privilege(mode_pass, channel_name, 0))
+				throw(RED"Client not found\n"RESET);
+		}
+		else if (key == "-o") {
+			manage manage(server);
+			if (!manage.give_privilege(mode_pass, channel_name, 1))
+				throw(RED"Client not found\n"RESET);
+		}
 	}
+	else
+		throw (RED"Client is not an admin\n");	
 }
