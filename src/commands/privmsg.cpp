@@ -31,7 +31,7 @@ void    privmsg::parse_msg(std::string str, SERVSOCKET &server, client &Client) 
 		}
 	}
 	if (it == server.database.end() && channel_receive.empty())
-		throw ("Client not found\n");
+		throw (RED"Client not found\n"RESET);
 	if (!channel_receive.empty())
 		msg_to_channel(server, message, channel_receive, Client);
 	if (!receiver.empty())

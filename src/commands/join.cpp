@@ -50,16 +50,6 @@ void channel::join(std::string str, client &Client, SERVSOCKET &server)
 		channel_pass = "";
 	}
 	manage.addClientoChannel(channelName, Client);
-	std::map<std::string, channel>::iterator it = server.channel_map.begin();
-	for (; it != server.channel_map.end(); it++)
-	{
-		for (unsigned int i = 0; i < it->second.client_list.size(); i++)
-			std::cout << "------+|" << it->second.client_list[i].nickname << std::endl;
-		std::cout << it->second.channelName << std::endl;
-	}
-	std::cout << "---------------->>>>" << std::endl;
-	std::cout << "End of channels" << std::endl;
-	std::cout << "------------------" << std::endl;
 }
 
 bool channel::join_password(std::string password, client &Client, SERVSOCKET &server)
