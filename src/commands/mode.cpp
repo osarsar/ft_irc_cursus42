@@ -54,7 +54,7 @@ void	channel::execute_mode(std::string key, SERVSOCKET &server, client &Client, 
 			if (!manage.give_privilege(mode_pass, channel_name, true))
 				throw(RED"Client not found\n"RESET);
 		}
-		else
-			throw (RED"You are not an admin\n"RESET);
 	}
+	else
+		throw (RED"You are not an admin\n"RESET);
 }
