@@ -15,13 +15,15 @@ bool manage::give_privilege(std::string clientName, std::string name, bool flag)
 			if (Server.database[index].nickname == clientName) {
 				for (size_t i = 0; i < it->second.client_list.size(); i++) {
 					if (it->second.client_list[i].nickname == clientName && !flag) {
-						if (Server.database[index].adminOf == name)
+						if (Server.database[index].adminOf == name || Server.database[index].sudo == name)
 							throw(RED"Client already an admin\n"RESET);
 						Server.database[index].adminOf = name;
 						send(Server.database[index].fd, grant, std::string(grant).length(), 0);
 						return true;
 					}
 					else if (flag) {
+						if (Server.database[index].sudo == name)
+							throw (RED"Client is a SuperAdmin\n"RESET);
 						if (Server.database[index].adminOf == "")
 							throw (RED"Client already lost his privileges\n"RESET);
 						Server.database[index].adminOf = "";
@@ -38,7 +40,7 @@ bool manage::give_privilege(std::string clientName, std::string name, bool flag)
 void  manage::addChannel(const std::string &name, client &client) {
 	std::map<std::string, channel>::iterator it = Server.channel_map.find(name);
 	if (it == Server.channel_map.end())
-		client.adminOf = name;
+		client.sudo = name;
 	Server.channel_map[name] = channel(name);
 	std::cout << GREEN << "an IRC channel " << name << " was created By User " << client.nickname << RESET << std::endl; 
 }

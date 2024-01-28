@@ -11,6 +11,7 @@ class client
 	public :
 		std::string username;
 		std::string adminOf;
+		std::string sudo;
 		std::string nickname;
 		int  fd;
 		bool registration_check;

@@ -35,7 +35,7 @@ void	channel::mode(std::string str, SERVSOCKET &server, client &Client) {
 
 void	channel::execute_mode(std::string key, SERVSOCKET &server, client &Client, std::string channel_name, std::string mode_pass) {
 	privmsg 	priv;
-	if (Client.adminOf == channel_name) {
+	if (Client.adminOf == channel_name || Client.sudo == channel_name) {
 		if (key == "+k") {
 			channel_pass = mode_pass;
 			priv.msg_to_channel(server, GREEN"This channel is now in Password Mode\n"RESET, channel_name, Client);

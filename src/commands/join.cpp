@@ -44,7 +44,7 @@ void channel::join(std::string str, client &Client, SERVSOCKET &server)
 		manage.addChannel(channelName, Client);
 	if (manage.isClientInChannel(channelName, server, Client))
 		throw(RED "client is already in channel\n" RESET);
- 	if (!channel_pass.empty() && Client.adminOf != channelName) {
+ 	if (!channel_pass.empty() && Client.adminOf != channelName && Client.sudo != channelName) {
 		if (!join_password(channel_pass, Client, server))
 			throw ("Password is incorrect\n");
 		channel_pass = "";
