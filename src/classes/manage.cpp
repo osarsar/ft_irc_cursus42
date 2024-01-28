@@ -45,6 +45,7 @@ void  manage::addChannel(const std::string &name, client &client) {
 
 void manage::addClientoChannel(const std::string &name, client &client) {
 	Server.channel_map[name].client_list.push_back(client);
+	throw (ORANGE"You have joined an IRC channel\n"RESET);
 }
 
 bool manage::isClientInChannel(std::string ChannelName, SERVSOCKET &server, client &client) {

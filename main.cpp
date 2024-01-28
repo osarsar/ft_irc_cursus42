@@ -2,6 +2,12 @@
 #include "./inc/channel.hpp"
 #include "./inc/privmsg.hpp"
 
+void    to_lawar(std::string &str) {
+    for (int index = 0; str[index]; index++) {
+        str[index] = std::tolower(str[index]);
+    }
+}
+
 int main(int ac, char **av)
 {
     if (ac != 3)
@@ -54,6 +60,7 @@ int main(int ac, char **av)
                         server.nickname(vector.vector[i].fd, server.database[i - 1], data);
                         server.username(vector.vector[i].fd, server.database[i - 1], data);
                         std::string command = data.substr(0, data.find(" "));
+                        to_lawar(command);
                         if (!server.database[i - 1].registration_check && (command == JOIN && command == PRIVMSG && command == MODE))
                             throw(RED "Khasek lwra9 a m3alem sir tal gheda oji\n" RESET);
                         else if (command == JOIN && server.database[i - 1].registration_check)
@@ -62,9 +69,6 @@ int main(int ac, char **av)
                             Channel.mode(data, server, server.database[i - 1]);
                         else if (command == PRIVMSG && server.database[i - 1].registration_check)
                             Privmsg.parse_msg(data, server, server.database[i - 1]);
-                        // client.getclient_fd(vector.vector);
-                        // std::cout << client.client_fd << std::endl;
-                        // std::cout << data << std::endl;
                     }
                 }
                 i++;

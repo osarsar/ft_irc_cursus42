@@ -7,8 +7,7 @@ void	channel::mode(std::string str, SERVSOCKET &server, client &Client) {
 	std::string mode_pass;
 	std::string key;
 	std::string channel_name;
-	privmsg 	priv;
-
+	
 	if (str.substr(0, std::string(MODE).length()) == MODE)
 		str.erase(0, std::string(MODE).length() + 1);
 	p = std::strtok(const_cast<char *>(str.c_str()), ", \r\n");
@@ -31,6 +30,11 @@ void	channel::mode(std::string str, SERVSOCKET &server, client &Client) {
 		throw ("Channel not found\n");
 	if (i == 0)
 		throw ("mode key is necessary\n");
+	execute_mode(key, server, Client, channel_name, mode_pass);
+}
+
+void	channel::execute_mode(std::string key, SERVSOCKET &server, client &Client, std::string channel_name, std::string mode_pass) {
+	privmsg 	priv;
 	if (Client.adminOf == channel_name) {
 		if (key == "+k") {
 			channel_pass = mode_pass;
@@ -50,7 +54,7 @@ void	channel::mode(std::string str, SERVSOCKET &server, client &Client) {
 			if (!manage.give_privilege(mode_pass, channel_name, true))
 				throw(RED"Client not found\n"RESET);
 		}
+		else
+			throw (RED"You are not an admin\n"RESET);
 	}
-	else
-		throw (RED"You are not an admin\n"RESET);	
 }

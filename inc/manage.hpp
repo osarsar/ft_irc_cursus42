@@ -16,6 +16,7 @@ class manage
 	~manage();
 	void addChannel(const std::string &name, client &client);
 	bool give_privilege(std::string clientName, std::string name, bool flag);
+	void limit_mfs(std::string name);
 	void addClientoChannel(const std::string &name, client &client);
 	bool isClientInChannel(std::string ChannelName, SERVSOCKET &server, client &Client);
 };
