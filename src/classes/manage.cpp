@@ -1,9 +1,14 @@
 #include "../../inc/manage.hpp"
 
 manage::manage(SERVSOCKET &server) : Server(server) {
+	limit = 0;
 }
 
 manage::~manage() {
+}
+
+size_t manage::getlimit() {
+	return (limit);
 }
 
 bool manage::give_privilege(std::string clientName, std::string name, bool flag) {
@@ -22,8 +27,6 @@ bool manage::give_privilege(std::string clientName, std::string name, bool flag)
 						return true;
 					}
 					else if (flag) {
-						if (Server.database[index].sudo == name)
-							throw (RED"Client is a SuperAdmin\n"RESET);
 						if (Server.database[index].adminOf == "")
 							throw (RED"Client already lost his privileges\n"RESET);
 						Server.database[index].adminOf = "";

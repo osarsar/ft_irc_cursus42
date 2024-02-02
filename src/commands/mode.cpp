@@ -27,9 +27,11 @@ void	channel::mode(std::string str, SERVSOCKET &server, client &Client) {
 	channel_name = server.trim(channel_name);
 	std::map<std::string, channel>::iterator it = server.channel_map.find(channel_name);
 	if (it == server.channel_map.end())
-		throw ("Channel not found\n");
+		throw (RED"Channel not found\n"RESET);
 	if (i == 0)
-		throw ("mode key is necessary\n");
+		throw (RED"mode key is necessary\n"RESET);
+	if ((key == "+k" || key == "+o" || key == "-o" || key == "+l") && mode_pass.empty())
+		throw (RED"Invalid mode argument\n"RESET);
 	execute_mode(key, server, Client, channel_name, mode_pass);
 }
 
@@ -54,6 +56,13 @@ void	channel::execute_mode(std::string key, SERVSOCKET &server, client &Client, 
 			if (!manage.give_privilege(mode_pass, channel_name, true))
 				throw(RED"Client not found\n"RESET);
 		}
+		// else if (key == "+l") {
+		// 	manage manage(server);
+		// 	if (Client.sudo == channel_name) {
+		// 		manage.limit_clients(mode_pass);
+		// 		throw (GREEN"This Channel is now limited\n"RESET);
+		// 	}
+		// }
 	}
 	else
 		throw (RED"You are not an admin\n"RESET);

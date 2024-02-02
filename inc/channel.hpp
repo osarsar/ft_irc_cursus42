@@ -40,6 +40,7 @@ class channel
 		channel();
 		channel(const std::string& name) : channelName(name) {}
 		~channel();
+		bool	get_bool();
 		void	join(std::string str, client &Client, SERVSOCKET &server);
 		void	add_client(client *client);
 		void	mode(std::string str, SERVSOCKET &server, client &Client);
