@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include "channel.hpp"
 #include <iostream>
 #include <sys/socket.h>
@@ -46,6 +47,9 @@ class SERVSOCKET
         void nickname(int client_fd, client &client, std::string data);
         void username(int client_fd, client &client, std::string data);
         channel &add_channel(std::string name, channel &Channel);
+        std::string&    ltrim(std::string& str);
+        std::string&    rtrim(std::string& str);
+        std::string&    trim(std::string& str);
         void show();
 
         class ErrorOnMySocket : public std::exception

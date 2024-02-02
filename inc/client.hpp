@@ -1,6 +1,7 @@
 #ifndef CLIENT_HPP
 # define CLIENT_HPP
 
+
 #include <iostream>
 #include "servsocket.hpp"
 #include "channel.hpp"
@@ -10,6 +11,8 @@ class client
 {
 	public :
 		std::string username;
+		std::string adminOf;
+		std::string sudo;
 		std::string nickname;
 		int  fd;
 		bool registration_check;

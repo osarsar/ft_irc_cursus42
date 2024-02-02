@@ -1,6 +1,7 @@
 #include "../../inc/servsocket.hpp"
 #include "../../inc/channel.hpp"
 
+
 //--------------------------HANDEL ERRORS--------------------------------//
 
 const char* SERVSOCKET::ErrorOnMySocket::what() const throw()
@@ -37,6 +38,31 @@ const char* SERVSOCKET::ErrorOnPassword::what() const throw()
 }
 
 //----------------------------------------------------------------------//
+
+
+std::string& SERVSOCKET::ltrim(std::string& str) {
+    size_t start = str.find_first_not_of(" \t\n\r");
+    if (start != std::string::npos) {
+        str.erase(0, start);
+    } else {
+        str.clear();
+    }
+    return str;
+}
+
+std::string& SERVSOCKET::rtrim(std::string& str) {
+    size_t end = str.find_last_not_of(" \t\n\r");
+    if (end != std::string::npos) {
+        str.erase(end + 1);
+    } else {
+        str.clear();
+    }
+    return str;
+}
+
+std::string& SERVSOCKET::trim(std::string& str) {
+    return ltrim(rtrim(str));
+}
 
 int SERVSOCKET::mysocket(int ipvs, const int type)
 {
