@@ -1,6 +1,7 @@
 #include "../../inc/servsocket.hpp"
 #include "../../inc/channel.hpp"
 
+
 //--------------------------HANDEL ERRORS--------------------------------//
 
 const char* SERVSOCKET::ErrorOnMySocket::what() const throw()

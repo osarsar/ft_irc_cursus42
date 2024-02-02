@@ -35,6 +35,7 @@ void	channel::mode(std::string str, SERVSOCKET &server, client &Client) {
 	execute_mode(key, server, Client, channel_name, mode_pass);
 }
 
+
 void	channel::execute_mode(std::string key, SERVSOCKET &server, client &Client, std::string channel_name, std::string mode_pass) {
 	privmsg 	priv;
 	if (Client.adminOf == channel_name || Client.sudo == channel_name) {

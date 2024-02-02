@@ -1,5 +1,6 @@
 #include "../../inc/manage.hpp"
 
+
 manage::manage(SERVSOCKET &server) : Server(server) {
 	limit = 0;
 }

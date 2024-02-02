@@ -4,6 +4,7 @@ privmsg::privmsg() {}
 
 privmsg::~privmsg() {}
 
+
 void    privmsg::parse_msg(std::string str, SERVSOCKET &server, client &Client) {
 	std::string channel_receive;
 	std::string receiver;

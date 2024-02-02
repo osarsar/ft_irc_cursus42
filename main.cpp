@@ -3,6 +3,7 @@
 #include "./inc/privmsg.hpp"
 #include "./inc/client.hpp"
 
+
 client Client;
 privmsg Privmsg;
 SERVSOCKET server;

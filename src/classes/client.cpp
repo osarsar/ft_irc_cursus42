@@ -1,5 +1,6 @@
 #include "../../inc/client.hpp"
 
+
 client::client() {
 	registration_check = false;
 	pass_bool = false;

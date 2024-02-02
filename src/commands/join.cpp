@@ -6,6 +6,7 @@ channel::channel(void) {
 
 channel::~channel(void) {}
 
+
 int f_stoi(std::string numb)
 {
 	int ret;
