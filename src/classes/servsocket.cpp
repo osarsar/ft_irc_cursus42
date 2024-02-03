@@ -1,5 +1,7 @@
 #include "../../inc/servsocket.hpp"
 #include "../../inc/channel.hpp"
+#include "../../inc/Kick.hpp"
+#include "../../inc/invite.hpp"
 
 
 //--------------------------HANDEL ERRORS--------------------------------//
@@ -156,10 +158,36 @@ std::vector<int> POLLFD::getFds() const {
     return fds;
 }
 
-void SERVSOCKET::registration(int client_fd, client &client, std::string data)
+void SERVSOCKET::registration(int client_fd, client &client, std::string data, SERVSOCKET server)
 {
     std::string str;
-    if (data.substr(0, 5) == "PASS ")
+    std::vector<std::string> commands = my_split(data, ' ', server);
+    if (commands.size() < 1)
+        return;
+
+    toUpper(commands[0]);
+
+
+    trim(commands[0]);
+    if (commands[0] != "PASS")
+        return;
+
+    if (commands.size() == 1)
+        commands = my_split(commands[0], '\t', server);
+
+    if (commands.size() < 2)
+    {
+        server.mysend(client_fd, "ERR_NEEDMOREPARAMS\n");
+        return ;
+    }
+    if (commands.size() > 2)
+    {
+        server.mysend(client_fd, "ERR_NEED 2 PARAMS\n");
+        return ;
+    }
+    trim(commands[1]);
+
+    if (commands[0] == "PASS")
     {
         if (client.pass_bool == true)
         {
@@ -185,10 +213,35 @@ void SERVSOCKET::registration(int client_fd, client &client, std::string data)
     }
 }
 
-void SERVSOCKET::nickname(int client_fd, client &client, std::string data)
+void SERVSOCKET::nickname(int client_fd, client &client, std::string data, SERVSOCKET server)
 {
     std::string str;
-    if (data.substr(0, 5) == "NICK ")
+    std::vector<std::string> commands = my_split(data, ' ', server);
+    if (commands.size() < 1)
+        return;
+
+    toUpper(commands[0]);
+    trim(commands[0]);
+    if (commands[0] != "NICK")
+        return;
+
+    if (commands.size() == 1)
+        commands = my_split(commands[0], '\t', server);
+
+    if (commands.size() < 2)
+    {
+        server.mysend(client_fd, "ERR_NEEDMOREPARAMS\n");
+        return ;
+    }
+    if (commands.size() > 2)
+    {
+        server.mysend(client_fd, "ERR_NEED 2 PARAMS\n");
+        return ;
+    }
+
+    trim(commands[1]);
+
+    if (commands[0] == "NICK")
     {
         if (client.pass_bool != 1)
         {
@@ -230,10 +283,35 @@ void SERVSOCKET::nickname(int client_fd, client &client, std::string data)
     }
 }
 
-void SERVSOCKET::username(int client_fd, client &client, std::string data)
+void SERVSOCKET::username(int client_fd, client &client, std::string data, SERVSOCKET server)
 {
     std::string str;
-    if (data.substr(0, 5) == "USER ")
+    std::vector<std::string> commands = my_split(data, ' ', server);
+    if (commands.size() < 1)
+        return;
+
+    toUpper(commands[0]);
+    trim(commands[0]);
+    if (commands[0] != "USER")
+        return;
+
+    if (commands.size() == 1)
+        commands = my_split(commands[0], '\t', server);
+
+    if (commands.size() < 2)
+    {
+        server.mysend(client_fd, "ERR_NEEDMOREPARAMS\n");
+        return ;
+    }
+    if (commands.size() > 2)
+    {
+        server.mysend(client_fd, "ERR_NEED 2 PARAMS\n");
+        return ;
+    }
+    
+    trim(commands[1]);
+
+    if (commands[0] == "USER")
     {
         if (client.pass_bool != 1)
         {

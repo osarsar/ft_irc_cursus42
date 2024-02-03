@@ -1,8 +1,11 @@
 #include "../../inc/invite.hpp"
 #include "../../inc/privmsg.hpp"
 #include "../../inc/servsocket.hpp"
+#include "../../inc/client.hpp"
+#include "../../inc/error.hpp"
 
-std::vector<std::string> my_split(const std::string& input, char delimiter, SERVSOCKET server) {
+std::vector<std::string> my_split(const std::string& input, char delimiter, SERVSOCKET server)
+{
     std::vector<std::string> tokens;
     std::istringstream stream(input);
     std::string token;
@@ -16,8 +19,6 @@ std::vector<std::string> my_split(const std::string& input, char delimiter, SERV
     return tokens;
 }
 
-// ... (other includes and definitions)
-// INVITE Wiz #foo_bar    ; Invite Wiz to #foo_bar
 Invite::Invite()
 {
 }
@@ -26,62 +27,131 @@ Invite::~Invite()
 {
 }
 
-void Invite::go_to_invite(std::string data, SERVSOCKET &server)
+client* get_client(int fd, SERVSOCKET server)
 {
-    (void)data;
-    (void)server;
-    // // Split the inviteCommand into components
-    // // Assume you have a utility function to split the string, e.g., splitString
-    // std::vector<std::string> commandParts = my_split(data, ' ', server);
-    // if (commandParts.size() != 3) {
-    //     // inviter->send("ERR_NEEDMOREPARAMS INVITE");
-    //     std::cout << "ERR_NEEDMOREPARAMS INVITE\n";
-    //     return ;
-    // }
-    // const std::string& channelName = commandParts[2];
-    // if (channelName == name) {
-    //     // The channel name in the command matches the current channel
+    std::vector<client>::iterator iter_clt;
+    for (iter_clt = server.database.begin(); iter_clt != server.database.end();iter_clt++)
+    {
+        if (iter_clt->fd == fd)
+            return &(*iter_clt);// HERE
+    }
+    return NULL;
+}
 
-    //     // Extract the nickname to invite
-    //     const std::string& targetNickname = commandParts[3];
+client* get_client(std::string nickname, SERVSOCKET server)
+{
+    std::vector<client>::iterator iter_clt;
+    for (iter_clt = server.database.begin(); iter_clt != server.database.end();iter_clt++)
+    {
+        if (iter_clt->nickname == nickname)
+            return &(*iter_clt);// HERE
+    }
+    return NULL;
+}
 
-    //     // Check if the target is not already a member
-    //     auto targetIt = std::find_if(members.begin(), members.end(),
-    //         [targetNickname](client* client) {
-    //             return client->getNickname() == targetNickname;
-    //         });
+channel* get_channel(std::string channelName, SERVSOCKET &server)
+{
+    std::map <std::string, channel>::iterator iter_chnl;
 
-    //     if (targetIt == members.end()) {
-    //         // Case: Inviting a client not already in the channel
-    //         // Add the target to the channel members
-    //         client* targetClient = findClientByNickname(targetNickname);
-    //         if (targetClient != nullptr) {
-    //             members.push_back(targetClient);
+    for (iter_chnl = server.channel_map.begin(); iter_chnl != server.channel_map.end(); iter_chnl++)
+    {
+        if (iter_chnl->first == channelName)
+            return &(iter_chnl->second);// HERE
+    }
+    return NULL;
+}
 
-    //             // Notify others about the invitation
-    //             // Implement this based on your communication mechanism
-    //             sendMessage("INVITE " + targetNickname + " :" + name, inviter);
+int check_client_in_channel(client guest, SERVSOCKET server, std::string channel_name)
+{
+	std::map <std::string, channel>::iterator iter_chnl;
+    std::vector<client>::iterator iter_clt;
+		
+    for (iter_chnl = server.channel_map.begin(); iter_chnl != server.channel_map.end(); iter_chnl++)
+    {
+        if (iter_chnl->first == channel_name)
+        {
+            for (iter_clt = iter_chnl->second.client_list.begin(); iter_clt != iter_chnl->second.client_list.end();iter_clt++)
+            {
+                if (iter_clt->nickname == guest.nickname)
+                    return 1;
+            }
+            break;
+        }
+    }
+    return 0;
+}
 
-    //             // Notify the inviter about the successful invitation
-    //             // Implement this based on your communication mechanism
-    //             inviter->send("RPL_INVITING " + targetNickname + " " + name);
-    //         } else {
-    //             // Target client not found
-    //             // Respond with an error message
-    //             // Implement this based on your communication mechanism
-    //             inviter->send("ERR_NOSUCHNICK " + targetNickname);
-    //         }
-    //     } else {
-    //         // Case: Target is already a member
-    //         // Respond with an error message
-    //         // Implement this based on your communication mechanism
-    //         inviter->send("ERR_USERONCHANNEL " + targetNickname + " " + name);
-    //     }
-    // } else {
-    //     // Channel name in the command doesn't match the current channel
-    //     // Respond with an error message
-    //     // Implement this based on your communication mechanism
-    //     inviter->send("ERR_NOSUCHCHANNEL " + channelName);
-    // }
+int is_operator(const std::vector<std::string>& operators, const std::string& client_name) {
+for (std::vector<std::string>::const_iterator it = operators.begin(); it != operators.end(); ++it) {
+        if (*it == client_name) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void Invite::go_to_invite(std::string data, SERVSOCKET &server, int fd)
+{
+    (void) fd;
+
+    std::vector<std::string> commands = my_split(data, ' ', server);
+    if (commands.size() < 3)
+    {
+       server.mysend(fd, "ERR_NEEDMOREPARAMS INVITE\n");
+        return ;
+    }
+    client *host;
+    client *guest;
+
+    host = get_client(fd, server);
+    if (!host)
+    {
+        server.mysend(fd, "ERR_NOTREGISTERED\n");
+        return;
+    }
+
+    guest = get_client(commands[1], server);
+    if (!guest)
+    {
+        server.mysend(fd, "ERR_NOSUCHNICK (client n'existe pas) HERE ---> i dkn what the message\n");
+        return;
+    }
+
+    std::string channelName = commands[2];
+    channel *channel = get_channel(channelName, server);
+    if (!channel)
+    {
+        throw (std::runtime_error(ERR_NOSUCHCHANNEL(host->nickname, channelName)));
+        server.mysend(fd, "ERR_NOSUCHCHANNEL\n");
+        return;
+    }
+
+    std::cout << "host: " << host->nickname << ".\n";
+    if (check_client_in_channel(*host, server, channelName) == 0)
+    {
+        server.mysend(fd, "ERR_NOTONCHANNEL\n");
+        return;
+    }
+    std::cout << "host on channel, " << host->nickname << ".\n";
+
+    if (check_client_in_channel(*guest, server, channelName) == 1)
+    {
+       server.mysend(fd, "ERR_USERONCHANNEL\n");
+        return;
+    }
     
+    // if (!is_operator(channel->operators, host->nickname))
+    // {
+    //    server.mysend(fd, "ERR_CHANOPRIVSNEEDED\n");
+    //     return;
+    // }
+
+    channel->client_list.push_back(*guest);
+
+    if (check_client_in_channel(*guest, server, channelName) == 1)
+    {
+        server.mysend(fd, "RPL_INVITING\n");
+        server.mysend(fd, "Added successfully\n");
+        return;
+    }
 }

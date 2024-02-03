@@ -10,8 +10,8 @@
 #include <map>
 #include <sstream>
 
-#define JOIN "join"
-#define MODE "mode"
+#define JOIN "JOIN"
+#define MODE "MODE"
 #define PASS "PASS"
 
 #define BLUE      "\x1b[34m"

@@ -43,9 +43,9 @@ class SERVSOCKET
         int  myaccept(void);
         std::string myrecv(unsigned int size, int fd);
         void mysend(int fd, std::string data_send);
-        void registration(int client_fd, client &client, std::string data);
-        void nickname(int client_fd, client &client, std::string data);
-        void username(int client_fd, client &client, std::string data);
+        void registration(int client_fd, client &client, std::string data, SERVSOCKET server);
+        void nickname(int client_fd, client &client, std::string data, SERVSOCKET server);
+        void username(int client_fd, client &client, std::string data, SERVSOCKET server);
         channel &add_channel(std::string name, channel &Channel);
         std::string&    ltrim(std::string& str);
         std::string&    rtrim(std::string& str);

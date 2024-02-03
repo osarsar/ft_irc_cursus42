@@ -22,6 +22,7 @@
 #define ERR_NOSUCHCHANNEL(clt, chnl)                std::string(clt) + " " + std::string(chnl) + " :No such channel"
 #define ERR_NOTONCHANNEL(clt, chnl)                 std::string(clt) + " " + std::string(chnl) + " :You're not on that channel"
 #define ERR_CHANOPRIVSNEEDED(clt, chnl)             std::string(clt) + " " + std::string(chnl) + " :You're not channel operator"
+#define ERR_NOTREGISTERED(clt)                      std::string(clt) + " :You have not registered"
 
 //>>>>>>>> TOPIC --------------------------------------------------------->>>>>>>>>>>>>>>>>>
 #define RPL_NOTOPIC(clt, chnl)                      std::string(clt) + " " + std::string(chnl) + " :No topic is set"

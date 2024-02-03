@@ -2,35 +2,67 @@
 #include <sstream>
 #include <vector>
 #include "privmsg.hpp"
+#include <algorithm>
 
-std::vector<std::string> split(const std::string& input, char delimiter) {
-    std::vector<std::string> tokens;
-    std::istringstream stream(input);
-    std::string token;
 
-    while (std::getline(stream, token, delimiter)) {
-        token = trim(token);
-        if (!token.empty()) {
-            tokens.push_back(token);
+
+bool isStringInVector(const std::vector<std::string>& vec, const std::string& str) {
+    for (std::vector<std::string>::const_iterator it = vec.begin(); it != vec.end(); ++it) {
+        if (*it == str) {
+            return true;
         }
     }
-
-    return tokens;
+    return false;
 }
 
 int main() {
-    std::string input = "Hello      Wo    rld  C++ Split";
-    char delimiter = ' ';
+    std::vector<std::string> operators;
+    operators.push_back("add");
+    operators.push_back("subtract");
+    operators.push_back("multiply");
+    operators.push_back("divide");
 
-    std::vector<std::string> result = split(input, delimiter);
+    std::string input;
+    std::cout << "Enter an operator: ";
+    std::cin >> input;
 
-    // Afficher les résultats
-    for (size_t i = 0; i < result.size(); ++i) {
-        std::cout << "[" << result[i] << "]" << std::endl;
+    if (isStringInVector(operators, input)) {
+        std::cout << "Operator found in the vector." << std::endl;
+    } else {
+        std::cout << "Operator not found in the vector." << std::endl;
     }
 
     return 0;
 }
+
+// std::vector<std::string> split(const std::string& input, char delimiter) {
+//     std::vector<std::string> tokens;
+//     std::istringstream stream(input);
+//     std::string token;
+
+//     while (std::getline(stream, token, delimiter)) {
+//         token = trim(token);
+//         if (!token.empty()) {
+//             tokens.push_back(token);
+//         }
+//     }
+
+//     return tokens;
+// }
+
+// int main() {
+//     std::string input = "Hello      Wo    rld  C++ Split";
+//     char delimiter = ' ';
+
+//     std::vector<std::string> result = split(input, delimiter);
+
+//     // Afficher les résultats
+//     for (size_t i = 0; i < result.size(); ++i) {
+//         std::cout << "[" << result[i] << "]" << std::endl;
+//     }
+
+//     return 0;
+// }
 
 // #include "error.hpp"
 // #include "channel.hpp"

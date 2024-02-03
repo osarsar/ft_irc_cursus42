@@ -1,7 +1,7 @@
 #include "./inc/servsocket.hpp"
 #include "./inc/channel.hpp"
-#include "./inc/privmsg.hpp"
 #include "./inc/client.hpp"
+#include "./inc/privmsg.hpp"
 #include "./inc/Kick.hpp"
 #include "./inc/topic.hpp"
 #include "./inc/invite.hpp"
@@ -15,35 +15,40 @@ Kick kick;
 Topic topic;
 Invite invite;
 
-void    executables(size_t &i, std::string data)
+void    executables(size_t &i, std::string data, int fd)
 {
     std::string command = data.substr(0, data.find(" "));
-    if (!server.database[i - 1].registration_check && (command == JOIN || command == PRIVMSG || command == MODE))
+    toUpper(command);
+    if (!server.database[i - 1].registration_check && (command == KICK || command == TOPIC || command == INVITE ||\
+        command == JOIN || command == PRIVMSG || command == MODE))
+    {
+        server.mysend(fd, "ERR_NOTREGISTERED\n");
         throw(RED "Khasek lwra9 a m3alem sir tal gheda oji\n" RESET);
+    }
     else if (command == JOIN && server.database[i - 1].registration_check)
         Channel.join(data, server.database[i - 1], server);
     else if (command == MODE && server.database[i - 1].registration_check)
         Channel.mode(data, server, server.database[i - 1]);
     else if (command == PRIVMSG && server.database[i - 1].registration_check)
-        Privmsg.parse_msg(data, server, server.database[i - 1]); 
+        Privmsg.parse_msg(data, server, server.database[i - 1]);
     else if (command == KICK)
         kick.go_to_kick(data, server);
     else if (command == TOPIC)
         topic.go_to_topic(data, server);
     else if (command == INVITE)
-        invite.go_to_invite(data, server);
+        invite.go_to_invite(data, server, fd);
 }
 
-int main(int ac, char **av)
+int main(int ac, char** av) 
 {
     if (ac != 3)
     {
-        std::cerr << RED "Invalid arguments" RESET << std::endl;
-        exit(1);
+        std::cerr << RED"Invalid arguments"RESET << std::endl;
+        exit (1);
     }
     std::string data;
     std::string port;
-
+        
     port = av[1];
     server.servpass = av[2];
     int server_fd = server.mysocket(AF_INET, SOCK_STREAM);
@@ -52,7 +57,7 @@ int main(int ac, char **av)
     server.mylisten(5);
     std::cout << GREEN << "------- MY SERVER ------" << RESET << std::endl;
     std::cout << PURPLE << "Server Listening on port " << port << " ..." << RESET << std::endl;
-
+    
     POLLFD vector;
     int client_fd;
     size_t i = 0;
@@ -60,7 +65,7 @@ int main(int ac, char **av)
     vector.push(server_fd, POLLIN, 0);
     while (true)
     {
-        try
+        try 
         {
             poll(vector.vector.data(), vector.vector.size(), -1);
             i = 0;
@@ -77,11 +82,10 @@ int main(int ac, char **av)
                     else
                     {
                         data = server.myrecv(1024, vector.vector[i].fd);
-                        // server.mysend(vector.vector[i % 2 + 1].fd,data);
-                        server.registration(vector.vector[i].fd, server.database[i - 1], data);
-                        server.nickname(vector.vector[i].fd, server.database[i - 1], data);
-                        server.username(vector.vector[i].fd, server.database[i - 1], data);
-                        executables(i, data);
+                        server.registration(vector.vector[i].fd, server.database[i - 1], data, server);
+                        server.nickname(vector.vector[i].fd, server.database[i - 1], data, server);
+                        server.username(vector.vector[i].fd, server.database[i - 1], data, server);
+                        executables(i, data, vector.vector[i].fd);                   
                     }
                 }
                 i++;
@@ -89,7 +93,7 @@ int main(int ac, char **av)
         }
         catch (std::exception &e)
         {
-            std::cerr << e.what() << std::endl;
+            std::cerr << "hahh, " << e.what() << std::endl;
             if (i)
             {
                 close(vector.vector[i].fd);

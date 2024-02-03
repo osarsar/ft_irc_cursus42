@@ -16,4 +16,11 @@ join #frapucini
 
  
 
-privmsg #general : 🤓
+privmsg #ch1 : 🤓
+
+privmsg temsa :test test allah
+KICK #sarsar hii
+KICK #Finnish John :Speaking English
+---->>
+TOPIC #test :dfg
+INVITE Wiz #foo_bar    ; Invite Wiz to #foo_bar

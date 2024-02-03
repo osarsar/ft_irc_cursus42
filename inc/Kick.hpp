@@ -20,4 +20,6 @@ public:
     void 	kick(client *kicker, client *target);
 };
 
+void toUpper(std::string& str);
+
 #endif

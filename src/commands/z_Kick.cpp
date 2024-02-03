@@ -1,12 +1,18 @@
 #include "../../inc/Kick.hpp"
 #include "../../inc/privmsg.hpp"
-#include "../../inc/error.hpp"
 #include "../../inc/servsocket.hpp"
 
 
 Kick::Kick(){}
 
 Kick::~Kick(){}
+
+void toUpper(std::string& str)
+{
+    for (std::string::iterator it = str.begin(); it != str.end(); ++it) {
+        *it = std::toupper(*it);
+    }
+}
 
 void 	Kick::go_to_kick(std::string data, SERVSOCKET &server)
 {
