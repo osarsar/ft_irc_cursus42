@@ -4,7 +4,10 @@ SRCS =  main.cpp \
 		./src/commands/join.cpp\
 		./src/commands/mode.cpp\
 		./src/commands/privmsg.cpp\
-		./src/classes/manage.cpp
+		./src/classes/manage.cpp\
+		./src/commands/z_Kick.cpp\
+		./src/commands/z_Invite.cpp\
+		./src/commands/z_Topic.cpp
 		
 FLAGS = -Wall -Wextra -Werror -std=c++98 #-g -fsanitize=address
 

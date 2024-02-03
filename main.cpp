@@ -2,12 +2,18 @@
 #include "./inc/channel.hpp"
 #include "./inc/privmsg.hpp"
 #include "./inc/client.hpp"
+#include "./inc/Kick.hpp"
+#include "./inc/topic.hpp"
+#include "./inc/invite.hpp"
 
 
 client Client;
 privmsg Privmsg;
 SERVSOCKET server;
 channel Channel;
+Kick kick;
+Topic topic;
+Invite invite;
 
 void    executables(size_t &i, std::string data)
 {
@@ -20,6 +26,12 @@ void    executables(size_t &i, std::string data)
         Channel.mode(data, server, server.database[i - 1]);
     else if (command == PRIVMSG && server.database[i - 1].registration_check)
         Privmsg.parse_msg(data, server, server.database[i - 1]); 
+    else if (command == KICK)
+        kick.go_to_kick(data, server);
+    else if (command == TOPIC)
+        topic.go_to_topic(data, server);
+    else if (command == INVITE)
+        invite.go_to_invite(data, server);
 }
 
 int main(int ac, char **av)
@@ -36,7 +48,7 @@ int main(int ac, char **av)
     server.servpass = av[2];
     int server_fd = server.mysocket(AF_INET, SOCK_STREAM);
     int value = f_stoi(port);
-    server.mybind("10.12.6.6", value);
+    server.mybind("127.0.0.1", value);
     server.mylisten(5);
     std::cout << GREEN << "------- MY SERVER ------" << RESET << std::endl;
     std::cout << PURPLE << "Server Listening on port " << port << " ..." << RESET << std::endl;

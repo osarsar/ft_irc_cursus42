@@ -26,7 +26,7 @@
 
 class client;
 class SERVSOCKET;
-
+// Here --> majiscule
 class channel
 {
 	public :
