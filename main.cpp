@@ -18,7 +18,7 @@ Invite invite;
 void    executables(size_t &i, std::string data, int fd)
 {
     std::string command = data.substr(0, data.find(" "));
-    toUpper(command);
+    // toUpper(command);
     if (!server.database[i - 1].registration_check && (command == KICK || command == TOPIC || command == INVITE ||\
         command == JOIN || command == PRIVMSG || command == MODE))
     {

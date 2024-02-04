@@ -7,8 +7,9 @@ privmsg #general :test test allah
 PASS p
 NICK obesini
 USER othmanini
+join #general password
 join #general
-
+mode #general +k password
 PASS p
 NICK totizini
 USER sancholini

@@ -10,6 +10,7 @@ void	channel::mode(std::string str, SERVSOCKET &server, client &Client) {
 	
 	if (str.substr(0, std::string(MODE).length()) == MODE)
 		str.erase(0, std::string(MODE).length() + 1);
+	std::cout << str << std::endl;
 	p = std::strtok(const_cast<char *>(str.c_str()), ", \r\n");
 	while (p != NULL) {
 		if (p[0] == CHANNEL && channel_name.empty())
@@ -38,33 +39,39 @@ void	channel::mode(std::string str, SERVSOCKET &server, client &Client) {
 
 void	channel::execute_mode(std::string key, SERVSOCKET &server, client &Client, std::string channel_name, std::string mode_pass) {
 	privmsg 	priv;
-	if (Client.adminOf == channel_name || Client.sudo == channel_name) {
-		if (key == "+k") {
-			channel_pass = mode_pass;
-			priv.msg_to_channel(server, GREEN"This channel is now in Password Mode\n"RESET, channel_name, Client);
+	std::map<std::string, channel>::iterator it = server.channel_map.find(channel_name);
+	std::cout << Client.adminOf.size() << std::endl;
+	for (size_t k = 0; k < Client.adminOf.size(); k++) {
+		if (Client.adminOf[k] == channel_name) {
+			if (key == "+k") {
+				if (it != server.channel_map.end())
+					it->second.channel_pass = mode_pass;
+				priv.msg_to_channel(server, GREEN"This channel is now in Password Mode\n"RESET, channel_name, Client);
+			}
+			else if (!channel_pass.empty() && key == "-k") {
+				channel_pass = "";
+				priv.msg_to_channel(server, RED"This channel is no longer in Password Mode\n"RESET, channel_name, Client);
+			}
+			else if (key == "+o") {
+				manage manage(server);
+				std::cout << mode_pass << std::endl;
+				if (!manage.give_privilege(mode_pass, channel_name, false))
+					throw(RED"Client not found\n"RESET);
+			}
+			else if (key == "-o") {
+				manage manage(server);
+				if (!manage.give_privilege(mode_pass, channel_name, true))
+					throw(RED"Client not found\n"RESET);
+			}
+			// else if (key == "+l") {
+			// 	manage manage(server);
+			// 	if (Client.sudo == channel_name) {
+			// 		manage.limit_clients(mode_pass);
+			// 		throw (GREEN"This Channel is now limited\n"RESET);
+			// 	}
+			// }
+			return ;
 		}
-		else if (!channel_pass.empty() && key == "-k") {
-			channel_pass = "";
-			priv.msg_to_channel(server, RED"This channel is no longer in Password Mode\n"RESET, channel_name, Client);
-		}
-		else if (key == "+o") {
-			manage manage(server);
-			if (!manage.give_privilege(mode_pass, channel_name, false))
-				throw(RED"Client not found\n"RESET);
-		}
-		else if (key == "-o") {
-			manage manage(server);
-			if (!manage.give_privilege(mode_pass, channel_name, true))
-				throw(RED"Client not found\n"RESET);
-		}
-		// else if (key == "+l") {
-		// 	manage manage(server);
-		// 	if (Client.sudo == channel_name) {
-		// 		manage.limit_clients(mode_pass);
-		// 		throw (GREEN"This Channel is now limited\n"RESET);
-		// 	}
-		// }
 	}
-	else
-		throw (RED"You are not an admin\n"RESET);
+	throw (RED"You are not an admin\n"RESET);
 }

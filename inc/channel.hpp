@@ -10,8 +10,8 @@
 #include <map>
 #include <sstream>
 
-#define JOIN "JOIN"
-#define MODE "MODE"
+#define JOIN "join"
+#define MODE "mode"
 #define PASS "PASS"
 
 #define BLUE      "\x1b[34m"
@@ -30,7 +30,6 @@ class SERVSOCKET;
 class channel
 {
 	public :
-		std::string passmsg;
 		std::string channelName;
 		std::string channel_pass;
 		std::string topic;

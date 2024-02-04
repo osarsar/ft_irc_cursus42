@@ -1,7 +1,6 @@
 #include "../../inc/manage.hpp"
 
 channel::channel(void) {
-	passmsg = "Please provide the necessary password here : ";
 }
 
 channel::~channel(void) {}
@@ -23,7 +22,6 @@ int f_stoi(std::string numb)
 void channel::join(std::string str, client &Client, SERVSOCKET &server)
 {
 	char *p;
-	int i = 0;
 	int argumentcount = 0;
 	if (str.substr(0, std::string(JOIN).length()) == JOIN)
 		str.erase(0, std::string(JOIN).length() + 1);
@@ -32,10 +30,7 @@ void channel::join(std::string str, client &Client, SERVSOCKET &server)
 	{	
 		argumentcount++;
 		if (p[0] == CHANNEL)
-		{
 			channelName = p;
-			i++;
-		}
 		else
 			channel_pass = p;
 		p = std::strtok(NULL, ", \n");
@@ -52,11 +47,20 @@ void channel::join(std::string str, client &Client, SERVSOCKET &server)
 			manage.addChannel(channelName, Client);
 		if (manage.isClientInChannel(channelName, server, Client))
 			throw(RED "client is already in channel\n" RESET);
-		if (!channel_pass.empty() && Client.adminOf != channelName && Client.sudo != channelName && i != 0) {
-			if (!join_password(channel_pass, Client, server))
-				throw ("Password is incorrect\n");
-			channel_pass = "";
+		bool isAdmin = false;
+		for (size_t k = 0; k < Client.adminOf.size(); k++) {
+			if (Client.adminOf[k] == channelName) {
+				isAdmin = true;
+				if (!iter->second.channel_pass.empty()) {
+					if (!join_password(iter->second.channel_pass, Client, server))
+						throw ("Password is incorrect\n");
+				}
+			}
 		}
+		if (!isAdmin && !iter->second.channel_pass.empty()) {
+    	    if (!join_password(iter->second.channel_pass, Client, server))
+        	    throw ("Password is incorrect\n");
+    	}
 		manage.addClientoChannel(channelName, Client);
 	}
 	else
@@ -65,6 +69,7 @@ void channel::join(std::string str, client &Client, SERVSOCKET &server)
 
 bool channel::join_password(std::string password, client &Client, SERVSOCKET &server)
 {
+	std::string passmsg = "Please provide the necessary password here : ";
     send(Client.fd, passmsg.c_str(), passmsg.length(), 0);
     const int MAX_PASSWORD_LENGTH = 100;
     char userpass[MAX_PASSWORD_LENGTH];
