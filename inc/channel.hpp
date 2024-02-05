@@ -34,6 +34,7 @@ class channel
 		std::string channel_pass;
 		std::string topic;
 		std::vector < std::string > kicked_users;
+		std::vector < std::string > invited_users;
 		std::vector <client> client_list;
 		channel();
 		channel(const std::string& name) : channelName(name) {}

@@ -3,6 +3,11 @@
 
 
 #include "channel.hpp"
+#include "error.hpp"
+#include "client.hpp"
+#include "invite.hpp"
+#include "privmsg.hpp"
+#include "servsocket.hpp"
 
 #define KICK "KICK"
 #define TOPIC "TOPIC"
@@ -16,8 +21,7 @@ public:
     Kick();
     ~Kick();
     
-    void 	go_to_kick(std::string data, SERVSOCKET &server);
-    void 	kick(client *kicker, client *target);
+    void 	go_to_kick(std::string data, SERVSOCKET &server, int fd);
 };
 
 void toUpper(std::string& str);

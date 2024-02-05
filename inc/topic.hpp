@@ -3,6 +3,12 @@
 
 
 #include "channel.hpp"
+#include "client.hpp"
+#include "invite.hpp"
+#include "privmsg.hpp"
+#include "servsocket.hpp"
+#include "channel.hpp"
+#include "error.hpp"
 
 //--------------------------------------------------->>> Temsa:
 
@@ -14,8 +20,7 @@ public:
     Topic();
     ~Topic();
 
-    void    go_to_topic(std::string data, SERVSOCKET server);
-    void    TopicCommand(client* setter, std::string& topicCommand);
+    void    go_to_topic(std::string data, SERVSOCKET &server, int fd);
 };
 
 

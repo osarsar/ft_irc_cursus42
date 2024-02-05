@@ -17,7 +17,7 @@ join #frapucini
 
  
 
-privmsg #ch1 : 🤓
+privmsg #ch5 : 🤓
 
 privmsg temsa :test test allah
 KICK #sarsar hii

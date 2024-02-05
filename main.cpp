@@ -32,9 +32,9 @@ void    executables(size_t &i, std::string data, int fd)
     else if (command == PRIVMSG && server.database[i - 1].registration_check)
         Privmsg.parse_msg(data, server, server.database[i - 1]);
     else if (command == KICK)
-        kick.go_to_kick(data, server);
+        kick.go_to_kick(data, server, fd);
     else if (command == TOPIC)
-        topic.go_to_topic(data, server);
+        topic.go_to_topic(data, server, fd);
     else if (command == INVITE)
         invite.go_to_invite(data, server, fd);
 }
@@ -53,7 +53,7 @@ int main(int ac, char** av)
     server.servpass = av[2];
     int server_fd = server.mysocket(AF_INET, SOCK_STREAM);
     int value = f_stoi(port);
-    server.mybind("10.12.6.7", value);
+    server.mybind(IP, value);
     server.mylisten(5);
     std::cout << GREEN << "------- MY SERVER ------" << RESET << std::endl;
     std::cout << PURPLE << "Server Listening on port " << port << " ..." << RESET << std::endl;
@@ -93,7 +93,7 @@ int main(int ac, char** av)
         }
         catch (std::exception &e)
         {
-            std::cerr << "hahh, " << e.what() << std::endl;
+            std::cerr << e.what() << std::endl;
             if (i)
             {
                 close(vector.vector[i].fd);

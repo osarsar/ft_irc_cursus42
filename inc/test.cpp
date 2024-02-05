@@ -6,34 +6,6 @@
 
 
 
-bool isStringInVector(const std::vector<std::string>& vec, const std::string& str) {
-    for (std::vector<std::string>::const_iterator it = vec.begin(); it != vec.end(); ++it) {
-        if (*it == str) {
-            return true;
-        }
-    }
-    return false;
-}
-
-int main() {
-    std::vector<std::string> operators;
-    operators.push_back("add");
-    operators.push_back("subtract");
-    operators.push_back("multiply");
-    operators.push_back("divide");
-
-    std::string input;
-    std::cout << "Enter an operator: ";
-    std::cin >> input;
-
-    if (isStringInVector(operators, input)) {
-        std::cout << "Operator found in the vector." << std::endl;
-    } else {
-        std::cout << "Operator not found in the vector." << std::endl;
-    }
-
-    return 0;
-}
 
 // std::vector<std::string> split(const std::string& input, char delimiter) {
 //     std::vector<std::string> tokens;
