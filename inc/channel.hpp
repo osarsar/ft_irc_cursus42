@@ -10,8 +10,8 @@
 #include <map>
 #include <sstream>
 
-#define JOIN "join"
-#define MODE "mode"
+#define JOIN "JOIN"
+#define MODE "MODE"
 #define PASS "PASS"
 
 #define BLUE      "\x1b[34m"
@@ -34,8 +34,6 @@ class channel
 		std::string channel_pass;
 		std::string topic;
 		std::vector < std::string > kicked_users;
-		std::vector < std::string > banned_users;
-		std::vector < std::string > operators;
 		std::vector <client> client_list;
 		channel();
 		channel(const std::string& name) : channelName(name) {}

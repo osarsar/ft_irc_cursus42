@@ -18,7 +18,7 @@ Invite invite;
 void    executables(size_t &i, std::string data, int fd)
 {
     std::string command = data.substr(0, data.find(" "));
-    // toUpper(command);
+    toUpper(command);
     if (!server.database[i - 1].registration_check && (command == KICK || command == TOPIC || command == INVITE ||\
         command == JOIN || command == PRIVMSG || command == MODE))
     {
@@ -53,7 +53,7 @@ int main(int ac, char** av)
     server.servpass = av[2];
     int server_fd = server.mysocket(AF_INET, SOCK_STREAM);
     int value = f_stoi(port);
-    server.mybind("127.0.0.1", value);
+    server.mybind("10.12.6.7", value);
     server.mylisten(5);
     std::cout << GREEN << "------- MY SERVER ------" << RESET << std::endl;
     std::cout << PURPLE << "Server Listening on port " << port << " ..." << RESET << std::endl;
