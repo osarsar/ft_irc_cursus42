@@ -2,14 +2,9 @@
 
 
 manage::manage(SERVSOCKET &server) : Server(server) {
-	limit = 0;
 }
 
 manage::~manage() {
-}
-
-size_t manage::getlimit() {
-	return (limit);
 }
 
 bool manage::give_privilege(std::string clientName, std::string name, bool flag) {

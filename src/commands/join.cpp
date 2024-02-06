@@ -1,6 +1,8 @@
 #include "../../inc/manage.hpp"
 
 channel::channel(void) {
+	max_clients = 0;
+	flag = false;
 }
 
 channel::~channel(void) {}
@@ -13,9 +15,9 @@ int f_stoi(std::string numb)
 	std::stringstream var(numb);
 	for (int i = 0; (size_t)i < numb.length(); i++)
 		if (isdigit(numb[i]) == 0)
-			throw ("Error: is Not number");
+			throw (RED"Error: is Not number\n"RESET);
 	if (!(var >> ret))
-		throw ("Error: Overflow");
+		throw (RED"Error: Overflow\n"RESET);
 	return ret;
 }
 
@@ -55,6 +57,8 @@ void channel::join(std::string str, client &Client, SERVSOCKET &server)
 			if (!join_password(iter->second.channel_pass, Client, server))
 				throw ("Password is incorrect\n");
 		}
+		if (max_clients < (int)iter->second.client_list.size() + 1 && flag)
+			throw(RED"Channel has been limited\n"RESET);
 		manage.addClientoChannel(channelName, Client);
 	}
 	else

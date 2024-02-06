@@ -10,8 +10,8 @@ class manage
 {
 	private:
 		SERVSOCKET &Server;
-		size_t		limit;
 	public:
+	int	max_clients;
 	manage(SERVSOCKET &server);
 	manage();
 	~manage();

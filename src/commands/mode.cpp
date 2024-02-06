@@ -65,13 +65,19 @@ void	channel::execute_mode(std::string key, SERVSOCKET &server, client &Client, 
 				if (!manage.give_privilege(mode_pass, channel_name, true))
 					throw(RED"Client not found\n"RESET);
 			}
-			// else if (key == "+l") {
-			// 	manage manage(server);
-			// 	if (Client.sudo == channel_name) {
-			// 		manage.limit_clients(mode_pass);
-			// 		throw (GREEN"This Channel is now limited\n"RESET);
-			// 	}
-			// }
+			else if (key == "+l") {
+				if (f_stoi(mode_pass) < (int)it->second.client_list.size())
+					throw (RED"Can't limit channel with current value\n"RESET);
+				else {
+					max_clients = f_stoi(mode_pass);
+					flag = true;
+					throw (GREEN"This Channel is now limited\n"RESET);
+				}
+			}
+			else if (key == "-l") {
+				flag = false;
+				throw (GREEN"Channel users limit has been sealed off"RESET);
+			}
 			return ;
 		}
 	}

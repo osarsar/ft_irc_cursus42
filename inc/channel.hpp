@@ -34,9 +34,11 @@ class SERVSOCKET;
 class channel
 {
 	public :
+		bool flag;
 		std::string channelName;
 		std::string channel_pass;
 		std::string topic;
+		int			max_clients;
 		std::vector < std::string > kicked_users;
 		std::vector < std::string > invited_users;
 		std::vector <client> client_list;
