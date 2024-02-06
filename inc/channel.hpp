@@ -14,6 +14,10 @@
 #define MODE "MODE"
 #define PASS "PASS"
 
+#define Sjoin "join"
+#define Smode "mode"
+#define Spass "pass"
+
 #define BLUE      "\x1b[34m"
 #define ORANGE    "\x1b[33m"
 #define RESET     "\x1b[0m"

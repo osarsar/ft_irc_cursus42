@@ -25,6 +25,8 @@ void channel::join(std::string str, client &Client, SERVSOCKET &server)
 	int argumentcount = 0;
 	if (str.substr(0, std::string(JOIN).length()) == JOIN)
 		str.erase(0, std::string(JOIN).length() + 1);
+	else if (str.substr(0, std::string(Sjoin).length()) == Sjoin)
+		str.erase(0, std::string(Sjoin).length() + 1);
 	p = std::strtok(const_cast<char *>(str.c_str()), ", \r\n");
 	while (p != NULL)
 	{	
@@ -47,20 +49,12 @@ void channel::join(std::string str, client &Client, SERVSOCKET &server)
 			manage.addChannel(channelName, Client);
 		if (manage.isClientInChannel(channelName, server, Client))
 			throw(RED "client is already in channel\n" RESET);
-		bool isAdmin = false;
-		for (size_t k = 0; k < Client.adminOf.size(); k++) {
-			if (Client.adminOf[k] == channelName) {
-				isAdmin = true;
-				if (!iter->second.channel_pass.empty()) {
-					if (!join_password(iter->second.channel_pass, Client, server))
-						throw ("Password is incorrect\n");
-				}
-			}
+		else if (!channel_pass.empty() && iter->second.channel_pass.empty())
+			iter->second.channel_pass = channel_pass;
+		if (!iter->second.channel_pass.empty() && argumentcount == 1) {
+			if (!join_password(iter->second.channel_pass, Client, server))
+				throw ("Password is incorrect\n");
 		}
-		if (!isAdmin && !iter->second.channel_pass.empty()) {
-    	    if (!join_password(iter->second.channel_pass, Client, server))
-        	    throw ("Password is incorrect\n");
-    	}
 		manage.addClientoChannel(channelName, Client);
 	}
 	else

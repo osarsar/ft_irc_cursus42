@@ -10,6 +10,8 @@ void	channel::mode(std::string str, SERVSOCKET &server, client &Client) {
 	
 	if (str.substr(0, std::string(MODE).length()) == MODE)
 		str.erase(0, std::string(MODE).length() + 1);
+	else if (str.substr(0, std::string(Smode).length()) == Smode)
+		str.erase(0, std::string(Smode).length() + 1);
 	std::cout << str << std::endl;
 	p = std::strtok(const_cast<char *>(str.c_str()), ", \r\n");
 	while (p != NULL) {
