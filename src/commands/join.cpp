@@ -3,6 +3,7 @@
 channel::channel(void) {
 	max_clients = 0;
 	flag = false;
+	Iflag = false;
 }
 
 channel::~channel(void) {}
@@ -47,18 +48,30 @@ void channel::join(std::string str, client &Client, SERVSOCKET &server)
 	{
 		std::map<std::string, channel>::iterator iter = server.channel_map.find(channelName);
 		manage manage(server);
+		//Check if the channel is already created
 		if (iter == server.channel_map.end())
 			manage.addChannel(channelName, Client);
+		//Client is already in channel
 		if (manage.isClientInChannel(channelName, server, Client))
 			throw(RED "client is already in channel\n" RESET);
+		//Store the Password
 		else if (!channel_pass.empty() && iter->second.channel_pass.empty())
 			iter->second.channel_pass = channel_pass;
+		//Ask for Password if it is necessary
 		if (!iter->second.channel_pass.empty() && argumentcount == 1) {
 			if (!join_password(iter->second.channel_pass, Client, server))
 				throw ("Password is incorrect\n");
 		}
+		//Check if the channel is limited
 		if (max_clients < (int)iter->second.client_list.size() + 1 && flag)
 			throw(RED"Channel has been limited\n"RESET);
+		//Check invited users
+		if (iter->second.invited_users.size() == 0 && Iflag)
+			throw (RED"User is not invited to the Channel\n"RESET);
+		for (int k = 0; k != (int)iter->second.invited_users.size() && Iflag; k++) {
+			if (Client.nickname != iter->second.invited_users[k] && k + 1 == (int)iter->second.invited_users.size())
+				throw (RED"User is not invited to the Channel\n"RESET);
+		}
 		manage.addClientoChannel(channelName, Client);
 	}
 	else

@@ -44,6 +44,7 @@ void	channel::execute_mode(std::string key, SERVSOCKET &server, client &Client, 
 	std::map<std::string, channel>::iterator it = server.channel_map.find(channel_name);
 	std::cout << Client.adminOf.size() << std::endl;
 	for (size_t k = 0; k < Client.adminOf.size(); k++) {
+		//check if a client requested it
 		if (Client.adminOf[k] == channel_name) {
 			if (key == "+k") {
 				if (it != server.channel_map.end())
@@ -77,6 +78,14 @@ void	channel::execute_mode(std::string key, SERVSOCKET &server, client &Client, 
 			else if (key == "-l") {
 				flag = false;
 				throw (GREEN"Channel users limit has been sealed off"RESET);
+			}
+			else if (key == "+i") {
+				Iflag = true;
+				throw (GREEN"Channel in invite only mode\n"RESET);
+			}
+			else if (key == "-i") {
+				Iflag = false;
+				throw (GREEN"Channel in invite only mode\n"RESET);
 			}
 			return ;
 		}
