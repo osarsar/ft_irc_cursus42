@@ -12,7 +12,6 @@ class client
 {
 	public :
 		std::string username;
-		std::string Sudo;
 		std::vector<std::string> adminOf;
 		std::string nickname;
 		int  fd;

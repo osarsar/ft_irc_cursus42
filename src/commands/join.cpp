@@ -4,6 +4,7 @@ channel::channel(void) {
 	max_clients = 0;
 	flag = false;
 	Iflag = false;
+	Tflag = false;
 }
 
 channel::~channel(void) {}

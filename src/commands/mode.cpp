@@ -46,26 +46,31 @@ void	channel::execute_mode(std::string key, SERVSOCKET &server, client &Client, 
 	for (size_t k = 0; k < Client.adminOf.size(); k++) {
 		//check if a client requested it
 		if (Client.adminOf[k] == channel_name) {
+			// add a Password
 			if (key == "+k") {
 				if (it != server.channel_map.end())
 					it->second.channel_pass = mode_pass;
 				priv.msg_to_channel(server, GREEN"This channel is now in Password Mode\n"RESET, channel_name, Client);
 			}
+			// Remove a Password
 			else if (!channel_pass.empty() && key == "-k") {
 				channel_pass = "";
 				priv.msg_to_channel(server, RED"This channel is no longer in Password Mode\n"RESET, channel_name, Client);
 			}
+			// ADD an Admin
 			else if (key == "+o") {
 				manage manage(server);
 				std::cout << mode_pass << std::endl;
 				if (!manage.give_privilege(mode_pass, channel_name, false))
 					throw(RED"Client not found\n"RESET);
 			}
+			// Remove an Admin
 			else if (key == "-o") {
 				manage manage(server);
 				if (!manage.give_privilege(mode_pass, channel_name, true))
 					throw(RED"Client not found\n"RESET);
 			}
+			// Mode to Limit Channel users
 			else if (key == "+l") {
 				if (f_stoi(mode_pass) < (int)it->second.client_list.size())
 					throw (RED"Can't limit channel with current value\n"RESET);
@@ -75,24 +80,31 @@ void	channel::execute_mode(std::string key, SERVSOCKET &server, client &Client, 
 					throw (GREEN"This Channel is now limited\n"RESET);
 				}
 			}
+			// Remove The Channel limit
 			else if (key == "-l") {
 				flag = false;
-				throw (GREEN"Channel users limit has been sealed off"RESET);
+				throw (GREEN"Channel users limit has been sealed off\n"RESET);
 			}
+			// Make the Channel invite-only
 			else if (key == "+i") {
 				Iflag = true;
 				throw (GREEN"Channel in invite only mode\n"RESET);
 			}
+			// Remove the invite-only mode
 			else if (key == "-i") {
 				Iflag = false;
 				throw (GREEN"Invite only mode has been Removed\n"RESET);
 			}
-			// else if (key == "+t") {
-			// 	throw (GREEN"Invite only mode has been Removed\n"RESET);
-			// }
-			// else if (key == "-t") {
-			// 	throw (GREEN"Invite only mode has been Removed\n"RESET);
-			// }
+			// Remove the ability to user Topic command on regular users
+			else if (key == "+t") {
+				Tflag = true;
+				throw (GREEN"Invite only mode has been Removed\n"RESET);
+			}
+			// Change it back to normal
+			else if (key == "-t") {
+				Tflag = false;
+				throw (GREEN"Invite only mode has been Removed\n"RESET);
+			}
 			return ;
 		}
 	}

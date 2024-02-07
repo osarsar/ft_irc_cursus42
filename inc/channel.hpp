@@ -36,6 +36,7 @@ class channel
 	public :
 		bool flag;
 		bool Iflag;
+		bool Tflag;
 		std::string channelName;
 		std::string channel_pass;
 		std::string topic;
