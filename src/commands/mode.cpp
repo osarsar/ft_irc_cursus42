@@ -85,8 +85,14 @@ void	channel::execute_mode(std::string key, SERVSOCKET &server, client &Client, 
 			}
 			else if (key == "-i") {
 				Iflag = false;
-				throw (GREEN"Channel in invite only mode\n"RESET);
+				throw (GREEN"Invite only mode has been Removed\n"RESET);
 			}
+			// else if (key == "+t") {
+			// 	throw (GREEN"Invite only mode has been Removed\n"RESET);
+			// }
+			// else if (key == "-t") {
+			// 	throw (GREEN"Invite only mode has been Removed\n"RESET);
+			// }
 			return ;
 		}
 	}
