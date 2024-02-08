@@ -14,6 +14,8 @@ Topic::~Topic()
 
 void Topic::go_to_topic(std::string data, SERVSOCKET &server, int fd)
 {
+    // std::cout << "Topic 1.\n";
+
     size_t	pos1;
     size_t	pos2;
     std::string newTopic;

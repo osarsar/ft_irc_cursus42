@@ -27,5 +27,6 @@ int                         check_client_in_channel(client guest, SERVSOCKET ser
 channel*                    get_channel(std::string channelName, SERVSOCKET &server);
 client*                     get_client(std::string nickname, SERVSOCKET &server);
 client*                     get_client(int fd, SERVSOCKET &server);
+bool                        is_numeric(const std::string& str);
 
 #endif

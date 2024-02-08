@@ -8,6 +8,7 @@
 #include "invite.hpp"
 #include "privmsg.hpp"
 #include "servsocket.hpp"
+#include <map>
 
 #define KICK "KICK"
 #define TOPIC "TOPIC"

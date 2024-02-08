@@ -17,12 +17,14 @@ Invite invite;
 
 void    executables(size_t &i, std::string data, int fd)
 {
-    std::string command = data.substr(0, data.find(" "));
+    std::string command = data.substr(0, data.find(" "));//--> HER find dosen't existe in cpp98
     toUpper(command);
+    server.trim(command);
+
     if (!server.database[i - 1].registration_check && (command == KICK || command == TOPIC || command == INVITE ||\
         command == JOIN || command == PRIVMSG || command == MODE))
     {
-        server.mysend(fd, "ERR_NOTREGISTERED\n");
+        server.mysend(fd, "ERR_NOTREGISTERED\n");//->HERE
         throw(RED "Khasek lwra9 a m3alem sir tal gheda oji\n" RESET);
     }
     else if (command == JOIN && server.database[i - 1].registration_check)
@@ -44,6 +46,12 @@ int main(int ac, char** av)
     if (ac != 3)
     {
         std::cerr << RED"Invalid arguments"RESET << std::endl;
+        exit (1);
+    }    
+    // --> HERE
+    if (!is_numeric(av[1]))
+    {
+        std::cerr << RED"Invalid port"RESET << std::endl;
         exit (1);
     }
     std::string data;
@@ -81,11 +89,15 @@ int main(int ac, char** av)
                     }
                     else
                     {
-                        data = server.myrecv(1024, vector.vector[i].fd);
-                        server.registration(vector.vector[i].fd, server.database[i - 1], data, server);
-                        server.nickname(vector.vector[i].fd, server.database[i - 1], data, server);
-                        server.username(vector.vector[i].fd, server.database[i - 1], data, server);
-                        executables(i, data, vector.vector[i].fd);                   
+                        int check = 0;
+                        data = server.Temsa_recv(1024, vector.vector[i].fd, check, server);
+                        if (check == 1)
+                        {
+                            server.registration(vector.vector[i].fd, server.database[i - 1], data, server);
+                            server.nickname(vector.vector[i].fd, server.database[i - 1], data, server);
+                            server.username(vector.vector[i].fd, server.database[i - 1], data, server);
+                            executables(i, data, vector.vector[i].fd);                   
+                        }               
                     }
                 }
                 i++;

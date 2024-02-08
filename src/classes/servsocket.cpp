@@ -113,15 +113,65 @@ int SERVSOCKET::myaccept()
     return socket_client;
 }
 
-std::string SERVSOCKET::myrecv(unsigned int size, int fd)
+client* SERVSOCKET::get_client_Tem(int fd)
+{
+    std::vector<client>::iterator iter_clt;
+    for (iter_clt = database.begin(); iter_clt != database.end();iter_clt++)
+    {
+        if (iter_clt->fd == fd)
+            return &(*iter_clt);
+    }
+    return NULL;
+}
+
+std::string SERVSOCKET::Temsa_recv(unsigned int size, int fd, int &check, SERVSOCKET &serv)
 {
     char buffer[size];
+    std::string mybuffer;
     ssize_t num_read;
+    int _else = 0;
+    (void) serv;
 
     num_read = recv(fd, buffer, sizeof(buffer), 0);
-    buffer[num_read - 1] = '\0';
     if (num_read <= 0)
         throw ErrorOnMyRecv();
+
+    mybuffer.append(buffer, num_read);
+    
+    if (mybuffer.find_first_of("\r\n") != std::string::npos)
+    {
+        if(fd_buff[fd] != "")
+        {
+            fd_buff[fd].erase(fd_buff[fd].size() - 1);
+            fd_buff[fd].append(buffer, num_read - 1);
+            std::string str(fd_buff[fd]);
+            fd_buff[fd] = "";
+            check = 1;
+            return str;
+        }
+        check = 1;
+    }
+    else
+    {
+        num_read++;// car buffer[num_read - 1] = '\0'; supprime last element
+        _else = 1;
+    }
+    
+    buffer[num_read - 1] = '\0';
+
+    if (_else == 1)
+    {
+        if (!fd_buff[fd].empty())
+            fd_buff[fd].erase(fd_buff[fd].size() - 1);
+        fd_buff[fd].append(buffer, num_read);
+    }
+
+    if(fd_buff[fd] != "")
+    {
+        std::string str(fd_buff[fd]);
+        return str;
+    }
+
     std::string str(buffer);
     return str;
 }
@@ -177,7 +227,7 @@ void SERVSOCKET::registration(int client_fd, client &client, std::string data, S
 
     if (commands.size() < 2)
     {
-        server.mysend(client_fd, "ERR_NEEDMOREPARAMS\n");
+        server.mysend(client_fd, "ERR_NEEDMOREPARAMS\n");//-> HERE
         return ;
     }
     if (commands.size() > 2)

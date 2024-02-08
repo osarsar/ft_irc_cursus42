@@ -1,7 +1,6 @@
 #ifndef CLIENT_HPP
 # define CLIENT_HPP
 
-
 #include <iostream>
 #include <vector>
 #include "servsocket.hpp"
@@ -11,6 +10,8 @@ class SERVSOCKET;
 class client
 {
 	public :
+	// HERE Temsa
+		std::string buff_data;
 		std::string username;
 		std::vector<std::string> adminOf;
 		std::string nickname;

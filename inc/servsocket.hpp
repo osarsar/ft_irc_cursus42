@@ -15,6 +15,8 @@
 class channel;
 class client;
 
+
+
 class POLLFD
 {
     public:
@@ -26,6 +28,8 @@ class POLLFD
 class SERVSOCKET
 {
     public:
+        std::map<int, std::string> fd_buff;//Temsa
+        
         std::string servpass;
         sockaddr_in server_addr;
         int socket_server;
@@ -41,7 +45,9 @@ class SERVSOCKET
         void mybind(std::string ip, int port);
         void mylisten(int nb_client);
         int  myaccept(void);
-        std::string myrecv(unsigned int size, int fd);
+        std::string Temsa_recv(unsigned int size, int fd, int &check, SERVSOCKET &serv);
+        client* get_client_Tem(int fd);
+        
         void mysend(int fd, std::string data_send);
         void registration(int client_fd, client &client, std::string data, SERVSOCKET server);
         void nickname(int client_fd, client &client, std::string data, SERVSOCKET server);

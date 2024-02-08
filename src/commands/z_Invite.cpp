@@ -1,5 +1,14 @@
 #include "../../inc/invite.hpp"
 
+bool is_numeric(const std::string& str) {
+    for (size_t i = 0; i < str.length(); ++i) {
+        if (!std::isdigit(str[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
 std::vector<std::string> my_split(const std::string& input, char delimiter, SERVSOCKET server)
 {
     std::vector<std::string> tokens;
@@ -77,13 +86,24 @@ int check_client_in_channel(client guest, SERVSOCKET server, std::string channel
     return 0;
 }
 
-int is_operator(const std::vector<std::string>& operators, const std::string& client_name) {
-for (std::vector<std::string>::const_iterator it = operators.begin(); it != operators.end(); ++it) {
-        if (*it == client_name) {
-            return 1;
+// int is_operator(const std::vector<std::string>& operators, const std::string& client_name) {
+// for (std::vector<std::string>::const_iterator it = operators.begin(); it != operators.end(); ++it) {
+//         if (*it == client_name) {
+//             return 1;
+//         }
+//     }
+//     return 0;
+// }
+
+bool isInAdminOf(std::string str, std::vector<std::string> _adminOf)
+{
+    std::vector<std::string>::iterator it;
+    for (it = _adminOf.begin(); it != _adminOf.end(); ++it) {
+        if (*it == str) {
+            return true;
         }
     }
-    return 0;
+    return false;
 }
 
 void Invite::go_to_invite(std::string data, SERVSOCKET &server, int fd)
@@ -136,6 +156,15 @@ void Invite::go_to_invite(std::string data, SERVSOCKET &server, int fd)
     //     return;
     // }
 
+    if (channel->Iflag == true)
+    {
+        if (!isInAdminOf(channelName, host->adminOf))
+        {
+            server.mysend(fd, ERR_CHANOPRIVSNEEDED(host_ni, channelName));
+            return;
+        }
+    }
+    
     channel->invited_users.push_back(guest->nickname);
 
     server.mysend(fd, RPL_INVITING(host_ni, guest->nickname, channelName));
