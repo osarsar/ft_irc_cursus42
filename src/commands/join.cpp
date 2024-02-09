@@ -27,26 +27,32 @@ void channel::join(std::string str, client &Client, SERVSOCKET &server)
 {
 	char *p;
 	int argumentcount = 0;
+	std::string Password;
+	std::string Name;
 	if (str.substr(0, std::string(JOIN).length()) == JOIN)
 		str.erase(0, std::string(JOIN).length() + 1);
 	else if (str.substr(0, std::string(Sjoin).length()) == Sjoin)
 		str.erase(0, std::string(Sjoin).length() + 1);
-	p = std::strtok(const_cast<char *>(str.c_str()), ", \r\n");
+	p = std::strtok(const_cast<char *>(str.c_str()), ", \t\r\n");
 	while (p != NULL)
 	{	
 		argumentcount++;
 		if (p[0] == CHANNEL)
-			channelName = p;
+			Name = p;
 		else
-			channel_pass = p;
-		p = std::strtok(NULL, ", \n");
+			Password = p;
+		p = std::strtok(NULL, ", \t\r\n");
 	}
 	if (argumentcount > 2 || argumentcount < 1)
 		throw (RED"Join Invalid arguments\n"RESET);
-	channelName = server.trim(channelName);
-	channel_pass = server.trim(channel_pass);
-	if (channelName[0] == '#' && std::isalpha(channelName[1]))
+	else if (argumentcount == 2) {
+		channel_pass = Password;
+		channel_pass = server.trim(channel_pass);
+	}
+	if (Name[0] == '#' && std::isalpha(Name[1]))
 	{
+		channelName = Name;
+		channelName = server.trim(channelName);
 		std::map<std::string, channel>::iterator iter = server.channel_map.find(channelName);
 		manage manage(server);
 		//Check if the channel is already created
@@ -73,6 +79,7 @@ void channel::join(std::string str, client &Client, SERVSOCKET &server)
 			if (Client.nickname != iter->second.invited_users[k] && k + 1 == (int)iter->second.invited_users.size())
 				throw (RED"User is not invited to the Channel\n"RESET);
 		}
+		//Add Client to Channel
 		manage.addClientoChannel(channelName, Client);
 	}
 	else

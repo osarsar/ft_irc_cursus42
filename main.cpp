@@ -31,7 +31,7 @@ void    executables(size_t &i, std::string data, int fd)
         Channel.join(data, server.database[i - 1], server);
     else if (command == MODE && server.database[i - 1].registration_check)
         Channel.mode(data, server, server.database[i - 1]);
-    else if (command == PRIVMSG && server.database[i - 1].registration_check)
+    else if (command == LPRIVMSG && server.database[i - 1].registration_check)
         Privmsg.parse_msg(data, server, server.database[i - 1]);
     else if (command == KICK)
         kick.go_to_kick(data, server, fd);

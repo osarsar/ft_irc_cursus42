@@ -6,6 +6,7 @@
 #include "client.hpp"
 #include <fstream>
 #define PRIVMSG "privmsg"
+#define LPRIVMSG "PRIVMSG"
 
 class SERVSOCKET;
 class client;

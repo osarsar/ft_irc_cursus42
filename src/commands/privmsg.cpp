@@ -13,6 +13,8 @@ void    privmsg::parse_msg(std::string str, SERVSOCKET &server, client &Client) 
 
     if (str.substr(0, std::string(PRIVMSG).length()) == PRIVMSG)
         str.erase(0, std::string(PRIVMSG).length() + 1);
+	if (str.substr(0, std::string(LPRIVMSG).length()) == LPRIVMSG)
+        str.erase(0, std::string(LPRIVMSG).length() + 1);
 	if ((pos = str.find(":")) != std::string::npos) {
 		std::string which(str.substr(0, pos));
 		if (which[0] == '#')

@@ -12,7 +12,6 @@ void	channel::mode(std::string str, SERVSOCKET &server, client &Client) {
 		str.erase(0, std::string(MODE).length() + 1);
 	else if (str.substr(0, std::string(Smode).length()) == Smode)
 		str.erase(0, std::string(Smode).length() + 1);
-	std::cout << str << std::endl;
 	p = std::strtok(const_cast<char *>(str.c_str()), ", \r\n");
 	while (p != NULL) {
 		if (p[0] == CHANNEL && channel_name.empty())
@@ -42,7 +41,6 @@ void	channel::mode(std::string str, SERVSOCKET &server, client &Client) {
 void	channel::execute_mode(std::string key, SERVSOCKET &server, client &Client, std::string channel_name, std::string mode_pass) {
 	privmsg 	priv;
 	std::map<std::string, channel>::iterator it = server.channel_map.find(channel_name);
-	std::cout << Client.adminOf.size() << std::endl;
 	for (size_t k = 0; k < Client.adminOf.size(); k++) {
 		//check if a client requested it
 		if (Client.adminOf[k] == channel_name) {
