@@ -109,7 +109,9 @@ int SERVSOCKET::myaccept()
         close(socket_server);
         throw ErrorOnMyAccept();
     }
-    mysend(socket_client, GREEN"------- WELCOME TO THE SERVER ------\n"RESET);
+    mysend(socket_client, RPL_YOURHOST("IRC_SERVER", "lastest vesion"));
+    mysend(socket_client, RPL_CREATED("09-02-2024"));
+    mysend(socket_client, RPL_MYINFO("serverName", "version", "userModes", "channelModes"));
     return socket_client;
 }
 
@@ -227,12 +229,12 @@ void SERVSOCKET::registration(int client_fd, client &client, std::string data, S
 
     if (commands.size() < 2)
     {
-        server.mysend(client_fd, "ERR_NEEDMOREPARAMS\n");//-> HERE
+        server.mysend(client_fd, ERR_NEEDMOREPARAMSS("PASS"));//-> HERE
         return ;
     }
     if (commands.size() > 2)
     {
-        server.mysend(client_fd, "ERR_NEED 2 PARAMS\n");
+        server.mysend(client_fd, ERR_NEEDMOREPARAMSS("PASS"));
         return ;
     }
     trim(commands[1]);
@@ -241,7 +243,7 @@ void SERVSOCKET::registration(int client_fd, client &client, std::string data, S
     {
         if (client.pass_bool == true)
         {
-            mysend(client_fd, ORANGE"YOU ALREADY ENTER THE PASSWORD\n"RESET);
+            mysend(client_fd, ERR_ALREADYREGISTRED);
             return;
         }
         str = data.erase(0, 5);
@@ -255,7 +257,7 @@ void SERVSOCKET::registration(int client_fd, client &client, std::string data, S
         str = std::strtok(const_cast<char *>(str.c_str()), " ");
         if (str != servpass)
         {
-            mysend(client_fd, RED"INCORRECT PASSWORD\n"RESET);
+            mysend(client_fd, ERR_PASSWDMISMATCH);
             return;
         }
         client.pass_bool = true;
@@ -280,12 +282,12 @@ void SERVSOCKET::nickname(int client_fd, client &client, std::string data, SERVS
 
     if (commands.size() < 2)
     {
-        server.mysend(client_fd, "ERR_NEEDMOREPARAMS\n");
+        mysend(client_fd, ERR_NEEDMOREPARAMSS("NICK"));
         return ;
     }
     if (commands.size() > 2)
     {
-        server.mysend(client_fd, "ERR_NEED 2 PARAMS\n");
+        mysend(client_fd, ERR_NEEDMOREPARAMSS("NICK"));
         return ;
     }
 
@@ -300,7 +302,7 @@ void SERVSOCKET::nickname(int client_fd, client &client, std::string data, SERVS
         }
         if (client.nick_bool == true)
         {
-            mysend(client_fd, ORANGE"YOU ALREADY ENTER THE NICKNAME\n"RESET);
+            mysend(client_fd, ERR_ALREADYREGISTRED);
             return;
         }
         str = data.erase(0, 5);
@@ -316,7 +318,7 @@ void SERVSOCKET::nickname(int client_fd, client &client, std::string data, SERVS
         {
             if (it->nickname == str)
             {
-                mysend(client_fd, RED"NICKNAME ALREADY USED\n"RESET);
+                mysend(client_fd, ERR_NICKNAMEINUSE(it->nickname));
                 return;
             }
         }
@@ -350,12 +352,12 @@ void SERVSOCKET::username(int client_fd, client &client, std::string data, SERVS
 
     if (commands.size() < 2)
     {
-        server.mysend(client_fd, "ERR_NEEDMOREPARAMS\n");
+        mysend(client_fd, ERR_NEEDMOREPARAMSS("USER"));
         return ;
     }
     if (commands.size() > 2)
     {
-        server.mysend(client_fd, "ERR_NEED 2 PARAMS\n");
+        mysend(client_fd, ERR_NEEDMOREPARAMSS("USER"));
         return ;
     }
     

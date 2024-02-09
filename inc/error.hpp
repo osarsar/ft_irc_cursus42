@@ -45,6 +45,17 @@
 #define RPL_INVITELIST(hN, hU, ip, gN,chnl)         ":" + std::string(hN) + "!~" + std::string(hU) + "@" + std::string(ip) + " INVITE " + std::string(gN) + " :" + std::string(chnl) + "\r\t\n"
 #define RPL_ENDOFINVITELIST(nik)                    std::string(nik) + " :End of /INVITE list"
 
+//-----------ADDED------------------//
+#define ERR_NICKCOLLISION(nick, cmd)               RED":1337.Temsa.ma 436 " + std::string(nick) + " " + std::string(cmd) + " :Nickname collision KILL\r\t\n"RESET
+#define RPL_WELCOME(nick, cmd)                      "001" + std::string("001 @ Welcome to the internet Relay Network ") + std::string(nick) + "!" + std::string(cmd) + "@10.11.9.2\r\n"
+#define	RPL_YOURHOST(nick, cmd)				        "002" + std::string("002 @ Your host is ") + std::string(nick) + ", running version " + std::string(cmd) + "\r\n"
+#define	RPL_CREATED(cmd)						    "003" + std::string("003 @ This server was created ") + std::string(cmd) + "\r\n"
+#define RPL_MYINFO(serverName, version, userModes, channelModes) "004" + std::string("004 @ ") + std::string(serverName) + " " + std::string(version) + " User modes: " +  std::string(userModes) + " Channel modes: " +  std::string(channelModes) + "\r\n"
+#define ERR_NEEDMOREPARAMSS(cmd)					"461" + std::string(" @ ") + std::string(cmd) + " :Not enough parameters\r\n" //add s in the last of the word
+#define ERR_PASSWDMISMATCH							"464" + std::string(" @ ") + ":Password incorrect\r\n"
+#define ERR_ALREADYREGISTRED 						"462" + std::string(" @ ") + ":Unauthorized command (already registered)\r\n"
+#define	ERR_UNKNOWNCOMMAND(cmd)						"421" + std::string(" @ ") + std::string(cmd) + " :Unknown command\r\n" 
+#define	ERR_NICKNAMEINUSE(nick)						"433" + std::string(" @ ") + std::string(nick) + " :Nickname is already in use" + "\r\n"
 
 #endif
 
