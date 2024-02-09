@@ -109,6 +109,7 @@ int SERVSOCKET::myaccept()
         close(socket_server);
         throw ErrorOnMyAccept();
     }
+    mysend(socket_client, RPL_WELCOME("nickname", "username"));
     mysend(socket_client, RPL_YOURHOST("IRC_SERVER", "lastest vesion"));
     mysend(socket_client, RPL_CREATED("09-02-2024"));
     mysend(socket_client, RPL_MYINFO("serverName", "version", "userModes", "channelModes"));

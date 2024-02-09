@@ -39,7 +39,7 @@ void    executables(size_t &i, std::string data, int fd)
         topic.go_to_topic(data, server, fd);
     else if (command == INVITE)
         invite.go_to_invite(data, server, fd);
-    else
+    else if ((command != "PASS" && command != "NICK" && command != "USER") && !command.empty())
         server.mysend(fd, ERR_UNKNOWNCOMMAND(command));
 }
 
