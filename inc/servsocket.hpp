@@ -35,6 +35,7 @@ class SERVSOCKET
         int socket_server;
         sockaddr_in client_addr;
         int socket_client;
+        char client_ip[INET_ADDRSTRLEN];
         std::map <std::string, channel> channel_map;
         std::vector<client> database;
         std::vector<client>::iterator it;
@@ -47,7 +48,6 @@ class SERVSOCKET
         int  myaccept(void);
         std::string Temsa_recv(unsigned int size, int fd, int &check, SERVSOCKET &serv);
         client* get_client_Tem(int fd);
-        
         void mysend(int fd, std::string data_send);
         void registration(int client_fd, client &client, std::string data, SERVSOCKET server);
         void nickname(int client_fd, client &client, std::string data, SERVSOCKET server);
