@@ -58,7 +58,6 @@ void	channel::execute_mode(std::string key, SERVSOCKET &server, client &Client, 
 			// ADD an Admin
 			else if (key == "+o") {
 				manage manage(server);
-				std::cout << mode_pass << std::endl;
 				if (!manage.give_privilege(mode_pass, channel_name, false))
 					throw(RED"Client not found\n"RESET);
 			}

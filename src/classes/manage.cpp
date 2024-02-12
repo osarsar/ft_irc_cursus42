@@ -8,14 +8,12 @@ manage::~manage() {
 }
 
 bool manage::give_privilege(std::string clientName, std::string name, bool flag) {
-	std::cout << clientName << std::endl;
 	std::map<std::string, channel>::iterator it = Server.channel_map.find(name);
 	const char *grant = BLUE"Hey Wake up, You have been granted the Admin status\n"RESET;
 	const char *seize = RED"It is with great sorrow to inform you that your admin privileges has been lost\n"RESET;
 	if (it != Server.channel_map.end()) {
 		for (size_t index = 0; index < Server.database.size(); index++) {
 			if (Server.database[index].nickname == clientName) {
-				std::cout << Server.database[index].nickname << std::endl;
 				for (size_t i = 0; i < it->second.client_list.size(); i++) {
 					if (it->second.client_list[i].nickname == clientName && !flag) {
 						for (size_t k = 0; k < Server.database[index].adminOf.size(); k++) {
@@ -44,17 +42,19 @@ bool manage::give_privilege(std::string clientName, std::string name, bool flag)
 	return false;
 }
 
-void  manage::addChannel(const std::string &name, client &client) {
+void  manage::addChannel(const std::string &name, client &client, std::string password) {
 	if (Server.channel_map.find(name) == Server.channel_map.end()) {
         Server.channel_map[name] = channel(name);
+		Server.channel_map[name].channel_pass = password;
     }
     client.adminOf.push_back(name);
+	Server.channel_map[name].adminMap[client.nickname] = true;
     std::cout << GREEN << "An IRC channel " << name << " was created by User " << client.nickname << RESET << std::endl;
 }
 
 void manage::addClientoChannel(const std::string &name, client &client) {
 	Server.channel_map[name].client_list.push_back(client);
-	throw (ORANGE"You have joined an IRC channel\n"RESET);
+	std::cout << ORANGE << "You have joined an IRC channel" << RESET << std::endl;
 }
 
 bool manage::isClientInChannel(std::string ChannelName, SERVSOCKET &server, client &client) {

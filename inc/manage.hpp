@@ -16,7 +16,7 @@ class manage
 	manage();
 	~manage();
 	size_t getlimit();
-	void addChannel(const std::string &name, client &client);
+	void addChannel(const std::string &name, client &client, std::string password);
 	bool give_privilege(std::string clientName, std::string name, bool flag);
 	void addClientoChannel(const std::string &name, client &client);
 	bool isClientInChannel(std::string ChannelName, SERVSOCKET &server, client &Client);

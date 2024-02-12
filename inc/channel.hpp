@@ -39,6 +39,9 @@ class channel
 		bool Tflag;
 		std::string channelName;
 		std::string channel_pass;
+		std::map <std::string, bool> adminMap;
+		std::vector < std::string > NameVec;
+		std::vector < std::string > PassVec;
 		std::string topic;
 		int			max_clients;
 		std::vector < std::string > kicked_users;
@@ -48,11 +51,11 @@ class channel
 		channel(const std::string& name) : channelName(name) {}
 		~channel();
 		bool	get_bool();
-		void	join(std::string str, client &Client, SERVSOCKET &server);
-		void	add_client(client *client);
+		void	join(std::string Name, std::string Password, client &Client, SERVSOCKET &server);
 		void	mode(std::string str, SERVSOCKET &server, client &Client);
 		void	execute_mode(std::string key, SERVSOCKET &server, client &Client, std::string channel_name, std::string channel_pass);
 		bool	join_password(std::string password, client &Client, SERVSOCKET &server);
+		int		fill(std::string str);
 };
 int	f_stoi(std::string numb);
 std::ostream& operator<<(std::ostream& os, const channel& c);

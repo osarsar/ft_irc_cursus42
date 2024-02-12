@@ -23,12 +23,10 @@ int f_stoi(std::string numb)
 	return ret;
 }
 
-void channel::join(std::string str, client &Client, SERVSOCKET &server)
-{
+int channel::fill(std::string str) {
 	char *p;
 	int argumentcount = 0;
-	std::string Password;
-	std::string Name;
+	std::cout << str << std::endl;
 	if (str.substr(0, std::string(JOIN).length()) == JOIN)
 		str.erase(0, std::string(JOIN).length() + 1);
 	else if (str.substr(0, std::string(Sjoin).length()) == Sjoin)
@@ -38,56 +36,46 @@ void channel::join(std::string str, client &Client, SERVSOCKET &server)
 	{	
 		argumentcount++;
 		if (p[0] == CHANNEL)
-			Name = p;
+			NameVec.push_back(p);
 		else
-			Password = p;
+			PassVec.push_back(p);
 		p = std::strtok(NULL, ", \t\r\n");
 	}
-	if (argumentcount > 2 || argumentcount < 1)
-		throw (RED"Join Invalid arguments\n"RESET);
-	else if (argumentcount == 2) {
-		channel_pass = Password;
-		channel_pass = server.trim(channel_pass);
-	}
-	if (Name[0] == '#' && std::isalpha(Name[1]))
-	{
-		channelName = Name;
-		channelName = server.trim(channelName);
-		std::map<std::string, channel>::iterator iter = server.channel_map.find(channelName);
-		manage manage(server);
-		//Check if the channel is already created
-		if (iter == server.channel_map.end())
-			manage.addChannel(channelName, Client);
-		//Client is already in channel
-		if (manage.isClientInChannel(channelName, server, Client))
-			throw(RED "client is already in channel\n" RESET);
-		//Store the Password
-		else if (!channel_pass.empty() && iter->second.channel_pass.empty())
-			iter->second.channel_pass = channel_pass;
-		//Ask for Password if it is necessary
-		if (!iter->second.channel_pass.empty() && argumentcount == 1) {
-			if (!join_password(iter->second.channel_pass, Client, server))
-				throw ("Password is incorrect\n");
-		}
-		//Check if the channel is limited
-		if (max_clients < (int)iter->second.client_list.size() + 1 && flag)
-			throw(RED"Channel has been limited\n"RESET);
-		//Check invited users
-		if (iter->second.invited_users.size() == 0 && Iflag)
+	return (argumentcount);
+}
+
+void channel::join(std::string Name, std::string Password, client &Client, SERVSOCKET &server)
+{
+	channelName = Name;
+	manage manage(server);
+	std::map<std::string, channel>::iterator iter = server.channel_map.find(channelName);
+	//Client is already in channel
+	if (manage.isClientInChannel(channelName, server, Client))
+		throw(RED "client is already in channel\n" RESET);
+	//Check if the channel is already created
+	if (iter == server.channel_map.end())
+		manage.addChannel(channelName, Client, Password);
+	// Ask for Password if it is necessary
+	else if (iter != server.channel_map.end() && !iter->second.channel_pass.empty())
+		if (!join_password(iter->second.channel_pass, Client, server))
+			throw ("Password is incorrect\n");
+	//Check if the channel is limited
+	if (max_clients < (int)iter->second.client_list.size() + 1 && flag)
+		throw(RED"Channel has been limited\n"RESET);
+	//Check invited users
+	if (iter->second.invited_users.size() == 0 && Iflag)
+		throw (RED"User is not invited to the Channel\n"RESET);
+	for (int k = 0; k != (int)iter->second.invited_users.size() && Iflag; k++) {
+		if (Client.nickname != iter->second.invited_users[k] && k + 1 == (int)iter->second.invited_users.size())
 			throw (RED"User is not invited to the Channel\n"RESET);
-		for (int k = 0; k != (int)iter->second.invited_users.size() && Iflag; k++) {
-			if (Client.nickname != iter->second.invited_users[k] && k + 1 == (int)iter->second.invited_users.size())
-				throw (RED"User is not invited to the Channel\n"RESET);
-		}
-		//Add Client to Channel
-		manage.addClientoChannel(channelName, Client);
 	}
-	else
-		throw (RED"Join Command Error\n"RESET);
+	//Add Client to Channel
+	manage.addClientoChannel(channelName, Client);
 }
 
 bool channel::join_password(std::string password, client &Client, SERVSOCKET &server)
 {
+	adminMap[Client.nickname] = false;
 	std::string passmsg = "Please provide the necessary password here : ";
     send(Client.fd, passmsg.c_str(), passmsg.length(), 0);
     const int MAX_PASSWORD_LENGTH = 100;

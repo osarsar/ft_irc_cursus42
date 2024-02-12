@@ -20,7 +20,8 @@ void    executables(size_t &i, std::string data, int fd)
     std::string command = data.substr(0, data.find(" "));//--> HER find dosen't existe in cpp98
     toUpper(command);
     server.trim(command);
-
+    Channel.NameVec.clear();
+    Channel.PassVec.clear();
     if (!server.database[i - 1].registration_check && (command == KICK || command == TOPIC || command == INVITE ||\
         command == JOIN || command == PRIVMSG || command == MODE))
     {
@@ -28,7 +29,19 @@ void    executables(size_t &i, std::string data, int fd)
         throw(RED "Khasek lwra9 a m3alem sir tal gheda oji\n" RESET);
     }
     else if (command == JOIN && server.database[i - 1].registration_check)
-        Channel.join(data, server.database[i - 1], server);
+    {
+        int args = 0;
+        args = Channel.fill(data);
+        for (int k = 0; k < (int)Channel.NameVec.size(); k++) {
+            std::cout << Channel.NameVec[k] << std::endl;
+            if (Channel.PassVec.size() == Channel.NameVec.size() || Channel.NameVec.size() == 1) {
+                if (Channel.PassVec.size() != 0)
+                    Channel.join(Channel.NameVec[k], Channel.PassVec[k], server.database[i - 1], server);
+                else
+                    Channel.join(Channel.NameVec[k], std::string(""), server.database[i - 1], server);
+            }
+        }
+    }
     else if (command == MODE && server.database[i - 1].registration_check)
         Channel.mode(data, server, server.database[i - 1]);
     else if (command == LPRIVMSG && server.database[i - 1].registration_check)
