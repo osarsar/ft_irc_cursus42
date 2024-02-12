@@ -26,7 +26,6 @@ int f_stoi(std::string numb)
 int channel::fill(std::string str) {
 	char *p;
 	int argumentcount = 0;
-	std::cout << str << std::endl;
 	if (str.substr(0, std::string(JOIN).length()) == JOIN)
 		str.erase(0, std::string(JOIN).length() + 1);
 	else if (str.substr(0, std::string(Sjoin).length()) == Sjoin)

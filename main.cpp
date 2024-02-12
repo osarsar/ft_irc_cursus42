@@ -33,7 +33,6 @@ void    executables(size_t &i, std::string data, int fd)
         int args = 0;
         args = Channel.fill(data);
         for (int k = 0; k < (int)Channel.NameVec.size(); k++) {
-            std::cout << Channel.NameVec[k] << std::endl;
             if (Channel.PassVec.size() == Channel.NameVec.size() || Channel.NameVec.size() == 1) {
                 if (Channel.PassVec.size() != 0)
                     Channel.join(Channel.NameVec[k], Channel.PassVec[k], server.database[i - 1], server);
