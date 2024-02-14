@@ -53,9 +53,11 @@
 #define RPL_MYINFO(serverName, version, userModes, channelModes) "004" + std::string("004 @ ") + std::string(serverName) + " " + std::string(version) + " User modes: " +  std::string(userModes) + " Channel modes: " +  std::string(channelModes) + "\r\n"
 #define ERR_NEEDMOREPARAMSS(cmd)					"461" + std::string(" @ ") + std::string(cmd) + " :Not enough parameters\r\n" //add s in the last of the word
 #define ERR_PASSWDMISMATCH							"464" + std::string(" @ ") + ":Password incorrect\r\n"
+#define ERR_PASSWDCORRECT							"464" + std::string(" @ ") + ":Password correct\r\n"//CHECK
 #define ERR_ALREADYREGISTRED 						"462" + std::string(" @ ") + ":Unauthorized command (already registered)\r\n"
 #define	ERR_UNKNOWNCOMMAND(cmd)						"421" + std::string(" @ ") + std::string(cmd) + " :Unknown command\r\n" 
 #define	ERR_NICKNAMEINUSE(nick)						"433" + std::string(" @ ") + std::string(nick) + " :Nickname is already in use" + "\r\n"
+#define	ERR_REGISTREDSUCCESS(nick)					"434" + std::string(" @ ") + std::string(nick) + " :REGISTRATION SUCCESS" + "\r\n"
 
 #endif
 

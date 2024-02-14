@@ -51,7 +51,7 @@ void    executables(size_t &i, std::string data, int fd)
         topic.go_to_topic(data, server, fd);
     else if (command == INVITE)
         invite.go_to_invite(data, server, fd);
-    else
+    else if ((command != "PASS" && command != "NICK" && command != "USER") && !command.empty())
         server.mysend(fd, ERR_UNKNOWNCOMMAND(command));
 }
 
@@ -122,9 +122,11 @@ int main(int ac, char** av)
             std::cerr << e.what() << std::endl;
             if (i)
             {
+                server.show();
                 close(vector.vector[i].fd);
                 vector.vector.erase(vector.vector.begin() + i);
                 server.database.erase(server.database.begin() + i - 1);
+                server.show();
             }
         }
         catch (const char *str)

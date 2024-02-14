@@ -41,7 +41,6 @@ const char* SERVSOCKET::ErrorOnPassword::what() const throw()
 
 //----------------------------------------------------------------------//
 
-
 std::string& SERVSOCKET::ltrim(std::string& str) {
     size_t start = str.find_first_not_of(" \t\n\r");
     if (start != std::string::npos) {
@@ -219,9 +218,8 @@ void SERVSOCKET::registration(int client_fd, client &client, std::string data, S
         return;
 
     toUpper(commands[0]);
-
-
     trim(commands[0]);
+
     if (commands[0] != "PASS")
         return;
 
@@ -256,13 +254,14 @@ void SERVSOCKET::registration(int client_fd, client &client, std::string data, S
         if (!*ptr)
             return;
         str = std::strtok(const_cast<char *>(str.c_str()), " ");
-        if (str != servpass)
+        std::string join = servpass + "\r";
+        if (str != join)
         {
             mysend(client_fd, ERR_PASSWDMISMATCH);
             return;
         }
         client.pass_bool = true;
-        mysend(client_fd, GREEN"PASSWORD REGISTRED SUCCESSFULLY\n"RESET);
+        mysend(client_fd, ERR_PASSWDCORRECT);
     }
 }
 
@@ -301,11 +300,11 @@ void SERVSOCKET::nickname(int client_fd, client &client, std::string data, SERVS
             mysend(client_fd, ORANGE"PLEASE ENTER THE PASSWORD FIRST\n"RESET);
             return;
         }
-        if (client.nick_bool == true)
-        {
-            mysend(client_fd, ERR_ALREADYREGISTRED);
-            return;
-        }
+        // if (client.nick_bool == true)
+        // {
+        //     mysend(client_fd, ERR_ALREADYREGISTRED);
+        //     return;
+        // }
         str = data.erase(0, 5);
         if (str.empty())
             return;
@@ -328,7 +327,7 @@ void SERVSOCKET::nickname(int client_fd, client &client, std::string data, SERVS
         mysend(client_fd, GREEN"NICKNAME REGISTRED SUCCESSFULLY\n"RESET);
         if (client.user_bool == 1)
         {
-            mysend(client_fd, PURPLE"---- YOU HAVE BEEN REGISTRED SUCCESSFULLY ----\n"RESET);
+            mysend(client_fd, ERR_REGISTREDSUCCESS("SUCCESS"));
             client.registration_check = true;
             client.fd = client_fd;
         }
@@ -371,11 +370,11 @@ void SERVSOCKET::username(int client_fd, client &client, std::string data, SERVS
             mysend(client_fd, ORANGE"PLEASE ENTER THE PASSWORD FIRST\n"RESET);
             return;
         }
-        if (client.user_bool == true)
-        {
-            mysend(client_fd, ORANGE"YOU ALREADY ENTER THE USERNAME\n"RESET);
-            return;
-        }
+        // if (client.user_bool == true)
+        // {
+        //     mysend(client_fd, ERR_ALREADYREGISTRED);
+        //     return;
+        // }
         str = data.erase(0, 5);
         if (str.empty())
             return;
@@ -390,7 +389,7 @@ void SERVSOCKET::username(int client_fd, client &client, std::string data, SERVS
         mysend(client_fd, GREEN"USERNAME REGISTRED SUCCESSFULLY\n"RESET);
         if (client.nick_bool == 1)
         {
-            mysend(client_fd, PURPLE"---- YOU HAVE BEEN REGISTRED SUCCESSFULLY ----\n"RESET);
+            mysend(client_fd, ERR_NICKNAMEINUSE("SUCCESS"));
             client.registration_check = true;
             client.fd = client_fd;
         }
