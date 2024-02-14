@@ -60,7 +60,7 @@ void Topic::go_to_topic(std::string data, SERVSOCKET &server, int fd)
         {
             newTopic = data.substr(pos1 + 1);
             newTopic = server.trim(newTopic);
-            // std::cout << "newTopic:" << newTopic << ".\n";
+            // std::cout << "newTopic:" << Topic << ".\n";
             std::map <std::string, channel>::iterator iter_chnl;
             int check = 0;
             // std::cout << "Checking the topic for \"" << channel_name << "\".\n";

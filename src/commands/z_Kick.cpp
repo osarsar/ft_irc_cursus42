@@ -120,17 +120,17 @@ void 	Kick::go_to_kick(std::string data, SERVSOCKET &server, int fd)
                 break;
             }
 		}
-        if (check == 0)
-        {
-            server.mysend(fd, ERR_NOSUCHCHANNEL(host_ni, channel_name));
-            return;
-        }
-        else if (check == 1)
-        {
-            server.mysend(fd, ERR_NOSUCHNICK(host_ni, client_nick));
-            // std::cout << "No such nick/channel\n";
-            return;
-        }
+        // if (check == 0)
+        // {
+        //     server.mysend(fd, ERR_NOSUCHCHANNEL(host_ni, channel_name));
+        //     return;
+        // }
+        // else if (check == 1)
+        // {
+        //     server.mysend(fd, ERR_NOSUCHNICK(host_ni, client_nick));
+        //     // std::cout << "No such nick/channel\n";
+        //     return;
+        // }
 	}
 
     server.mysend(fd, RPL_KICK(host_ni, host_us, IP, iter_clt->nickname, channel_name));

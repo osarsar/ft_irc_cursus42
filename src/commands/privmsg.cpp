@@ -1,4 +1,5 @@
 #include "../../inc/privmsg.hpp"
+#include "../../inc/error.hpp"
 
 privmsg::privmsg() {}
 
@@ -34,7 +35,7 @@ void    privmsg::parse_msg(std::string str, SERVSOCKET &server, client &Client) 
 		}
 	}
 	if (it == server.database.end() && channel_receive.empty())
-		throw (RED"Client not found\n"RESET);
+		server.mysend(Client.fd, ERR_NOSUCHNICK(std::string(server.client_ip), channel_receive, receiver));
 	if (!channel_receive.empty())
 		msg_to_channel(server, message, channel_receive, Client);
 	if (!receiver.empty())

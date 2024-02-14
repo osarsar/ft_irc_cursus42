@@ -10,7 +10,7 @@
 // nik -> nick
 // setat -> setat
 
-#define IP "127.0.0.1"
+#define IP "10.12.6.7"
 
 // "<client> <command> :Not enough parameters"
 // "<client> <channel> :No such channel"
@@ -39,15 +39,15 @@
 #define RPL_KICK(hN, hU, ip, gN,chnl)               ":" + std::string(hN) + "!~" + std::string(hU) + "@" + std::string(ip) + " KICK " + std::string(chnl) + " " + std::string(gN)  + " :" + std::string(gN) + "\r\t\n"
 
 //>>>>>>>> INVITE --------------------------------------------------------->>>>>>>>>>>>>>>>>>
-#define ERR_NOSUCHNICK(nick, nameToDo)              ":1337.Temsa.ma 401 " + std::string(nick) + " " + std::string(nameToDo) + " :No such nick/channel\r\t\n"
-#define ERR_USERONCHANNEL(nik1, nik2, chnl)         ":1337.Temsa.ma 443 " + std::string(nik1) + " " + std::string(nik2) + " " + std::string(chnl) + " :is already on channel\r\t\n"
+// #define ERR_NOSUCHNICK(nick, nameToDo)              ":1337.Temsa.ma 401 " + std::string(nick) + " " + std::string(nameToDo) + " :No such nick/channel\r\t\n"
+// #define ERR_USERONCHANNEL(nik1, nik2, chnl)         ":1337.Temsa.ma 443 " + std::string(nik1) + " " + std::string(nik2) + " " + std::string(chnl) + " :is already on channel\r\t\n"
 #define RPL_INVITING(nik, nik2, chnl)               ":1337.Temsa.ma 341 " + std::string(nik) + " " + std::string(nik2) + " " + std::string(chnl) + "\r\t\n"
 #define RPL_INVITELIST(hN, hU, ip, gN,chnl)         ":" + std::string(hN) + "!~" + std::string(hU) + "@" + std::string(ip) + " INVITE " + std::string(gN) + " :" + std::string(chnl) + "\r\t\n"
 #define RPL_ENDOFINVITELIST(nik)                    std::string(nik) + " :End of /INVITE list"
 
 //-----------ADDED------------------//
 #define ERR_NICKCOLLISION(nick, cmd)               RED":1337.Temsa.ma 436 " + std::string(nick) + " " + std::string(cmd) + " :Nickname collision KILL\r\t\n"RESET
-#define RPL_WELCOME(nick, cmd)                      "001" + std::string("001 @ Welcome to the internet Relay Network ") + std::string(nick) + "!" + std::string(cmd) + "@10.11.9.2\r\n"
+#define RPL_WELCOME(nick, cmd)                      "001" + std::string("001 @ Welcome to the internet Relay Network ") + std::string(nick) + "!" + std::string(cmd) + "@10.12.6.7\r\n"
 #define	RPL_YOURHOST(nick, cmd)				        "002" + std::string("002 @ Your host is ") + std::string(nick) + ", running version " + std::string(cmd) + "\r\n"
 #define	RPL_CREATED(cmd)						    "003" + std::string("003 @ This server was created ") + std::string(cmd) + "\r\n"
 #define RPL_MYINFO(serverName, version, userModes, channelModes) "004" + std::string("004 @ ") + std::string(serverName) + " " + std::string(version) + " User modes: " +  std::string(userModes) + " Channel modes: " +  std::string(channelModes) + "\r\n"
@@ -58,6 +58,14 @@
 #define	ERR_UNKNOWNCOMMAND(cmd)						"421" + std::string(" @ ") + std::string(cmd) + " :Unknown command\r\n" 
 #define	ERR_NICKNAMEINUSE(nick)						"433" + std::string(" @ ") + std::string(nick) + " :Nickname is already in use" + "\r\n"
 #define	ERR_REGISTREDSUCCESS(nick)					"434" + std::string(" @ ") + std::string(nick) + " :REGISTRATION SUCCESS" + "\r\n"
-
+//>>>>>>>> JOIN --------------------------------------------------------->>>>>>>>>>>>>>>>>>
+# define RPL_JOIN(nick, username, channelname, ipaddress)                   ":" + nick + "!~" + username + "@" + ipaddress + " JOIN " + channelname + "\r\n"
+# define RPL_NAMREPLY(hostname, clients, channelname,nick)                  ":" + hostname + " 353 " + nick + " = " + channelname + " :" + clients + "\r\n"
+# define RPL_ENDOFNAMES(hostname, nick, channelname)                        ":" + hostname + " 366 " + nick + " " + channelname + " :END of /NAMES list\r\n"
+# define ERR_USERONCHANNEL(hostname, channel, nick)                         ":" + hostname + " 443 " + nick + " " + channel + "  :is already on channel\r\n"
+# define ERR_NOSUCHNICK(hostname, channel, argument)                        ":" + hostname + " 401 " + channel + " " +  argument + " :No such nick/channel\r\n"
+# define ERR_CHANNELISFULL(nick, hostname)                                  ":" + hostname + " 471 " + channelName + " :Cannot join channel (+l)\r\n"
+# define ERR_INVITEONLY(nick, hostname)                                     ":" + hostname + " 473 " + channelName + " :Cannot join channel (+i)\r\n"
+# define  ERR_JOINPASSWDMISMATCH(nick, hostname)	                        ":" + hostname + " 464 " + nick + " :Password incorrect !\r\n"
 #endif
 

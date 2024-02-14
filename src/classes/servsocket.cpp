@@ -254,8 +254,8 @@ void SERVSOCKET::registration(int client_fd, client &client, std::string data, S
         if (!*ptr)
             return;
         str = std::strtok(const_cast<char *>(str.c_str()), " ");
-        std::string join = servpass + "\r";
-        if (str != join)
+        trim(str);
+        if (str != servpass)
         {
             mysend(client_fd, ERR_PASSWDMISMATCH);
             return;
@@ -314,6 +314,7 @@ void SERVSOCKET::nickname(int client_fd, client &client, std::string data, SERVS
         if (!*ptr)
             return;
         str = std::strtok(const_cast<char *>(str.c_str()), " ");
+        trim(str);
         for (it = database.begin(); it != database.end() ; it++)
         {
             if (it->nickname == str)

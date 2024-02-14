@@ -1,5 +1,5 @@
 #include "../../inc/manage.hpp"
-
+#include "../../inc/error.hpp"
 
 manage::manage(SERVSOCKET &server) : Server(server) {
 }
@@ -54,7 +54,9 @@ void  manage::addChannel(const std::string &name, client &client, std::string pa
 
 void manage::addClientoChannel(const std::string &name, client &client) {
 	Server.channel_map[name].client_list.push_back(client);
-	std::cout << ORANGE << "You have joined an IRC channel" << RESET << std::endl;
+	Server.mysend(client.fd, RPL_JOIN(client.nickname, client.username, name, Server.client_ip));
+	Server.mysend(client.fd, RPL_NAMREPLY(std::string(Server.client_ip), client.nickname, name, client.nickname));
+	Server.mysend(client.fd, RPL_ENDOFNAMES(std::string(Server.client_ip), client.nickname, name));
 }
 
 bool manage::isClientInChannel(std::string ChannelName, SERVSOCKET &server, client &client) {

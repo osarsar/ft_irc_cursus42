@@ -125,7 +125,7 @@ void Invite::go_to_invite(std::string data, SERVSOCKET &server, int fd)
     guest = get_client(commands[1], server);
     if (!guest)
     {
-        server.mysend(fd, ERR_NOSUCHNICK(host_ni, commands[1]));
+        // server.mysend(fd, ERR_NOSUCHNICK(host_ni, commands[1]));
         return;
     }
     std::string guestd = guest->username;
