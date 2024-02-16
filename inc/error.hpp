@@ -10,7 +10,7 @@
 // nik -> nick
 // setat -> setat
 
-#define IP "10.12.6.7"
+#define IP "10.13.7.17"
 
 // "<client> <command> :Not enough parameters"
 // "<client> <channel> :No such channel"
@@ -20,11 +20,11 @@
 // "<client> <channel> :<topic>"
 // "<client> <channel> <nick> <setat>"
 
-#define ERR_NEEDMOREPARAMS(nick, cmd)               ":1337.Temsa.ma 461 " + std::string(nick) + " " + std::string(cmd) + " :Not enough parameters\r\t\n"
+#define ERR_NEEDMOREPARAMS(cid, cmd)               ":1337.Temsa.ma 461 " + std::string(cid) + " " + std::string(cmd) + " :Not enough parameters\r\t\n"
 #define ERR_NOSUCHCHANNEL(nick, chnl)               ":1337.Temsa.ma 403 " + std::string(nick) + " " + std::string(chnl) + " :No such channel\r\t\n"
 #define ERR_NOTONCHANNEL(nick, chnl)                ":1337.Temsa.ma 442 " + std::string(nick) + " " + std::string(chnl) + " :You're not on that channel\r\t\n"
 #define ERR_CHANOPRIVSNEEDED(nick, chnl)            ":1337.Temsa.ma 482 " + std::string(nick) + " " + std::string(chnl) + " :You're not a channel operator\r\t\n"
-#define ERR_NOTREGISTERED(nick)                      std::string(nick) + " :You have not registered"
+#define ERR_NOTREGISTERED(nick)                     ":1337.Temsa.ma 451 " + std::string(nick) + " :You have not registered"
 
 //>>>>>>>> TOPIC --------------------------------------------------------->>>>>>>>>>>>>>>>>>
 #define RPL_NOTOPIC(clt, chnl)                      ":1337.Temsa.ma 331 " + std::string(clt) + " " + std::string(chnl) + " :No topic is set\r\t\n"
@@ -46,18 +46,15 @@
 #define RPL_ENDOFINVITELIST(nik)                    std::string(nik) + " :End of /INVITE list"
 
 //-----------ADDED------------------//
-#define ERR_NICKCOLLISION(nick, cmd)               RED":1337.Temsa.ma 436 " + std::string(nick) + " " + std::string(cmd) + " :Nickname collision KILL\r\t\n"RESET
-#define RPL_WELCOME(nick, cmd)                      "001" + std::string("001 @ Welcome to the internet Relay Network ") + std::string(nick) + "!" + std::string(cmd) + "@10.12.6.7\r\n"
-#define	RPL_YOURHOST(nick, cmd)				        "002" + std::string("002 @ Your host is ") + std::string(nick) + ", running version " + std::string(cmd) + "\r\n"
-#define	RPL_CREATED(cmd)						    "003" + std::string("003 @ This server was created ") + std::string(cmd) + "\r\n"
-#define RPL_MYINFO(serverName, version, userModes, channelModes) "004" + std::string("004 @ ") + std::string(serverName) + " " + std::string(version) + " User modes: " +  std::string(userModes) + " Channel modes: " +  std::string(channelModes) + "\r\n"
-#define ERR_NEEDMOREPARAMSS(cmd)					"461" + std::string(" @ ") + std::string(cmd) + " :Not enough parameters\r\n" //add s in the last of the word
-#define ERR_PASSWDMISMATCH							"464" + std::string(" @ ") + ":Password incorrect\r\n"
-#define ERR_PASSWDCORRECT							"464" + std::string(" @ ") + ":Password correct\r\n"//CHECK
-#define ERR_ALREADYREGISTRED 						"462" + std::string(" @ ") + ":Unauthorized command (already registered)\r\n"
-#define	ERR_UNKNOWNCOMMAND(cmd)						"421" + std::string(" @ ") + std::string(cmd) + " :Unknown command\r\n" 
-#define	ERR_NICKNAMEINUSE(nick)						"433" + std::string(" @ ") + std::string(nick) + " :Nickname is already in use" + "\r\n"
-#define	ERR_REGISTREDSUCCESS(nick)					"434" + std::string(" @ ") + std::string(nick) + " :REGISTRATION SUCCESS" + "\r\n"
+#define ERR_NICKCOLLISION(nick, cmd)                                        ":1337.Temsa.ma 436 " + std::string(nick) + " " + std::string(cmd) + " :Nickname collision KILL\r\t\n"
+#define RPL_WELCOME(cid, name, nick, user, host)                            ":1337.Temsa.ma 001 " + cid + " :Welcome to the " + name + " Network, " + std::string(nick) + "!" + std::string(user) + "@" + std::string(host) + "\r\t\n"
+#define	RPL_YOURHOST(cid, servername, version)		                        ":1337.Temsa.ma 002 " + std::string(cid) + " :Your host is " + std::string(servername) + ", running version " + std::string(version) + "\r\t\n"
+#define	RPL_CREATED(cid, date)						                        ":1337.Temsa.ma 003 " + std::string(cid) + " :This server was created " + std::string(date) + "\r\t\n"
+#define RPL_MYINFO(cid, username, version, avmode, cmode, modepara)         ":1337.Temsa.ma 004 " + std::string(cid) + " " + std::string(username) + " " + std::string(version) + " " + std::string(avmode) + " " + std::string(cmode) + " [" + std::string(modepara) + "]\r\t\n"
+#define ERR_PASSWDMISMATCH(cid)						                        ":1337.Temsa.ma 464 " + std::string(cid) + " :Password incorrect\r\t\n"
+#define ERR_ALREADYREGISTRED(cid)						                    ":1337.Temsa.ma 462 " + std::string(cid) + " :Unauthorized command (already registered)\r\t\n"
+#define	ERR_UNKNOWNCOMMAND(cid, cmd)						                ":1337.Temsa.ma 421 " + std::string(cid) + " " + std::string(cmd) + " :Unknown command\r\t\n" 
+#define	ERR_NICKNAMEINUSE(cid, nick)						                ":1337.Temsa.ma 433 " + std::string(cid) + " " + std::string(nick) + " :Nickname is already in use\r\t\n"
 //>>>>>>>> JOIN --------------------------------------------------------->>>>>>>>>>>>>>>>>>
 # define RPL_JOIN(nick, username, channelname, ipaddress)                   ":" + nick + "!~" + username + "@" + ipaddress + " JOIN " + channelname + "\r\n"
 # define RPL_NAMREPLY(hostname, clients, channelname,nick)                  ":" + hostname + " 353 " + nick + " = " + channelname + " :" + clients + "\r\n"

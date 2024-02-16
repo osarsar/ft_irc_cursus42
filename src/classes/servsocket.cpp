@@ -109,10 +109,10 @@ int SERVSOCKET::myaccept()
         throw ErrorOnMyAccept();
     }
     inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
-    mysend(socket_client, RPL_WELCOME("oussama", "osarsar"));
-    mysend(socket_client, RPL_YOURHOST("IRC_SERVER", "lastest vesion"));
-    mysend(socket_client, RPL_CREATED("09-02-2024"));
-    mysend(socket_client, RPL_MYINFO("serverName", "version", "userModes", "channelModes"));
+    // mysend(socket_client, RPL_WELCOME("sarsar", "IRC_SERVER", "client.username", "client.nickname", "client_ip");
+    // mysend(socket_client, RPL_YOURHOST("sarsar", "IRC_SERVER", "last_version"));
+    // mysend(socket_client, RPL_CREATED("sarsar", "2024-02-16"));
+    // mysend(socket_client, RPL_MYINFO("sarsar", "IRC_SERVER", "last_version", "avmode", "cmode", "modepara"));
     return socket_client;
 }
 
@@ -213,6 +213,7 @@ std::vector<int> POLLFD::getFds() const {
 void SERVSOCKET::registration(int client_fd, client &client, std::string data, SERVSOCKET server)
 {
     std::string str;
+    
     std::vector<std::string> commands = my_split(data, ' ', server);
     if (commands.size() < 1)
         return;
@@ -228,12 +229,12 @@ void SERVSOCKET::registration(int client_fd, client &client, std::string data, S
 
     if (commands.size() < 2)
     {
-        server.mysend(client_fd, ERR_NEEDMOREPARAMSS("PASS"));//-> HERE
+        server.mysend(client_fd, ERR_NEEDMOREPARAMS(std::to_string(client_fd), "PASS"));//-> HERE
         return ;
     }
     if (commands.size() > 2)
     {
-        server.mysend(client_fd, ERR_NEEDMOREPARAMSS("PASS"));
+        server.mysend(client_fd, ERR_NEEDMOREPARAMS(std::to_string(client_fd), "PASS"));
         return ;
     }
     trim(commands[1]);
@@ -242,7 +243,7 @@ void SERVSOCKET::registration(int client_fd, client &client, std::string data, S
     {
         if (client.pass_bool == true)
         {
-            mysend(client_fd, ERR_ALREADYREGISTRED);
+            mysend(client_fd, ERR_ALREADYREGISTRED(std::to_string(client_fd)));
             return;
         }
         str = data.erase(0, 5);
@@ -257,12 +258,12 @@ void SERVSOCKET::registration(int client_fd, client &client, std::string data, S
         trim(str);
         if (str != servpass)
         {
-            mysend(client_fd, ERR_PASSWDMISMATCH);
+            mysend(client_fd, ERR_PASSWDMISMATCH(std::to_string(client_fd)));
             return;
         }
         client.pass_bool = true;
-        mysend(client_fd, ERR_PASSWDCORRECT);
     }
+    
 }
 
 void SERVSOCKET::nickname(int client_fd, client &client, std::string data, SERVSOCKET server)
@@ -282,12 +283,12 @@ void SERVSOCKET::nickname(int client_fd, client &client, std::string data, SERVS
 
     if (commands.size() < 2)
     {
-        mysend(client_fd, ERR_NEEDMOREPARAMSS("NICK"));
+        mysend(client_fd, ERR_NEEDMOREPARAMS(std::to_string(client_fd), "NICK"));
         return ;
     }
     if (commands.size() > 2)
     {
-        mysend(client_fd, ERR_NEEDMOREPARAMSS("NICK"));
+        mysend(client_fd, ERR_NEEDMOREPARAMS(std::to_string(client_fd), "NICK"));
         return ;
     }
 
@@ -300,11 +301,6 @@ void SERVSOCKET::nickname(int client_fd, client &client, std::string data, SERVS
             mysend(client_fd, ORANGE"PLEASE ENTER THE PASSWORD FIRST\n"RESET);
             return;
         }
-        // if (client.nick_bool == true)
-        // {
-        //     mysend(client_fd, ERR_ALREADYREGISTRED);
-        //     return;
-        // }
         str = data.erase(0, 5);
         if (str.empty())
             return;
@@ -319,7 +315,7 @@ void SERVSOCKET::nickname(int client_fd, client &client, std::string data, SERVS
         {
             if (it->nickname == str)
             {
-                mysend(client_fd, ERR_NICKNAMEINUSE(it->nickname));
+                mysend(client_fd, ERR_NICKNAMEINUSE(std::to_string(client_fd), it->nickname));
                 return;
             }
         }
@@ -328,9 +324,13 @@ void SERVSOCKET::nickname(int client_fd, client &client, std::string data, SERVS
         mysend(client_fd, GREEN"NICKNAME REGISTRED SUCCESSFULLY\n"RESET);
         if (client.user_bool == 1)
         {
-            mysend(client_fd, ERR_REGISTREDSUCCESS("SUCCESS"));
             client.registration_check = true;
             client.fd = client_fd;
+            mysend(client.fd, RPL_WELCOME(std::to_string(client.fd), "IRC_SERVER", client.nickname, trim(client.username), client_ip));
+            mysend(client.fd, RPL_WELCOME(std::to_string(client.fd), "IRC_SERVER", client.nickname, trim(client.username), client_ip));
+            mysend(client.fd, RPL_YOURHOST(std::to_string(client.fd), "IRC_SERVER", "last_version"));
+            mysend(client.fd, RPL_CREATED(std::to_string(client.fd), "2024-02-16"));
+            mysend(client.fd, RPL_MYINFO(std::to_string(client.fd), "IRC_SERVER", "last_version", "avmode", "cmode", "modepara"));
         }
 
     }
@@ -351,18 +351,19 @@ void SERVSOCKET::username(int client_fd, client &client, std::string data, SERVS
     if (commands.size() == 1)
         commands = my_split(commands[0], '\t', server);
 
-    if (commands.size() < 2)
+    if (commands.size() < 5)
     {
-        mysend(client_fd, ERR_NEEDMOREPARAMSS("USER"));
+        mysend(client_fd, ERR_NEEDMOREPARAMS(std::to_string(client_fd), "USER"));
         return ;
     }
-    if (commands.size() > 2)
+    if (commands.size() > 5)
     {
-        mysend(client_fd, ERR_NEEDMOREPARAMSS("USER"));
+        mysend(client_fd, ERR_NEEDMOREPARAMS(std::to_string(client_fd), "USER"));
         return ;
     }
     
     trim(commands[1]);
+    trim(commands[4]);
 
     if (commands[0] == "USER")
     {
@@ -371,12 +372,7 @@ void SERVSOCKET::username(int client_fd, client &client, std::string data, SERVS
             mysend(client_fd, ORANGE"PLEASE ENTER THE PASSWORD FIRST\n"RESET);
             return;
         }
-        // if (client.user_bool == true)
-        // {
-        //     mysend(client_fd, ERR_ALREADYREGISTRED);
-        //     return;
-        // }
-        str = data.erase(0, 5);
+        str = commands[1];
         if (str.empty())
             return;
         const char *ptr = str.c_str();
@@ -386,13 +382,17 @@ void SERVSOCKET::username(int client_fd, client &client, std::string data, SERVS
             return;
         str = std::strtok(const_cast<char *>(str.c_str()), " ");
         client.user_bool = true;
-        client.username = str;
+        client.username = commands[4];
         mysend(client_fd, GREEN"USERNAME REGISTRED SUCCESSFULLY\n"RESET);
         if (client.nick_bool == 1)
         {
-            mysend(client_fd, ERR_NICKNAMEINUSE("SUCCESS"));
             client.registration_check = true;
             client.fd = client_fd;
+            mysend(client.fd, RPL_WELCOME(std::to_string(client.fd), "IRC_SERVER", client.nickname, trim(client.username), client_ip));
+            mysend(client.fd, RPL_WELCOME(std::to_string(client.fd), "IRC_SERVER", client.nickname, trim(client.username), client_ip));
+            mysend(client.fd, RPL_YOURHOST(std::to_string(client.fd), "IRC_SERVER", "last_version"));
+            mysend(client.fd, RPL_CREATED(std::to_string(client.fd), "2024-02-16"));
+            mysend(client.fd, RPL_MYINFO(std::to_string(client.fd), "IRC_SERVER", "last_version", "avmode", "cmode", "modepara"));
         }
     }
 }

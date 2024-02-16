@@ -25,7 +25,7 @@ void    executables(size_t &i, std::string data, int fd)
     if (!server.database[i - 1].registration_check && (command == KICK || command == TOPIC || command == INVITE ||\
         command == JOIN || command == PRIVMSG || command == MODE))
     {
-        server.mysend(fd, "ERR_NOTREGISTERED\n");//->HERE
+        server.mysend(fd, ERR_NOTREGISTERED(std::to_string(fd)));//->HERE
         throw(RED "Khasek lwra9 a m3alem sir tal gheda oji\n" RESET);
     }
     else if (command == JOIN && server.database[i - 1].registration_check)
@@ -52,7 +52,7 @@ void    executables(size_t &i, std::string data, int fd)
     else if (command == INVITE)
         invite.go_to_invite(data, server, fd);
     else if ((command != "PASS" && command != "NICK" && command != "USER") && !command.empty())
-        server.mysend(fd, ERR_UNKNOWNCOMMAND(command));
+        server.mysend(fd, ERR_UNKNOWNCOMMAND(std::to_string(fd), command));
 }
 
 int main(int ac, char** av) 
@@ -106,11 +106,13 @@ int main(int ac, char** av)
                         int check = 0;
                         data = server.Temsa_recv(1024, vector.vector[i].fd, check, server);
                         if (check == 1)
-                        {
+                        {   
+                            std::cout << "----------BEFORE-----------"<< std::endl;
                             server.registration(vector.vector[i].fd, server.database[i - 1], data, server);
                             server.nickname(vector.vector[i].fd, server.database[i - 1], data, server);
                             server.username(vector.vector[i].fd, server.database[i - 1], data, server);
                             executables(i, data, vector.vector[i].fd);                   
+                            std::cout << "----------AFTER-----------"<< std::endl;
                         }               
                     }
                 }
@@ -122,11 +124,11 @@ int main(int ac, char** av)
             std::cerr << e.what() << std::endl;
             if (i)
             {
-                server.show();
+                // server.show();
                 close(vector.vector[i].fd);
                 vector.vector.erase(vector.vector.begin() + i);
                 server.database.erase(server.database.begin() + i - 1);
-                server.show();
+                // server.show();
             }
         }
         catch (const char *str)

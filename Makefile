@@ -9,7 +9,7 @@ SRCS =  main.cpp \
 		./src/commands/z_Invite.cpp\
 		./src/commands/z_Topic.cpp
 		
-FLAGS = -Wall -Wextra -Werror -std=c++98 -g -fsanitize=address
+FLAGS = -Wall -Wextra -Werror -std=c++98
 
 NAME = ircserv
 OBJ =  $(SRCS:.cpp=.o)
