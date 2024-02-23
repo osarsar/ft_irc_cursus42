@@ -10,7 +10,7 @@
 // nik -> nick
 // setat -> setat
 
-#define IP "10.13.7.17"
+#define IP "10.12.6.7"
 
 // "<client> <command> :Not enough parameters"
 // "<client> <channel> :No such channel"
@@ -47,7 +47,7 @@
 
 //-----------ADDED------------------//
 #define ERR_NICKCOLLISION(nick, cmd)                                        ":1337.Temsa.ma 436 " + std::string(nick) + " " + std::string(cmd) + " :Nickname collision KILL\r\t\n"
-#define RPL_WELCOME(cid, name, nick, user, host)                            ":1337.Temsa.ma 001 " + cid + " :Welcome to the " + name + " Network, " + std::string(nick) + "!" + std::string(user) + "@" + std::string(host) + "\r\t\n"
+#define RPL_WELCOME(cid, name, nick, user, host)                            ":1337.Temsa.ma 001 " + std::string(nick) + " :Welcome to the " + name + " Network, " + std::string(nick) + "!" + std::string(user) + "@" + std::string(host) + "\r\t\n"
 #define	RPL_YOURHOST(cid, servername, version)		                        ":1337.Temsa.ma 002 " + std::string(cid) + " :Your host is " + std::string(servername) + ", running version " + std::string(version) + "\r\t\n"
 #define	RPL_CREATED(cid, date)						                        ":1337.Temsa.ma 003 " + std::string(cid) + " :This server was created " + std::string(date) + "\r\t\n"
 #define RPL_MYINFO(cid, username, version, avmode, cmode, modepara)         ":1337.Temsa.ma 004 " + std::string(cid) + " " + std::string(username) + " " + std::string(version) + " " + std::string(avmode) + " " + std::string(cmode) + " [" + std::string(modepara) + "]\r\t\n"
@@ -63,6 +63,10 @@
 # define ERR_NOSUCHNICK(hostname, channel, argument)                        ":" + hostname + " 401 " + channel + " " +  argument + " :No such nick/channel\r\n"
 # define ERR_CHANNELISFULL(nick, hostname)                                  ":" + hostname + " 471 " + channelName + " :Cannot join channel (+l)\r\n"
 # define ERR_INVITEONLY(nick, hostname)                                     ":" + hostname + " 473 " + channelName + " :Cannot join channel (+i)\r\n"
-# define  ERR_JOINPASSWDMISMATCH(nick, hostname)	                        ":" + hostname + " 464 " + nick + " :Password incorrect !\r\n"
+# define ERR_JOINPASSWDMISMATCH(nick, hostname)	                        ":" + hostname + " 464 " + nick + " :Password incorrect !\r\n"
+# define ERR_MODENOSUCHCHANNEL(hostname, channel, nick)                         ":" + hostname + " 403 " + nick + " " + channel + " :No such channel\r\n"
+# define ERR_INVALIDMODEPARAM(channel, hostname, flag)                      ":" + hostname +  " 696 " + channel + " " + flag + " * you must specifiy a parameter for the op mode\r\n"
+# define RPL_MODEIS(channel, hostname, mode)                                ":" + hostname + " MODE " + channel + " " + mode + "\r\n"
+# define ERR_BADCHANNELKEY(nick, hostname, channelName)                     ":" + hostname + " 475 " + nick + " " + channelName + " :Cannot join channel (+K) - bad key\r\n"
+# define ERR_NOTOP(hostname, channel)                                       ":" + hostname + " 482 " + channel + " "  + ":You're not a channel operator\r\n"
 #endif
-

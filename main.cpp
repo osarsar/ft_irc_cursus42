@@ -107,12 +107,10 @@ int main(int ac, char** av)
                         data = server.Temsa_recv(1024, vector.vector[i].fd, check, server);
                         if (check == 1)
                         {   
-                            std::cout << "----------BEFORE-----------"<< std::endl;
                             server.registration(vector.vector[i].fd, server.database[i - 1], data, server);
                             server.nickname(vector.vector[i].fd, server.database[i - 1], data, server);
                             server.username(vector.vector[i].fd, server.database[i - 1], data, server);
-                            executables(i, data, vector.vector[i].fd);                   
-                            std::cout << "----------AFTER-----------"<< std::endl;
+                            executables(i, data, vector.vector[i].fd);
                         }               
                     }
                 }

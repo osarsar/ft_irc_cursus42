@@ -12,6 +12,7 @@ class manage
 		SERVSOCKET &Server;
 	public:
 	int	max_clients;
+	std::vector<std::string> oldclients;
 	manage(SERVSOCKET &server);
 	manage();
 	~manage();

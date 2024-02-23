@@ -60,7 +60,7 @@ void channel::join(std::string Name, std::string Password, client &Client, SERVS
 	// Ask for Password if it is necessary
 	else if (iter != server.channel_map.end() && !iter->second.channel_pass.empty())
 		if (!join_password(iter->second.channel_pass, Client, server)) {
-			server.mysend(Client.fd, ERR_JOINPASSWDMISMATCH(Client.nickname, std::string(server.client_ip)));
+			server.mysend(Client.fd, ERR_BADCHANNELKEY(Client.nickname, std::string(server.client_ip), channelName));
 			return ;
 		}
 	//Check if the channel is limited

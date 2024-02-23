@@ -52,11 +52,44 @@ void  manage::addChannel(const std::string &name, client &client, std::string pa
     std::cout << GREEN << "An IRC channel " << name << " was created by User " << client.nickname << RESET << std::endl;
 }
 
-void manage::addClientoChannel(const std::string &name, client &client) {
-	Server.channel_map[name].client_list.push_back(client);
-	Server.mysend(client.fd, RPL_JOIN(client.nickname, client.username, name, Server.client_ip));
-	Server.mysend(client.fd, RPL_NAMREPLY(std::string(Server.client_ip), client.nickname, name, client.nickname));
-	Server.mysend(client.fd, RPL_ENDOFNAMES(std::string(Server.client_ip), client.nickname, name));
+void manage::addClientoChannel(const std::string &name, client &newClient) {
+	bool flag = false;
+    channel& channel = Server.channel_map[name];
+    
+    // Add the new client to the channel
+    channel.client_list.push_back(newClient);
+ 
+    // Construct the NAMES reply string with existing clients first
+    std::string namesReply;
+    for (size_t i = 0; i < channel.client_list.size(); ++i) {
+        if (i != 0) {
+            namesReply += " ";
+        }
+		for (int k = 0; k < (int)channel.client_list[i].adminOf.size(); k++) {
+			if (channel.client_list[i].adminOf[k] == name)
+				flag = true;
+		}
+		if (flag) {
+   	    	namesReply += "@" + channel.client_list[i].nickname;
+			flag = false;
+		}
+        else 
+			namesReply += channel.client_list[i].nickname;
+    } 
+
+    // Send JOIN message to the new client
+    Server.mysend(newClient.fd, RPL_JOIN(newClient.nickname, newClient.username, name, Server.client_ip));
+    
+    // Send NAMES replies to all clients in the channel
+    for (size_t i = 0; i < channel.client_list.size(); ++i) {
+        Server.mysend(newClient.fd, RPL_NAMREPLY(std::string(Server.client_ip), namesReply, name, newClient.nickname));
+		break ;
+    }
+    Server.mysend(newClient.fd, RPL_ENDOFNAMES(std::string(Server.client_ip), newClient.nickname, name));
+	for (size_t i = 0; i < channel.client_list.size(); ++i) {
+		if (channel.client_list[i].nickname != newClient.nickname)
+    		Server.mysend(channel.client_list[i].fd, RPL_JOIN(newClient.nickname, newClient.username, name, Server.client_ip));
+    }
 }
 
 bool manage::isClientInChannel(std::string ChannelName, SERVSOCKET &server, client &client) {

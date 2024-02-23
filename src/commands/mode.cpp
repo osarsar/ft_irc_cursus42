@@ -1,5 +1,6 @@
 #include "../../inc/channel.hpp"
 #include "../../inc/manage.hpp"
+#include "../../inc/error.hpp"
 
 void	channel::mode(std::string str, SERVSOCKET &server, client &Client) {
 	char *p;
@@ -28,12 +29,18 @@ void	channel::mode(std::string str, SERVSOCKET &server, client &Client) {
 	mode_pass = server.trim(mode_pass);
 	channel_name = server.trim(channel_name);
 	std::map<std::string, channel>::iterator it = server.channel_map.find(channel_name);
-	if (it == server.channel_map.end())
-		throw (RED"Channel not found\n"RESET);
-	if (i == 0)
-		throw (RED"mode key is necessary\n"RESET);
-	if ((key == "+k" || key == "+o" || key == "-o" || key == "+l") && mode_pass.empty())
-		throw (RED"Invalid mode argument\n"RESET);
+	if (it == server.channel_map.end()) {
+		server.mysend(Client.fd, ERR_MODENOSUCHCHANNEL(std::string(server.client_ip), channel_name, Client.nickname));
+		return ;
+	}
+	if (i == 0) {
+		server.mysend(Client.fd, ERR_INVALIDMODEPARAM(channel_name, std::string(server.client_ip), key));
+		return ;
+	}	
+	if ((key == "+k" || key == "+o" || key == "-o" || key == "+l") && mode_pass.empty()) {
+		server.mysend(Client.fd, ERR_INVALIDMODEPARAM(channel_name, std::string(server.client_ip), key));
+		return ;
+	}
 	execute_mode(key, server, Client, channel_name, mode_pass);
 }
 
@@ -48,24 +55,22 @@ void	channel::execute_mode(std::string key, SERVSOCKET &server, client &Client, 
 			if (key == "+k") {
 				if (it != server.channel_map.end())
 					it->second.channel_pass = mode_pass;
-				priv.msg_to_channel(server, GREEN"This channel is now in Password Mode\n"RESET, channel_name, Client);
+				server.mysend(Client.fd, RPL_MODEIS(channel_name, std::string(server.client_ip), key + " " + mode_pass));
 			}
 			// Remove a Password
 			else if (!channel_pass.empty() && key == "-k") {
 				channel_pass = "";
-				priv.msg_to_channel(server, RED"This channel is no longer in Password Mode\n"RESET, channel_name, Client);
+				server.mysend(Client.fd, RPL_MODEIS(channel_name, std::string(server.client_ip), key));
 			}
 			// ADD an Admin
 			else if (key == "+o") {
 				manage manage(server);
-				if (!manage.give_privilege(mode_pass, channel_name, false))
-					throw(RED"Client not found\n"RESET);
+				server.mysend(Client.fd, RPL_MODEIS(channel_name, std::string(server.client_ip), key + " " + mode_pass));
 			}
 			// Remove an Admin
 			else if (key == "-o") {
 				manage manage(server);
-				if (!manage.give_privilege(mode_pass, channel_name, true))
-					throw(RED"Client not found\n"RESET);
+				server.mysend(Client.fd, RPL_MODEIS(channel_name, std::string(server.client_ip), key + " " + mode_pass));
 			}
 			// Mode to Limit Channel users
 			else if (key == "+l") {
@@ -74,36 +79,36 @@ void	channel::execute_mode(std::string key, SERVSOCKET &server, client &Client, 
 				else {
 					max_clients = f_stoi(mode_pass);
 					flag = true;
-					throw (GREEN"This Channel is now limited\n"RESET);
+					server.mysend(Client.fd, RPL_MODEIS(channel_name, std::string(server.client_ip), key + " " + mode_pass));
 				}
 			}
 			// Remove The Channel limit
 			else if (key == "-l") {
 				flag = false;
-				throw (GREEN"Channel users limit has been sealed off\n"RESET);
+				server.mysend(Client.fd, RPL_MODEIS(channel_name, std::string(server.client_ip), key));
 			}
 			// Make the Channel invite-only
 			else if (key == "+i") {
 				Iflag = true;
-				throw (GREEN"Channel in invite only mode\n"RESET);
+				server.mysend(Client.fd, RPL_MODEIS(channel_name, std::string(server.client_ip), key));
 			}
 			// Remove the invite-only mode
 			else if (key == "-i") {
 				Iflag = false;
-				throw (GREEN"Invite only mode has been Removed\n"RESET);
+				server.mysend(Client.fd, RPL_MODEIS(channel_name, std::string(server.client_ip), key));
 			}
 			// Remove the ability to user Topic command on regular users
 			else if (key == "+t") {
 				Tflag = true;
-				throw (GREEN"Invite only mode has been Removed\n"RESET);
+				server.mysend(Client.fd, RPL_MODEIS(channel_name, std::string(server.client_ip), key));
 			}
 			// Change it back to normal
 			else if (key == "-t") {
 				Tflag = false;
-				throw (GREEN"Invite only mode has been Removed\n"RESET);
+				server.mysend(Client.fd, RPL_MODEIS(channel_name, std::string(server.client_ip), key));
 			}
 			return ;
 		}
 	}
-	throw (RED"You are not an admin\n"RESET);
+	server.mysend(Client.fd, ERR_NOTOP(std::string(server.client_ip), channel_name));
 }
