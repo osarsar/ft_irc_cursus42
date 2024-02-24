@@ -139,8 +139,3 @@ void Topic::go_to_topic(std::string data, SERVSOCKET &server, int fd)
         }
     }
 }
-
-// mode #general +o benito
-
-//--> HERE (Check is operator) pour toute action (ATTENTION)
-// HERE send for all client in this channel
