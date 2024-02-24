@@ -85,33 +85,39 @@ void	channel::execute_mode(std::string key, SERVSOCKET &server, client &Client, 
 				else {
 					max_clients = f_stoi(mode_pass);
 					flag = true;
-					server.mysend(Client.fd, RPL_MODEIS(channel_name, std::string(server.client_ip), key + " " + mode_pass));
+					server.mysend(Client.fd, RPL_MODEIS(channel_name, std::string(server.client_ip), key));
+					priv.msg_to_channel(server, RPL_MODEIS(channel_name, std::string(server.client_ip), key), channel_name, Client, true);
 				}
 			}
 			// Remove The Channel limit
 			else if (key == "-l") {
 				flag = false;
 				server.mysend(Client.fd, RPL_MODEIS(channel_name, std::string(server.client_ip), key));
+				priv.msg_to_channel(server, RPL_MODEIS(channel_name, std::string(server.client_ip), key), channel_name, Client, true);
 			}
 			// Make the Channel invite-only
 			else if (key == "+i") {
 				Iflag = true;
 				server.mysend(Client.fd, RPL_MODEIS(channel_name, std::string(server.client_ip), key));
+				priv.msg_to_channel(server, RPL_MODEIS(channel_name, std::string(server.client_ip), key), channel_name, Client, true);
 			}
 			// Remove the invite-only mode
 			else if (key == "-i") {
 				Iflag = false;
 				server.mysend(Client.fd, RPL_MODEIS(channel_name, std::string(server.client_ip), key));
+				priv.msg_to_channel(server, RPL_MODEIS(channel_name, std::string(server.client_ip), key), channel_name, Client, true);
 			}
 			// Remove the ability to user Topic command on regular users
 			else if (key == "+t") {
 				Tflag = true;
 				server.mysend(Client.fd, RPL_MODEIS(channel_name, std::string(server.client_ip), key));
+				priv.msg_to_channel(server, RPL_MODEIS(channel_name, std::string(server.client_ip), key), channel_name, Client, true);
 			}
 			// Change it back to normal
 			else if (key == "-t") {
 				Tflag = false;
 				server.mysend(Client.fd, RPL_MODEIS(channel_name, std::string(server.client_ip), key));
+				priv.msg_to_channel(server, RPL_MODEIS(channel_name, std::string(server.client_ip), key), channel_name, Client, true);
 			}
 			return ;
 		}

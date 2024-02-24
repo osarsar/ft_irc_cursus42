@@ -77,7 +77,6 @@ void	privmsg::msg_to_channel(SERVSOCKET &server, std::string message, std::strin
 	unsigned long i = 0;
 	if (!flag)
 		message = ":" + Client.nickname + "!" + Client.username + "@" + server.client_ip + " PRIVMSG " + receiver + " " + message;
-	std::cout << message;
 	for (iti = fds_vector.begin(); i++ < fds_vector.size() && iti != fds_vector.end(); iti++) {
 			if (*iti != Client.fd)
 				send(*iti, message.c_str(), message.length(), 0);
