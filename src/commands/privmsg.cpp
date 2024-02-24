@@ -86,12 +86,6 @@ void	privmsg::msg_to_channel(SERVSOCKET &server, std::string message, std::strin
 }
 
 void	privmsg::msg_to_client(int fd, std::string message, std::string receiver, client &Client, SERVSOCKET &server) {
-	std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-    std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
-    std::string timeString = std::ctime(&currentTime);
-    timeString.pop_back();
 	message = ":" + Client.nickname + "!" + Client.username + "@" + server.client_ip + " PRIVMSG " + receiver + " " + message;
 	send(fd, message.c_str(), message.length(), 0);
-	std::ofstream file("./logs/logs.spyware", std::ios::app);
-	file << timeString << " [" << Client.nickname << "] sent"<<" to [" << receiver << "] ~~ " << message;
 }
