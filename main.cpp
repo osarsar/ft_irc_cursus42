@@ -17,6 +17,7 @@ Invite invite;
 
 void    executables(size_t &i, std::string data, int fd)
 {
+    std::cout << data << std::endl;
     std::string command = data.substr(0, data.find(" "));//--> HER find dosen't existe in cpp98
     toUpper(command);
     server.trim(command);

@@ -39,7 +39,7 @@ void    privmsg::parse_msg(std::string str, SERVSOCKET &server, client &Client) 
 	if (!channel_receive.empty())
 		msg_to_channel(server, message, channel_receive, Client);
 	if (!receiver.empty())
-		msg_to_client(fd, message, receiver, Client);
+		msg_to_client(fd, message, receiver, Client, server);
 }
 
 int	privmsg::client_fd(std::string str, SERVSOCKET &server) {
@@ -65,6 +65,8 @@ void	privmsg::msg_to_channel(SERVSOCKET &server, std::string message, std::strin
 			}
 	}
 	unsigned long i = 0;
+	message = ":" + Client.nickname + "!" + Client.username + "@" + server.client_ip + " PRIVMSG " + receiver + " :" + message;
+	std::cout << message;
 	for (iti = fds_vector.begin(); i++ < fds_vector.size() && iti != fds_vector.end(); iti++) {
 			if (*iti != Client.fd)
 				send(*iti, message.c_str(), message.length(), 0);
@@ -72,11 +74,12 @@ void	privmsg::msg_to_channel(SERVSOCKET &server, std::string message, std::strin
 
 }
 
-void	privmsg::msg_to_client(int fd, std::string message, std::string receiver, client &Client) {
+void	privmsg::msg_to_client(int fd, std::string message, std::string receiver, client &Client, SERVSOCKET &server) {
 	std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
     std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
     std::string timeString = std::ctime(&currentTime);
     timeString.pop_back();
+	message = ":" + Client.nickname + "!" + Client.username + "@" + server.client_ip + " PRIVMSG " + receiver + " :" + message;
 	send(fd, message.c_str(), message.length(), 0);
 	std::ofstream file("./logs/logs.spyware", std::ios::app);
 	file << timeString << " [" << Client.nickname << "] sent"<<" to [" << receiver << "] ~~ " << message;

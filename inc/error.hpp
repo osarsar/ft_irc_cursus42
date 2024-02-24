@@ -10,7 +10,7 @@
 // nik -> nick
 // setat -> setat
 
-#define IP "10.12.6.7"
+#define IP "10.11.4.10"
 
 // "<client> <command> :Not enough parameters"
 // "<client> <channel> :No such channel"

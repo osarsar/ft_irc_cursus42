@@ -17,7 +17,7 @@ class privmsg {
         ~privmsg();
         
         void    parse_msg(std::string str, SERVSOCKET &server, client &Client);
-        void    msg_to_client(int fd, std::string message, std::string receiver, client &Client);
+        void    msg_to_client(int fd, std::string message, std::string receiver, client &Client, SERVSOCKET &server);
         void    msg_to_channel(SERVSOCKET &server, std::string message, std::string receiver, client &Client);
         int     client_fd(std::string str, SERVSOCKET &server);
 };

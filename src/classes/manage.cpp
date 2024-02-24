@@ -9,6 +9,7 @@ manage::~manage() {
 
 bool manage::give_privilege(std::string clientName, std::string name, bool flag) {
 	std::map<std::string, channel>::iterator it = Server.channel_map.find(name);
+
 	if (it != Server.channel_map.end()) {
 		for (size_t index = 0; index < Server.database.size(); index++) {
 			if (Server.database[index].nickname == clientName) {
@@ -51,13 +52,13 @@ void  manage::addChannel(const std::string &name, client &client, std::string pa
 }
 
 void manage::addClientoChannel(const std::string &name, client &newClient) {
-	bool flag = false;
     channel& channel = Server.channel_map[name];
-    
+
     channel.client_list.push_back(newClient);
- 
+
     std::string namesReply;
     for (size_t i = 0; i < channel.client_list.size(); ++i) {
+		bool flag = false;
         if (i != 0) {
             namesReply += " ";
         }
@@ -65,10 +66,8 @@ void manage::addClientoChannel(const std::string &name, client &newClient) {
 			if (channel.client_list[i].adminOf[k] == name)
 				flag = true;
 		}
-		if (flag) {
+		if (flag)
    	    	namesReply += "@" + channel.client_list[i].nickname;
-			flag = false;
-		}
         else 
 			namesReply += channel.client_list[i].nickname;
     } 
