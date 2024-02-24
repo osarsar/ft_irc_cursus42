@@ -47,7 +47,7 @@ void    privmsg::parse_msg(std::string str, SERVSOCKET &server, client &Client) 
 	if (it == server.database.end() && channel_receive.empty())
 		server.mysend(Client.fd, ERR_NOSUCHNICK(std::string(server.client_ip), channel_receive, receiver));
 	if (!channel_receive.empty())
-		msg_to_channel(server, message, channel_receive, Client);
+		msg_to_channel(server, message, channel_receive, Client, false);
 	if (!receiver.empty())
 		msg_to_client(fd, message, receiver, Client, server);
 }
@@ -61,7 +61,7 @@ int	privmsg::client_fd(std::string str, SERVSOCKET &server) {
 	return (0);
 }
 
-void	privmsg::msg_to_channel(SERVSOCKET &server, std::string message, std::string receiver, client &Client)
+void	privmsg::msg_to_channel(SERVSOCKET &server, std::string message, std::string receiver, client &Client, bool flag)
 {
 	std::vector<int> fds_vector;
 	std::vector<client>::iterator vec_it;
@@ -75,7 +75,8 @@ void	privmsg::msg_to_channel(SERVSOCKET &server, std::string message, std::strin
 			}
 	}
 	unsigned long i = 0;
-	message = ":" + Client.nickname + "!" + Client.username + "@" + server.client_ip + " PRIVMSG " + receiver + " " + message;
+	if (!flag)
+		message = ":" + Client.nickname + "!" + Client.username + "@" + server.client_ip + " PRIVMSG " + receiver + " " + message;
 	std::cout << message;
 	for (iti = fds_vector.begin(); i++ < fds_vector.size() && iti != fds_vector.end(); iti++) {
 			if (*iti != Client.fd)
