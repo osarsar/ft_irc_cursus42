@@ -74,7 +74,7 @@ void	channel::execute_mode(std::string key, SERVSOCKET &server, client &Client, 
 				manage manage(server);
 				if (!manage.give_privilege(mode_pass, channel_name, true))
 					server.mysend(Client.fd, ERR_MODEUSERNOTINCHANNEL(std::string(server.client_ip), channel_name));
-				server.mysend(Client.fd, RPL_MODEIS(channel_name, std::string(server.client_ip), key + " " + mode_pass));
+				server.mysend(Client.fd, RPL_MODEIS(channel_name, std::string(server.client_ip), key + " " + mode_pass)); // broadcast this message to everyone in the channel(for limechat) ;)
 			}
 			// Mode to Limit Channel users
 			else if (key == "+l") {
