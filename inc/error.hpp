@@ -10,7 +10,7 @@
 // nik -> nick
 // setat -> setat
 
-#define IP "10.12.6.7"
+#define IP "10.13.1.7"
 
 // "<client> <command> :Not enough parameters"
 // "<client> <channel> :No such channel"
@@ -55,6 +55,7 @@
 #define ERR_ALREADYREGISTRED(cid)						                    ":1337.Temsa.ma 462 " + std::string(cid) + " :Unauthorized command (already registered)\r\t\n"
 #define	ERR_UNKNOWNCOMMAND(cid, cmd)						                ":1337.Temsa.ma 421 " + std::string(cid) + " " + std::string(cmd) + " :Unknown command\r\t\n" 
 #define	ERR_NICKNAMEINUSE(cid, nick)						                ":1337.Temsa.ma 433 " + std::string(cid) + " " + std::string(nick) + " :Nickname is already in use\r\t\n"
+#define	RPL_UPPER(str)						                                ":1337.Temsa.ma 433 " + std::string(str) + "\r\t\n"
 //>>>>>>>> JOIN --------------------------------------------------------->>>>>>>>>>>>>>>>>>
 # define RPL_JOIN(nick, username, channelname, ipaddress)                   ":" + nick + "!~" + username + "@" + ipaddress + " JOIN " + channelname + "\r\n"
 # define RPL_NAMREPLY(hostname, clients, channelname,nick)                  ":" + hostname + " 353 " + nick + " = " + channelname + " :" + clients + "\r\n"
@@ -63,7 +64,7 @@
 # define ERR_NOSUCHNICK(hostname, channel, argument)                        ":" + hostname + " 401 " + channel + " " +  argument + " :No such nick/channel\r\n"
 # define ERR_CHANNELISFULL(nick, hostname)                                  ":" + hostname + " 471 " + channelName + " :Cannot join channel (+l)\r\n"
 # define ERR_INVITEONLY(nick, hostname)                                     ":" + hostname + " 473 " + channelName + " :Cannot join channel (+i)\r\n"
-# define ERR_JOINPASSWDMISMATCH(nick, hostname)	                        ":" + hostname + " 464 " + nick + " :Password incorrect !\r\n"
+# define ERR_JOINPASSWDMISMATCH(nick, hostname)	                            ":" + hostname + " 464 " + nick + " :Password incorrect !\r\n"
 # define ERR_MODENOSUCHCHANNEL(hostname, channel, nick)                         ":" + hostname + " 403 " + nick + " " + channel + " :No such channel\r\n"
 # define ERR_MODEUSERNOTINCHANNEL(hostname, channel)                            ":" + hostname + " 441 " + channel + " "  + ":they aren't on that channel\r\n"
 # define ERR_INVALIDMODEPARAM(channel, hostname, flag)                      ":" + hostname +  " 696 " + channel + " " + flag + " * you must specifiy a parameter for the op mode\r\n"

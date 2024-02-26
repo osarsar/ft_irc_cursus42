@@ -213,7 +213,6 @@ std::vector<int> POLLFD::getFds() const {
 void SERVSOCKET::registration(int client_fd, client &client, std::string data, SERVSOCKET server)
 {
     std::string str;
-    
     std::vector<std::string> commands = my_split(data, ' ', server);
     if (commands.size() < 1)
         return;
@@ -262,6 +261,7 @@ void SERVSOCKET::registration(int client_fd, client &client, std::string data, S
             return;
         }
         client.pass_bool = true;
+        client.time = clock();
     }
     
 }
@@ -395,6 +395,33 @@ void SERVSOCKET::username(int client_fd, client &client, std::string data, SERVS
             mysend(client.fd, RPL_MYINFO(std::to_string(client.fd), "IRC_SERVER", "last_version", "avmode", "cmode", "modepara"));
         }
     }
+}
+
+void SERVSOCKET::upper(int client_fd, std::string data, SERVSOCKET server)
+{
+    std::string str;
+    std::vector<std::string> commands = my_split(data, ' ', server);
+    if (commands.size() < 1)
+        return;
+
+    toUpper(commands[0]);
+    trim(commands[0]);
+
+    if (commands[0] != "UPPER")
+        return;
+
+    if (commands.size() == 1)
+        commands = my_split(commands[0], '\t', server);
+
+    if (commands.size() > 2)
+    {
+        server.mysend(client_fd, ERR_NEEDMOREPARAMS(std::to_string(client_fd), "UPPER"));
+        return ;
+    }
+    trim(commands[1]);
+    toUpper(commands[1]);
+    if (commands[0] == "UPPER")
+        mysend(client_fd, RPL_UPPER(commands[1]));
 }
 
 void SERVSOCKET::push()

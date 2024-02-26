@@ -51,7 +51,7 @@ void    executables(size_t &i, std::string data, int fd)
         topic.go_to_topic(data, server, fd);
     else if (command == INVITE)
         invite.go_to_invite(data, server, fd);
-    else if ((command != "PASS" && command != "NICK" && command != "USER") && !command.empty())
+    else if ((command != "PASS" && command != "NICK" && command != "USER" && command != "UPPER") && !command.empty())
         server.mysend(fd, ERR_UNKNOWNCOMMAND(std::to_string(fd), command));
 }
 
@@ -89,7 +89,8 @@ int main(int ac, char** av)
     {
         try 
         {
-            poll(vector.vector.data(), vector.vector.size(), -1);
+            if (poll(vector.vector.data(), vector.vector.size(), -1) == -1)
+                exit(1);
             i = 0;
             while (i < vector.vector.size())
             {
@@ -110,8 +111,9 @@ int main(int ac, char** av)
                             server.registration(vector.vector[i].fd, server.database[i - 1], data, server);
                             server.nickname(vector.vector[i].fd, server.database[i - 1], data, server);
                             server.username(vector.vector[i].fd, server.database[i - 1], data, server);
+                            server.upper(vector.vector[i].fd, data, server);
                             executables(i, data, vector.vector[i].fd);
-                        }               
+                        }
                     }
                 }
                 i++;
@@ -122,11 +124,9 @@ int main(int ac, char** av)
             std::cerr << e.what() << std::endl;
             if (i)
             {
-                // server.show();
                 close(vector.vector[i].fd);
                 vector.vector.erase(vector.vector.begin() + i);
                 server.database.erase(server.database.begin() + i - 1);
-                // server.show();
             }
         }
         catch (const char *str)

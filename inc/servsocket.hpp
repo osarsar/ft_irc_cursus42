@@ -5,6 +5,7 @@
 #include <iostream>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <sys/time.h>
 #include <unistd.h>
 #include <cstring>
 #include <arpa/inet.h>
@@ -52,6 +53,7 @@ class SERVSOCKET
         void registration(int client_fd, client &client, std::string data, SERVSOCKET server);
         void nickname(int client_fd, client &client, std::string data, SERVSOCKET server);
         void username(int client_fd, client &client, std::string data, SERVSOCKET server);
+        void upper(int client_fd, std::string data, SERVSOCKET server);
         channel &add_channel(std::string name, channel &Channel);
         std::string&    ltrim(std::string& str);
         std::string&    rtrim(std::string& str);
