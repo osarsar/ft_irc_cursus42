@@ -18,6 +18,9 @@
 #define Smode "mode"
 #define Spass "pass"
 
+#define PART "PART"
+#define SPART "part"
+
 #define BLUE      "\x1b[34m"
 #define ORANGE    "\x1b[33m"
 #define RESET     "\x1b[0m"
@@ -53,6 +56,7 @@ class channel
 		bool	get_bool();
 		void	join(std::string Name, std::string Password, client &Client, SERVSOCKET &server);
 		void	mode(std::string str, SERVSOCKET &server, client &Client);
+		void	part(std::string Name, client &Client, SERVSOCKET &server);
 		void	execute_mode(std::string key, SERVSOCKET &server, client &Client, std::string channel_name, std::string channel_pass);
 		bool	join_password(std::string password, client &Client, SERVSOCKET &server);
 		int		fill(std::string str);

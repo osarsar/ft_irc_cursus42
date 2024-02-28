@@ -45,6 +45,8 @@ void    executables(size_t &i, std::string data, int fd)
         Channel.mode(data, server, server.database[i - 1]);
     else if (command == LPRIVMSG && server.database[i - 1].registration_check)
         Privmsg.parse_msg(data, server, server.database[i - 1]);
+    else if (command == PART)
+        Channel.part(data, server.database[i - 1], server);
     else if (command == KICK)
         kick.go_to_kick(data, server, fd);
     else if (command == TOPIC)

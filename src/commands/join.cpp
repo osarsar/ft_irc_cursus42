@@ -83,6 +83,52 @@ void channel::join(std::string Name, std::string Password, client &Client, SERVS
 	manage.addClientoChannel(channelName, Client);
 }
 
+void channel::part(std::string str, client &Client, SERVSOCKET &server)
+{
+	privmsg obj;
+	char *p;
+	std::string nameofchannel;
+	std::string message;
+	if (str.substr(0, std::string(PART).length()) == PART)
+		str.erase(0, std::string(PART).length() + 1);
+	else if (str.substr(0, std::string(SPART).length()) == SPART)
+		str.erase(0, std::string(SPART).length() + 1);
+	p = std::strtok(const_cast<char *>(str.c_str()), ", \t\r\n");
+	while (p != NULL)
+	{	
+		if (p[0] == CHANNEL && nameofchannel.empty())
+			nameofchannel = p;
+		else if (p[0] != CHANNEL) {
+  			if (!message.empty())
+                message += " ";
+            message += p;
+		}
+		p = std::strtok(NULL, ", \t\r\n");
+	}
+	message += '\n';
+	std::map<std::string, channel>::iterator it = server.channel_map.find(nameofchannel);
+	if (it != server.channel_map.end())
+	{
+		for (std::vector<client>::iterator cli = it->second.client_list.begin(); cli != it->second.client_list.end(); cli++) {
+			if (cli->nickname == Client.nickname)
+			{
+				it->second.client_list.erase(cli);
+				std::vector<std::string>::iterator adminIt = std::find(Client.adminOf.begin(), Client.adminOf.end(), it->first);
+                if (adminIt != Client.adminOf.end())
+                    Client.adminOf.erase(adminIt);
+				std::string tosend = ":" + Client.nickname + "!" + Client.username + "@" + server.client_ip + " PART " + it->first + " " + message;
+				send(Client.fd, tosend.c_str(), tosend.length(), 0);
+                obj.msg_to_channel(server, tosend, it->first, Client, true); 
+				break ;
+			}
+			else
+                server.mysend(Client.fd, ERR_MODEUSERNOTINCHANNEL(std::string(server.client_ip), it->first));
+		}
+	}
+	else
+    	server.mysend(Client.fd, ERR_MODENOSUCHCHANNEL(std::string(server.client_ip), channelName, Client.nickname));
+}
+
 bool channel::join_password(std::string password, client &Client, SERVSOCKET &server)
 {
 	adminMap[Client.nickname] = false;
