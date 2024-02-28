@@ -15,21 +15,13 @@ bool manage::give_privilege(std::string clientName, std::string name, bool flag)
 			if (Server.database[index].nickname == clientName) {
 				for (size_t i = 0; i < it->second.client_list.size(); i++) {
 					if (it->second.client_list[i].nickname == clientName && !flag) {
-						for (size_t k = 0; k < Server.database[index].adminOf.size(); k++) {
-							if (Server.database[index].adminOf[k] == name)
-								std::cout << "Client " << clientName << " already an admin" << RESET << std::endl;
-						}
 						Server.database[index].adminOf.push_back(name);
-						std::cout << BLUE << "Hey Wake up, " << clientName << " You have been granted the Admin status" << RESET << std::endl;
 						return true;
 					}
 					else if (flag) {
 						for (size_t j = 0; j < Server.database[index].adminOf.size(); j++) {
-							if (Server.database[index].adminOf[j] != name)
-								std::cout << RED << "Client " << clientName << " already lost his privileges" << RESET << std::endl;
 							if (Server.database[index].adminOf[j] == name) {
 								Server.database[index].adminOf[j].erase();
-								std::cout << RED << "It is with great sorrow to inform " << clientName << " that your admin privileges has been lost" << RESET << std::endl;
 								return true;
 							}
 						}

@@ -81,7 +81,7 @@ void	channel::execute_mode(std::string key, SERVSOCKET &server, client &Client, 
 			// Mode to Limit Channel users
 			else if (key == "+l") {
 				if (f_stoi(mode_pass) < (int)it->second.client_list.size())
-					throw (RED"Can't limit channel with current value\n"RESET);
+					throw ("Can't limit channel with current value\n");
 				else {
 					max_clients = f_stoi(mode_pass);
 					flag = true;
