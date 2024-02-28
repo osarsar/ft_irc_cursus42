@@ -96,7 +96,7 @@ int main(int ac, char** av)
             {
                 if (vector.vector[i].revents & POLLIN)
                 {
-                    pf (vector.vector[i].fd == server_fd)
+                    if (vector.vector[i].fd == server_fd)
                     {
                         client_fd = server.myaccept();
                         vector.push(client_fd, POLLIN, 0);
