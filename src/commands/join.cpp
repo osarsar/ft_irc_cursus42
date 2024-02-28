@@ -18,9 +18,9 @@ int f_stoi(std::string numb)
 	std::stringstream var(numb);
 	for (int i = 0; (size_t)i < numb.length(); i++)
 		if (isdigit(numb[i]) == 0)
-			throw (RED"Error: is Not number\n"RESET);
+			throw ("Error: is Not number\n");
 	if (!(var >> ret))
-		throw (RED"Error: Overflow\n"RESET);
+		throw ("Error: Overflow\n");
 	return ret;
 }
 
