@@ -228,12 +228,12 @@ void SERVSOCKET::registration(int client_fd, client &client, std::string data, S
 
     if (commands.size() < 2)
     {
-        server.mysend(client_fd, ERR_NEEDMOREPARAMS(std::to_string(client_fd), "PASS"));//-> HERE
+        server.mysend(client_fd, ERR_NEEDMOREPARAMS(std::to_string(client_fd), "PASS", IP));//-> HERE
         return ;
     }
     if (commands.size() > 2)
     {
-        server.mysend(client_fd, ERR_NEEDMOREPARAMS(std::to_string(client_fd), "PASS"));
+        server.mysend(client_fd, ERR_NEEDMOREPARAMS(std::to_string(client_fd), "PASS", IP));
         return ;
     }
     trim(commands[1]);
@@ -283,12 +283,12 @@ void SERVSOCKET::nickname(int client_fd, client &client, std::string data, SERVS
 
     if (commands.size() < 2)
     {
-        mysend(client_fd, ERR_NEEDMOREPARAMS(std::to_string(client_fd), "NICK"));
+        mysend(client_fd, ERR_NEEDMOREPARAMS(std::to_string(client_fd), "NICK", IP));
         return ;
     }
     if (commands.size() > 2)
     {
-        mysend(client_fd, ERR_NEEDMOREPARAMS(std::to_string(client_fd), "NICK"));
+        mysend(client_fd, ERR_NEEDMOREPARAMS(std::to_string(client_fd), "NICK", IP));
         return ;
     }
 
@@ -353,12 +353,12 @@ void SERVSOCKET::username(int client_fd, client &client, std::string data, SERVS
 
     if (commands.size() < 5)
     {
-        mysend(client_fd, ERR_NEEDMOREPARAMS(std::to_string(client_fd), "USER"));
+        mysend(client_fd, ERR_NEEDMOREPARAMS(std::to_string(client_fd), "USER", IP));
         return ;
     }
     if (commands.size() > 5)
     {
-        mysend(client_fd, ERR_NEEDMOREPARAMS(std::to_string(client_fd), "USER"));
+        mysend(client_fd, ERR_NEEDMOREPARAMS(std::to_string(client_fd), "USER", IP));
         return ;
     }
     
@@ -415,7 +415,7 @@ void SERVSOCKET::upper(int client_fd, std::string data, SERVSOCKET server)
 
     if (commands.size() > 2)
     {
-        server.mysend(client_fd, ERR_NEEDMOREPARAMS(std::to_string(client_fd), "UPPER"));
+        server.mysend(client_fd, ERR_NEEDMOREPARAMS(std::to_string(client_fd), "UPPER", IP));
         return ;
     }
     trim(commands[1]);

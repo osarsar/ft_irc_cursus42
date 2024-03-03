@@ -1,0 +1,8 @@
+
+
+Invite :
+    return &(iter_chnl->second);
+    // HERE send for all client in this channel
+
+Topic :
+    // HERE send for all client in this channel

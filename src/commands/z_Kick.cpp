@@ -11,6 +11,23 @@ void toUpper(std::string& str)
     }
 }
 
+std::vector<std::string> get_client_kick(std::string &client_nick, SERVSOCKET &server)
+{
+    std::vector<std::string> list_client_kick = my_split(client_nick, ',', server);
+    return (list_client_kick);
+}
+
+int kill_him_or_no(std::string &iter_clt_nickname, std::vector<std::string> &list_client_kick)
+{
+    std::vector<std::string>::iterator it;
+    for (it = list_client_kick.begin(); it != list_client_kick.end(); it++)
+    {
+        if (*it == iter_clt_nickname)
+            return 1;        
+    }
+    return 0;
+}
+
 void 	Kick::go_to_kick(std::string data, SERVSOCKET &server, int fd)
 {
     client *host;
@@ -19,25 +36,31 @@ void 	Kick::go_to_kick(std::string data, SERVSOCKET &server, int fd)
     std::string host_ni = host->nickname;
     std::string host_us = host->username;
 
+    std::vector<std::string> commands0 = my_split(data, ' ', server);
+    if ((commands0.size() <= 3) && commands0[commands0.size() - 1] == ":")
+    {
+        data.erase(data.size() - 1);
+        server.trim(data);
+    }
+
     std::vector<std::string> commands = my_split(data, ' ', server);
     if (commands.size() < 3)
     {
-        server.mysend(fd, ERR_NEEDMOREPARAMS(host_ni, "KICK"));
+        server.mysend(fd, ERR_NEEDMOREPARAMS(host_ni, "KICK", IP));
         return ;
     }
-    
+
     size_t	pos1;
     size_t	pos2;
     std::string channel_name;
-    std::string message;
+    std::string message = "";
     std::string client_nick;
-
+    std::vector<std::string> list_client_kick;
 
     if ((pos1 = data.find(":")) != std::string::npos)
     {
         message = data.substr(pos1 + 1);
         message = server.trim(message);
-        // std::cout << "message:" << message << ".\n";
 	}
 
     if ((pos2 = data.find(" ")) != std::string::npos)
@@ -47,60 +70,54 @@ void 	Kick::go_to_kick(std::string data, SERVSOCKET &server, int fd)
         channel_name = channel_name.substr(0, channel_name.find(" "));
         if (channel_name[0] != '#' && channel_name[0] != '&')
         {
-            server.mysend(fd, ERR_BADCHANMASK(channel_name));
+            server.mysend(fd, ERR_BADCHANMASK(channel_name, IP));
             return ;
         }
         channel_name = server.trim(channel_name);
         client_nick = server.trim(client_nick);
-        // std::cout << "channel_name:" << channel_name << ".\n";
-        // std::cout << "client_nick:" << client_nick << ".\n";
 	}
     else
     {
-        server.mysend(fd, ERR_NEEDMOREPARAMS(host_ni, "KICK"));
+        server.mysend(fd, ERR_NEEDMOREPARAMS(host_ni, "KICK", IP));
         return ;
     }
+    
+    list_client_kick = get_client_kick(client_nick, server);
 
     if (check_client_in_channel(*host, server, channel_name) == 0)
     {
-        server.mysend(fd, ERR_NOTONCHANNEL(host_ni, channel_name));
+        server.mysend(fd, ERR_NOTONCHANNEL(host_ni, channel_name, IP));
+        return;
+    }
+
+    if (!isInAdminOf(channel_name, host->adminOf))
+    {
+        server.mysend(fd, ERR_CHANOPRIVSNEEDED(host_ni, channel_name, IP));
         return;
     }
 
 	std::map <std::string, channel>::iterator iter_chnl;
     std::vector<client>::iterator iter_clt;
-    
+    std::vector<int> vect_fd;
 
     if (!channel_name.empty())
 	{
-        int check = 0;
-        // std::cout << "1-->>\n";
-
 		for (iter_chnl = server.channel_map.begin(); iter_chnl != server.channel_map.end(); iter_chnl++)
         {
 			if (iter_chnl->first == channel_name)
             {
-                // std::cout << "Channel Existe\n";
-                check = 1;
                 int i = 0;
+                int check = 0;
                 for (iter_clt = iter_chnl->second.client_list.begin(); iter_clt != iter_chnl->second.client_list.end();iter_clt++)
                 {
-                    if (iter_clt->nickname == client_nick)
+                    vect_fd.push_back(iter_clt->fd);
+                    if (kill_him_or_no(iter_clt->nickname, list_client_kick) == 1)
                     {
-                        // std::cout << "i-> " << i << ". Client Existe\n";
-                        check = 2;
-                        std::string cause;
-                        if (message.empty()) {
-                            cause = "You are Kicked.\n";
-                        }
-                        else
-                            cause = "You are Kicked because: " + message + "\n";
-                        
-                        std::vector<std::string>::iterator invtd_usrs2;
                         int j = 0;
+                        check = 1;
+                        std::vector<std::string>::iterator invtd_usrs2;
                         for (invtd_usrs2 = iter_chnl->second.invited_users.begin(); invtd_usrs2 != iter_chnl->second.invited_users.end(); invtd_usrs2++)
                         {
-                            std::cout << "1 ->." << *invtd_usrs2 << ".\n";
                             if (*invtd_usrs2 == client_nick)
                             {
                                 iter_chnl->second.invited_users.erase(iter_chnl->second.invited_users.begin() + j);
@@ -108,33 +125,27 @@ void 	Kick::go_to_kick(std::string data, SERVSOCKET &server, int fd)
                             }
                             j++;
                         }
-
-                        iter_chnl->second.client_list.erase(iter_chnl->second.client_list.begin() + i);
-
-                        iter_chnl->second.kicked_users.push_back(client_nick);
-                        // --> HERE kick from all inv, oper, normal ; + kik
-                        break;
+                        iter_chnl->second.kicked_users.push_back(iter_clt->nickname);
+                        iter_clt = iter_chnl->second.client_list.erase(iter_clt);
+                        --iter_clt;
 				    }
                     i++;
 				}
-                break;
+                if (check == 1)
+                {
+                    std::vector<int>::iterator iti_fd;
+                    for (iti_fd = vect_fd.begin(); iti_fd != vect_fd.end(); iti_fd++)
+                    {
+                        server.mysend(*iti_fd, RPL_KICK(host_ni, host_us, IP, channel_name, client_nick, message));
+                    }
+                    server.mysend(fd, RPL_KICK(host_ni, host_us, IP, channel_name, client_nick, message));
+                    return;
+                }
+                server.mysend(fd, ERR_NOSUCHNICK(host_ni, channel_name, client_nick));
+                return;
             }
 		}
-        // if (check == 0)
-        // {
-        //     server.mysend(fd, ERR_NOSUCHCHANNEL(host_ni, channel_name));
-        //     return;
-        // }
-        // else if (check == 1)
-        // {
-        //     server.mysend(fd, ERR_NOSUCHNICK(host_ni, client_nick));
-        //     // std::cout << "No such nick/channel\n";
-        //     return;
-        // }
+        server.mysend(fd, ERR_NOSUCHCHANNEL(host_ni, channel_name, IP));
+        return;
 	}
-
-    server.mysend(fd, RPL_KICK(host_ni, host_us, IP, iter_clt->nickname, channel_name));
-
-    server.mysend(iter_clt->fd, RPL_KICK(host_ni, host_us, IP, iter_clt->nickname, channel_name));
 }
-// kick from all inv, oper, normal ; + kik

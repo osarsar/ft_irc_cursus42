@@ -6,6 +6,9 @@
 #include "./inc/topic.hpp"
 #include "./inc/invite.hpp"
 
+// join | creat a channel
+
+// privmsg #sdf SDFf | check if existe
 
 client Client;
 privmsg Privmsg;
@@ -17,15 +20,17 @@ Invite invite;
 
 void    executables(size_t &i, std::string data, int fd)
 {
+    server.trim(data); // Added by temsa (test: "    join")
     std::string command = data.substr(0, data.find(" "));//--> HER find dosen't existe in cpp98
     toUpper(command);
     server.trim(command);
     Channel.NameVec.clear();
     Channel.PassVec.clear();
+
     if (!server.database[i - 1].registration_check && (command == KICK || command == TOPIC || command == INVITE ||\
         command == JOIN || command == PRIVMSG || command == MODE))
     {
-        server.mysend(fd, ERR_NOTREGISTERED(std::to_string(fd)));//->HERE
+        server.mysend(fd, ERR_NOTREGISTERED(std::to_string(fd), IP));//->HERE
         throw(RED "Khasek lwra9 a m3alem sir tal gheda oji\n" RESET);
     }
     else if (command == JOIN && server.database[i - 1].registration_check)
