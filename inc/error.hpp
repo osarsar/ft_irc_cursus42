@@ -10,7 +10,7 @@
 // nik -> nick
 // setat -> setat
 
-#define IP "127.0.0.1"
+#define IP "10.12.6.9"
 
 // "<client> <command> :Not enough parameters"
 // "<client> <channel> :No such channel"
@@ -46,16 +46,17 @@
 #define RPL_ENDOFINVITELIST(nik)                    std::string(nik) + " :End of /INVITE list"
 
 //-----------ADDED------------------//
-#define ERR_NICKCOLLISION(nick, cmd)                                        ":1337.Temsa.ma 436 " + std::string(nick) + " " + std::string(cmd) + " :Nickname collision KILL\r\t\n"
-#define RPL_WELCOME(cid, name, nick, user, host)                            ":1337.Temsa.ma 001 " + std::string(nick) + " :Welcome to the " + name + " Network, " + std::string(nick) + "!" + std::string(user) + "@" + std::string(host) + "\r\t\n"
-#define	RPL_YOURHOST(cid, servername, version)		                        ":1337.Temsa.ma 002 " + std::string(cid) + " :Your host is " + std::string(servername) + ", running version " + std::string(version) + "\r\t\n"
-#define	RPL_CREATED(cid, date)						                        ":1337.Temsa.ma 003 " + std::string(cid) + " :This server was created " + std::string(date) + "\r\t\n"
-#define RPL_MYINFO(cid, username, version, avmode, cmode, modepara)         ":1337.Temsa.ma 004 " + std::string(cid) + " " + std::string(username) + " " + std::string(version) + " " + std::string(avmode) + " " + std::string(cmode) + " [" + std::string(modepara) + "]\r\t\n"
-#define ERR_PASSWDMISMATCH(cid)						                        ":1337.Temsa.ma 464 " + std::string(cid) + " :Password incorrect\r\t\n"
-#define ERR_ALREADYREGISTRED(cid)						                    ":1337.Temsa.ma 462 " + std::string(cid) + " :Unauthorized command (already registered)\r\t\n"
-#define	ERR_UNKNOWNCOMMAND(cid, cmd)						                ":1337.Temsa.ma 421 " + std::string(cid) + " " + std::string(cmd) + " :Unknown command\r\t\n" 
-#define	ERR_NICKNAMEINUSE(cid, nick)						                ":1337.Temsa.ma 433 " + std::string(cid) + " " + std::string(nick) + " :Nickname is already in use\r\t\n"
-#define	RPL_UPPER(str)						                                ":1337.Temsa.ma 433 " + std::string(str) + "\r\t\n"
+#define ERR_NICKCOLLISION(hostname, nick, cmd)                                        ":" + std::string(hostname) + " 436 " + std::string(nick) + " " + std::string(cmd) + " :Nickname collision KILL\r\t\n"
+#define RPL_WELCOME(nick, hostname)                                         ":" + std::string(hostname) + " 001 " + nick + " :Welcome " + nick + " to the ft_irc network !\r\n"
+#define RPL_YOURHOST(nick, hostname)                                        ":" + std::string(hostname) + " 002 " + nick + " :Your host is " + std::string(hostname) + " running version 1.0 !\r\n"
+#define RPL_CREATED(nick, hostname)                                         ":" + std::string(hostname) + " 003 " + nick + " :This server was created 2024-03-02 !\r\n"
+#define RPL_MYINFO(nick, hostname)                                          ":" + std::string(hostname) + " 004 " + nick + " :Host: " + std::string(hostname) + ", Version: 1.0, User mode: none, Channel modes: o, t, k, i !\r\n"
+
+#define ERR_PASSWDMISMATCH(hostname, cid)						                        ":" + std::string(hostname) + " 464 " + std::string(cid) + " :Password incorrect\r\t\n"
+#define ERR_ALREADYREGISTRED(hostname, cid)						                    ":" + std::string(hostname) + " 462 " + std::string(cid) + " :Unauthorized command (already registered)\r\t\n"
+#define	ERR_UNKNOWNCOMMAND(hostname, cid, cmd)						                ":" + std::string(hostname) + " 421 " + std::string(cid) + " " + std::string(cmd) + " :Unknown command\r\t\n" 
+#define	ERR_NICKNAMEINUSE(hostname, cid, nick)						                ":" + std::string(hostname) + " 433 " + std::string(cid) + " " + std::string(nick) + " :Nickname is already in use\r\t\n"
+# define ERR_BOT(hostname, nick)                                                    ":" + hostname + " 450 " + nick + "enter [BOT generate] to generate a joke" + "\r\n"
 //>>>>>>>> JOIN --------------------------------------------------------->>>>>>>>>>>>>>>>>>
 # define RPL_JOIN(nick, username, channelname, ipaddress)                   ":" + nick + "!~" + username + "@" + ipaddress + " JOIN " + channelname + "\r\n"
 # define RPL_NAMREPLY(hostname, clients, channelname,nick)                  ":" + hostname + " 353 " + nick + " = " + channelname + " :" + clients + "\r\n"

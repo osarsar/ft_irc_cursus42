@@ -59,7 +59,7 @@ void    executables(size_t &i, std::string data, int fd)
     else if (command == INVITE)
         invite.go_to_invite(data, server, fd);
     else if ((command != "PASS" && command != "NICK" && command != "USER" && command != "UPPER") && !command.empty())
-        server.mysend(fd, ERR_UNKNOWNCOMMAND(std::to_string(fd), command));
+        server.mysend(fd, ERR_UNKNOWNCOMMAND(server.client_ip, server.client_ip ,command));
 }
 
 int main(int ac, char** av) 
