@@ -255,7 +255,6 @@ void SERVSOCKET::registration(int client_fd, client &client, std::string data, S
         if (str != servpass)
         {
             mysend(client_fd, ERR_PASSWDMISMATCH(client.ip, client.nickname));
-            std::cout << client.ip << std::endl;
             return;
         }
         client.pass_bool = true;
