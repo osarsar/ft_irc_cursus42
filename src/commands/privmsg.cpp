@@ -66,13 +66,17 @@ void	privmsg::msg_to_channel(SERVSOCKET &server, std::string message, std::strin
 	std::vector<int> fds_vector;
 	std::vector<client>::iterator vec_it;
 	std::vector<int>::iterator iti;
-	std::map<std::string, channel>::iterator iter;
-
-	for (iter = server.channel_map.begin(); iter != server.channel_map.end(); iter++) {
-		if (iter->first == receiver)
-			for (vec_it = iter->second.client_list.begin(); vec_it != iter->second.client_list.end();vec_it++) {
-				fds_vector.push_back(vec_it->fd);
-			}
+	std::map<std::string, channel>::iterator iter = server.channel_map.find(receiver);
+	if (iter != server.channel_map.end()) 
+	{
+		for (vec_it = iter->second.client_list.begin(); vec_it != iter->second.client_list.end();vec_it++) {
+			fds_vector.push_back(vec_it->fd);
+		}
+	}
+	else
+	{
+		server.mysend(Client.fd, ERR_MODENOSUCHCHANNEL(std::string(server.client_ip), receiver, Client.nickname));
+		return ;
 	}
 	unsigned long i = 0;
 	if (!flag)

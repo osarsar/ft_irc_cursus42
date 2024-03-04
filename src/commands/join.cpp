@@ -109,9 +109,11 @@ void channel::part(std::string str, client &Client, SERVSOCKET &server)
 	std::map<std::string, channel>::iterator it = server.channel_map.find(nameofchannel);
 	if (it != server.channel_map.end())
 	{
+		bool foundclient = false;
 		for (std::vector<client>::iterator cli = it->second.client_list.begin(); cli != it->second.client_list.end(); cli++) {
 			if (cli->nickname == Client.nickname)
 			{
+				foundclient = true;
 				it->second.client_list.erase(cli);
 				std::vector<std::string>::iterator adminIt = std::find(Client.adminOf.begin(), Client.adminOf.end(), it->first);
                 if (adminIt != Client.adminOf.end())
@@ -121,9 +123,9 @@ void channel::part(std::string str, client &Client, SERVSOCKET &server)
                 obj.msg_to_channel(server, tosend, it->first, Client, true); 
 				break ;
 			}
-			else
-                server.mysend(Client.fd, ERR_MODEUSERNOTINCHANNEL(std::string(server.client_ip), it->first));
 		}
+		if (!foundclient)
+            server.mysend(Client.fd, ERR_MODEUSERNOTINCHANNEL(std::string(server.client_ip), it->first));
 	}
 	else
     	server.mysend(Client.fd, ERR_MODENOSUCHCHANNEL(std::string(server.client_ip), channelName, Client.nickname));
