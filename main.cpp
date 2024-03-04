@@ -18,7 +18,7 @@ Kick kick;
 Topic topic;
 Invite invite;
 
-void    executables(size_t &i, std::string data, int fd)
+void    executables(size_t &i, std::string data, int fd, client &client)
 {
     server.trim(data); // Added by temsa (test: "    join")
     std::string command = data.substr(0, data.find(" "));//--> HER find dosen't existe in cpp98
@@ -59,7 +59,7 @@ void    executables(size_t &i, std::string data, int fd)
     else if (command == INVITE)
         invite.go_to_invite(data, server, fd);
     else if ((command != "PASS" && command != "NICK" && command != "USER" && command != "UPPER") && !command.empty())
-        server.mysend(fd, ERR_UNKNOWNCOMMAND(server.client_ip, server.client_ip ,command));
+        server.mysend(fd, ERR_UNKNOWNCOMMAND(server.client_ip, client.ip ,command));
 }
 
 int main(int ac, char** av) 
@@ -68,7 +68,7 @@ int main(int ac, char** av)
     {
         std::cerr << RED"Invalid arguments"RESET << std::endl;
         exit (1);
-    }    
+    }
     // --> HERE
     if (!is_numeric(av[1]))
     {
@@ -77,7 +77,7 @@ int main(int ac, char** av)
     }
     std::string data;
     std::string port;
-        
+
     port = av[1];
     server.servpass = av[2];
     int server_fd = server.mysocket(AF_INET, SOCK_STREAM);
@@ -94,7 +94,7 @@ int main(int ac, char** av)
     vector.push(server_fd, POLLIN, 0);
     while (true)
     {
-        try 
+        try
         {
             if (poll(vector.vector.data(), vector.vector.size(), -1) == -1)
                 exit(1);
@@ -114,12 +114,12 @@ int main(int ac, char** av)
                         int check = 0;
                         data = server.Temsa_recv(1024, vector.vector[i].fd, check, server);
                         if (check == 1)
-                        {   
+                        {
                             server.registration(vector.vector[i].fd, server.database[i - 1], data, server);
                             server.nickname(vector.vector[i].fd, server.database[i - 1], data, server);
                             server.username(vector.vector[i].fd, server.database[i - 1], data, server);
-                            server.upper(vector.vector[i].fd, data, server);
-                            executables(i, data, vector.vector[i].fd);
+                            server.upper(vector.vector[i].fd, data, server, server.database[i - 1]);
+                            executables(i, data, vector.vector[i].fd, server.database[i - 1]);
                         }
                     }
                 }

@@ -109,10 +109,7 @@ int SERVSOCKET::myaccept()
         throw ErrorOnMyAccept();
     }
     inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
-    // mysend(socket_client, RPL_WELCOME("sarsar", "IRC_SERVER", "client.username", "client.nickname", "client_ip");
-    // mysend(socket_client, RPL_YOURHOST("sarsar", "IRC_SERVER", "last_version"));
-    // mysend(socket_client, RPL_CREATED("sarsar", "2024-02-16"));
-    // mysend(socket_client, RPL_MYINFO("sarsar", "IRC_SERVER", "last_version", "avmode", "cmode", "modepara"));
+    
     return socket_client;
 }
 
@@ -228,12 +225,12 @@ void SERVSOCKET::registration(int client_fd, client &client, std::string data, S
 
     if (commands.size() < 2)
     {
-        server.mysend(client_fd, ERR_NEEDMOREPARAMS(client.nickname, "PASS", client_ip));//-> HERE
+        server.mysend(client_fd, ERR_NEEDMOREPARAMS(client.nickname, "PASS", client.ip));//-> HERE
         return ;
     }
     if (commands.size() > 2)
     {
-        server.mysend(client_fd, ERR_NEEDMOREPARAMS(client.nickname, "PASS", client_ip));
+        server.mysend(client_fd, ERR_NEEDMOREPARAMS(client.nickname, "PASS", client.ip));
         return ;
     }
     trim(commands[1]);
@@ -242,7 +239,7 @@ void SERVSOCKET::registration(int client_fd, client &client, std::string data, S
     {
         if (client.pass_bool == true)
         {
-            mysend(client_fd, ERR_ALREADYREGISTRED(client_ip, client.nickname));
+            mysend(client_fd, ERR_ALREADYREGISTRED(client.ip, client.nickname));
             return;
         }
         str = data.erase(0, 5);
@@ -257,7 +254,8 @@ void SERVSOCKET::registration(int client_fd, client &client, std::string data, S
         trim(str);
         if (str != servpass)
         {
-            mysend(client_fd, ERR_PASSWDMISMATCH(client_ip, client.nickname));
+            mysend(client_fd, ERR_PASSWDMISMATCH(client.ip, client.nickname));
+            std::cout << client.ip << std::endl;
             return;
         }
         client.pass_bool = true;
@@ -283,12 +281,12 @@ void SERVSOCKET::nickname(int client_fd, client &client, std::string data, SERVS
 
     if (commands.size() < 2)
     {
-        mysend(client_fd, ERR_NEEDMOREPARAMS(client.nickname, "NICK", client_ip));
+        mysend(client_fd, ERR_NEEDMOREPARAMS(client.nickname, "NICK", client.ip));
         return ;
     }
     if (commands.size() > 2)
     {
-        mysend(client_fd, ERR_NEEDMOREPARAMS(client.nickname, "NICK", client_ip));
+        mysend(client_fd, ERR_NEEDMOREPARAMS(client.nickname, "NICK", client.ip));
         return ;
     }
 
@@ -315,7 +313,7 @@ void SERVSOCKET::nickname(int client_fd, client &client, std::string data, SERVS
         {
             if (it->nickname == str)
             {
-                mysend(client_fd, ERR_NICKNAMEINUSE(client_ip , it->nickname, it->nickname));
+                mysend(client_fd, ERR_NICKNAMEINUSE(client.ip , it->nickname, it->nickname));
                 return;
             }
         }
@@ -326,11 +324,11 @@ void SERVSOCKET::nickname(int client_fd, client &client, std::string data, SERVS
         {
             client.registration_check = true;
             client.fd = client_fd;
-            mysend(client.fd, RPL_WELCOME(client.nickname, client_ip));
-            mysend(client.fd, RPL_WELCOME(client.nickname, client_ip));
-            mysend(client.fd, RPL_YOURHOST(client.nickname, client_ip));
-            mysend(client.fd, RPL_CREATED(client.nickname, client_ip));
-            mysend(client.fd, RPL_MYINFO(client.nickname, client_ip));
+            mysend(client.fd, RPL_WELCOME(client.nickname, client.ip));
+            mysend(client.fd, RPL_WELCOME(client.nickname, client.ip));
+            mysend(client.fd, RPL_YOURHOST(client.nickname, client.ip));
+            mysend(client.fd, RPL_CREATED(client.nickname, client.ip));
+            mysend(client.fd, RPL_MYINFO(client.nickname, client.ip));
         }
     }
 }
@@ -352,12 +350,12 @@ void SERVSOCKET::username(int client_fd, client &client, std::string data, SERVS
 
     if (commands.size() < 5)
     {
-        mysend(client_fd, ERR_NEEDMOREPARAMS(client.nickname, "USER", client_ip));
+        mysend(client_fd, ERR_NEEDMOREPARAMS(client.nickname, "USER", client.ip));
         return ;
     }
     if (commands.size() > 5)
     {
-        mysend(client_fd, ERR_NEEDMOREPARAMS(client.nickname, "USER", client_ip));
+        mysend(client_fd, ERR_NEEDMOREPARAMS(client.nickname, "USER", client.ip));
         return ;
     }
     
@@ -387,16 +385,16 @@ void SERVSOCKET::username(int client_fd, client &client, std::string data, SERVS
         {
             client.registration_check = true;
             client.fd = client_fd;
-            mysend(client.fd, RPL_WELCOME(client.nickname, client_ip));
-            mysend(client.fd, RPL_WELCOME(client.nickname, client_ip));
-            mysend(client.fd, RPL_YOURHOST(client.nickname, client_ip));
-            mysend(client.fd, RPL_CREATED(client.nickname, client_ip));
-            mysend(client.fd, RPL_MYINFO(client.nickname, client_ip));
+            mysend(client.fd, RPL_WELCOME(client.nickname, client.ip));
+            mysend(client.fd, RPL_WELCOME(client.nickname, client.ip));
+            mysend(client.fd, RPL_YOURHOST(client.nickname, client.ip));
+            mysend(client.fd, RPL_CREATED(client.nickname, client.ip));
+            mysend(client.fd, RPL_MYINFO(client.nickname, client.ip));
         }
     }
 }
 
-void SERVSOCKET::upper(int client_fd, std::string data, SERVSOCKET server)
+void SERVSOCKET::upper(int client_fd, std::string data, SERVSOCKET server, client &client)
 {
     std::string str;
     std::vector<std::string> commands = my_split(data, ' ', server);
@@ -414,7 +412,7 @@ void SERVSOCKET::upper(int client_fd, std::string data, SERVSOCKET server)
 
     if (commands.size() > 2)
     {
-        server.mysend(client_fd, ERR_NEEDMOREPARAMS(server.client_ip, "USER", client_ip));
+        server.mysend(client_fd, ERR_NEEDMOREPARAMS(client.ip, "USER", client.ip));
         return ;
     }
     trim(commands[1]);
@@ -426,6 +424,7 @@ void SERVSOCKET::upper(int client_fd, std::string data, SERVSOCKET server)
 void SERVSOCKET::push()
 {
     client client;
+    client.ip = client_ip;
     database.push_back(client);
 }
 

@@ -16,6 +16,7 @@ class client
 		std::string username;
 		std::vector<std::string> adminOf;
 		std::string nickname;
+		std::string ip;
 		int  fd;
 		bool registration_check;
 		bool pass_bool;
