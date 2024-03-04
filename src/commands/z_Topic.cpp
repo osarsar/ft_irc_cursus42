@@ -31,7 +31,7 @@ void Topic::go_to_topic(std::string data, SERVSOCKET &server, int fd)
     std::vector<std::string> commands = my_split(data, ' ', server);
     if (commands.size() < 2)
     {            
-        server.mysend(fd, ERR_NEEDMOREPARAMS(host_ni, "TOPIC", IP));
+        server.mysend(fd, ERR_NEEDMOREPARAMS(host_ni, "TOPIC", host->ip));
         return ;
     }
 
@@ -48,7 +48,7 @@ void Topic::go_to_topic(std::string data, SERVSOCKET &server, int fd)
         {
             if (data == "TOPIC :")
                 channel_name = ".";
-            server.mysend(fd, ERR_BADCHANMASK(channel_name, IP));
+            server.mysend(fd, ERR_BADCHANMASK(channel_name, host->ip));
             return ;
         }
         channel_name = server.trim(channel_name);
@@ -78,20 +78,20 @@ void Topic::go_to_topic(std::string data, SERVSOCKET &server, int fd)
                                 {
                                     if (!isInAdminOf(channel_name, host->adminOf))
                                     {
-                                        server.mysend(fd, ERR_CHANOPRIVSNEEDED(host_ni, channel_name, IP));
+                                        server.mysend(fd, ERR_CHANOPRIVSNEEDED(host_ni, channel_name, host->ip));
                                         return;
                                     }
                                 }
                                 iter_chnl->second.topic = newTopic;
-                                server.mysend(fd, RPL_TOPIC(host_ni, host_us, IP, newTopic, channel_name));// HERE send for all client in this channel
+                                server.mysend(fd, RPL_TOPIC(host_ni, host_us, host->ip, newTopic, channel_name));// HERE send for all client in this channel
                                 return;
                             }
                         }
-                        server.mysend(fd, ERR_NOTONCHANNEL(host_ni, channel_name, IP));
+                        server.mysend(fd, ERR_NOTONCHANNEL(host_ni, channel_name, host->ip));
                         return;
                     }
                 }
-                server.mysend(fd, ERR_NOSUCHCHANNEL(host_ni, channel_name, IP));
+                server.mysend(fd, ERR_NOSUCHCHANNEL(host_ni, channel_name, host->ip));
                 return;
             }
         }
@@ -113,20 +113,20 @@ void Topic::go_to_topic(std::string data, SERVSOCKET &server, int fd)
                                 {
                                     if (!isInAdminOf(channel_name, host->adminOf))
                                     {
-                                        server.mysend(fd, ERR_CHANOPRIVSNEEDED(host_ni, channel_name, IP));
+                                        server.mysend(fd, ERR_CHANOPRIVSNEEDED(host_ni, channel_name, host->ip));
                                         return;
                                     }
                                 }
                                 iter_chnl->second.topic = "";
-                                server.mysend(fd, RPL_TOPIC_CLEAR(host_ni, host_us, IP, channel_name));
+                                server.mysend(fd, RPL_TOPIC_CLEAR(host_ni, host_us, host->ip, channel_name));
                                 return;
                             }
                         }
-                        server.mysend(fd, ERR_NOTONCHANNEL(host_ni, channel_name, IP));
+                        server.mysend(fd, ERR_NOTONCHANNEL(host_ni, channel_name, host->ip));
                         return;
                     }
                 }
-                server.mysend(fd, ERR_NOSUCHCHANNEL(host_ni, channel_name, IP));
+                server.mysend(fd, ERR_NOSUCHCHANNEL(host_ni, channel_name, host->ip));
                 return;
             }
         }
@@ -147,18 +147,18 @@ void Topic::go_to_topic(std::string data, SERVSOCKET &server, int fd)
                         {
                             if (iter_chnl->second.topic.empty())
                             {
-                                server.mysend(fd, RPL_NOTOPIC(host_ni, channel_name, IP));
+                                server.mysend(fd, RPL_NOTOPIC(host_ni, channel_name, host->ip));
                                 return;
                             }
-                            server.mysend(fd, RPL_TOPIC_DISPLAY(host_ni, host_us, IP, iter_chnl->second.topic, channel_name));
+                            server.mysend(fd, RPL_TOPIC_DISPLAY(host_ni, host_us, host->ip, iter_chnl->second.topic, channel_name));
                             return;
                         }
                     }
-                    server.mysend(fd, ERR_NOTONCHANNEL(host_ni, channel_name, IP));
+                    server.mysend(fd, ERR_NOTONCHANNEL(host_ni, channel_name, host->ip));
                     return;
                 }
             }
-            server.mysend(fd, ERR_NOSUCHCHANNEL(host_ni, channel_name, IP));
+            server.mysend(fd, ERR_NOSUCHCHANNEL(host_ni, channel_name, host->ip));
             return;
         }
     }

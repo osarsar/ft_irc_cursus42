@@ -46,7 +46,7 @@ void 	Kick::go_to_kick(std::string data, SERVSOCKET &server, int fd)
     std::vector<std::string> commands = my_split(data, ' ', server);
     if (commands.size() < 3)
     {
-        server.mysend(fd, ERR_NEEDMOREPARAMS(host_ni, "KICK", IP));
+        server.mysend(fd, ERR_NEEDMOREPARAMS(host_ni, "KICK", host->ip));
         return ;
     }
 
@@ -70,7 +70,7 @@ void 	Kick::go_to_kick(std::string data, SERVSOCKET &server, int fd)
         channel_name = channel_name.substr(0, channel_name.find(" "));
         if (channel_name[0] != '#' && channel_name[0] != '&')
         {
-            server.mysend(fd, ERR_BADCHANMASK(channel_name, IP));
+            server.mysend(fd, ERR_BADCHANMASK(channel_name, host->ip));
             return ;
         }
         channel_name = server.trim(channel_name);
@@ -78,7 +78,7 @@ void 	Kick::go_to_kick(std::string data, SERVSOCKET &server, int fd)
 	}
     else
     {
-        server.mysend(fd, ERR_NEEDMOREPARAMS(host_ni, "KICK", IP));
+        server.mysend(fd, ERR_NEEDMOREPARAMS(host_ni, "KICK", host->ip));
         return ;
     }
     
@@ -86,13 +86,13 @@ void 	Kick::go_to_kick(std::string data, SERVSOCKET &server, int fd)
 
     if (check_client_in_channel(*host, server, channel_name) == 0)
     {
-        server.mysend(fd, ERR_NOTONCHANNEL(host_ni, channel_name, IP));
+        server.mysend(fd, ERR_NOTONCHANNEL(host_ni, channel_name, host->ip));
         return;
     }
 
     if (!isInAdminOf(channel_name, host->adminOf))
     {
-        server.mysend(fd, ERR_CHANOPRIVSNEEDED(host_ni, channel_name, IP));
+        server.mysend(fd, ERR_CHANOPRIVSNEEDED(host_ni, channel_name, host->ip));
         return;
     }
 
@@ -136,16 +136,16 @@ void 	Kick::go_to_kick(std::string data, SERVSOCKET &server, int fd)
                     std::vector<int>::iterator iti_fd;
                     for (iti_fd = vect_fd.begin(); iti_fd != vect_fd.end(); iti_fd++)
                     {
-                        server.mysend(*iti_fd, RPL_KICK(host_ni, host_us, IP, channel_name, client_nick, message));
+                        server.mysend(*iti_fd, RPL_KICK(host_ni, host_us, host->ip, channel_name, client_nick, message));
                     }
-                    server.mysend(fd, RPL_KICK(host_ni, host_us, IP, channel_name, client_nick, message));
+                    server.mysend(fd, RPL_KICK(host_ni, host_us, host->ip, channel_name, client_nick, message));
                     return;
                 }
                 server.mysend(fd, ERR_NOSUCHNICK(host_ni, channel_name, client_nick));
                 return;
             }
 		}
-        server.mysend(fd, ERR_NOSUCHCHANNEL(host_ni, channel_name, IP));
+        server.mysend(fd, ERR_NOSUCHCHANNEL(host_ni, channel_name, host->ip));
         return;
 	}
 }

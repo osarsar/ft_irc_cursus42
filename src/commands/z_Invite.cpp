@@ -115,7 +115,7 @@ void Invite::go_to_invite(std::string data, SERVSOCKET &server, int fd)
     std::vector<std::string> commands = my_split(data, ' ', server);
     if (commands.size() < 3)
     {
-        server.mysend(fd, ERR_NEEDMOREPARAMS(host_ni, "INVITE", IP));
+        server.mysend(fd, ERR_NEEDMOREPARAMS(host_ni, "INVITE", host->ip));
         return ;
     }
 
@@ -123,7 +123,7 @@ void Invite::go_to_invite(std::string data, SERVSOCKET &server, int fd)
     channel *channel = get_channel(channelName, server);
     if (!channel)
     {
-        server.mysend(fd, ERR_NOSUCHCHANNEL(host_ni, channelName, IP));
+        server.mysend(fd, ERR_NOSUCHCHANNEL(host_ni, channelName, host->ip));
         return;
     }
 
@@ -138,7 +138,7 @@ void Invite::go_to_invite(std::string data, SERVSOCKET &server, int fd)
 
     if (check_client_in_channel(*host, server, channelName) == 0)
     {
-        server.mysend(fd, ERR_NOTONCHANNEL(host_ni, channelName, IP));
+        server.mysend(fd, ERR_NOTONCHANNEL(host_ni, channelName, host->ip));
         return;
     }
 
@@ -152,17 +152,17 @@ void Invite::go_to_invite(std::string data, SERVSOCKET &server, int fd)
     {
         if (!isInAdminOf(channelName, host->adminOf))
         {
-            server.mysend(fd, ERR_CHANOPRIVSNEEDED(host_ni, channelName, IP));
+            server.mysend(fd, ERR_CHANOPRIVSNEEDED(host_ni, channelName, host->ip));
             return;
         }
     }
     
     channel->invited_users.push_back(guest->nickname);
 
-    server.mysend(fd, RPL_INVITING(host_ni, guest->nickname, channelName, IP));
+    server.mysend(fd, RPL_INVITING(host_ni, guest->nickname, channelName, host->ip));
 
     // HERE send for all client in this channel
-    server.mysend(guest->fd, RPL_INVITELIST(host_ni, host_us, IP, guest->nickname ,channelName));
+    server.mysend(guest->fd, RPL_INVITELIST(host_ni, host_us, host->ip, guest->nickname ,channelName));
 
     return;
 }
