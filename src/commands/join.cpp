@@ -59,10 +59,13 @@ void channel::join(std::string Name, std::string Password, client &Client, SERVS
 		manage.addChannel(channelName, Client, Password);
 	// Ask for Password if it is necessary
 	else if (iter != server.channel_map.end() && !iter->second.channel_pass.empty())
-		if (!join_password(iter->second.channel_pass, Client, server)) {
+	{
+		if (Password != iter->second.channel_pass)
+		{
 			server.mysend(Client.fd, ERR_BADCHANNELKEY(Client.nickname, std::string(server.client_ip), channelName));
 			return ;
 		}
+	}
 	//Check if the channel is limited
 	if (max_clients < (int)iter->second.client_list.size() + 1 && flag) {
 		server.mysend(Client.fd, ERR_CHANNELISFULL(Client.nickname, std::string(server.client_ip)));
@@ -131,19 +134,19 @@ void channel::part(std::string str, client &Client, SERVSOCKET &server)
     	server.mysend(Client.fd, ERR_MODENOSUCHCHANNEL(std::string(server.client_ip), channelName, Client.nickname));
 }
 
-bool channel::join_password(std::string password, client &Client, SERVSOCKET &server)
-{
-	adminMap[Client.nickname] = false;
-	std::string passmsg = "Please provide the necessary password here : ";
-    send(Client.fd, passmsg.c_str(), passmsg.length(), 0);
-    const int MAX_PASSWORD_LENGTH = 100;
-    char userpass[MAX_PASSWORD_LENGTH];
-    memset(userpass, 0, sizeof(userpass));
-	std::string receivedPass;
-    recv(Client.fd, userpass, sizeof(userpass) - 1, 0);
-	receivedPass = userpass;
-	receivedPass = server.trim(receivedPass);
-    if (receivedPass == password)
-        return true;
-    return false;
-}
+// bool channel::join_password(std::string password, client &Client, SERVSOCKET &server)
+// {
+// 	adminMap[Client.nickname] = false;
+// 	std::string passmsg = "Please provide the necessary password here : ";
+//     send(Client.fd, passmsg.c_str(), passmsg.length(), 0);
+//     const int MAX_PASSWORD_LENGTH = 100;
+//     char userpass[MAX_PASSWORD_LENGTH];
+//     memset(userpass, 0, sizeof(userpass));
+// 	std::string receivedPass;
+//     recv(Client.fd, userpass, sizeof(userpass) - 1, 0);
+// 	receivedPass = userpass;
+// 	receivedPass = server.trim(receivedPass);
+//     if (receivedPass == password)
+//         return true;
+//     return false;
+// }

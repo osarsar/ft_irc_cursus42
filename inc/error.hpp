@@ -10,7 +10,7 @@
 // nik -> nick
 // setat -> setat
 
-#define IP "10.12.10.13"
+#define IP "10.12.7.9"
 
 // "<client> <command> :Not enough parameters"
 // "<client> <channel> :No such channel"
@@ -24,7 +24,7 @@
 #define ERR_NOSUCHCHANNEL(nick, chnl, hostname)               ":" + std::string(hostname) + " 403 " + std::string(nick) + " " + std::string(chnl) + " :No such channel\r\t\n"
 #define ERR_NOTONCHANNEL(nick, chnl, hostname)                ":" + std::string(hostname) + " 442 " + std::string(nick) + " " + std::string(chnl) + " :You're not on that channel\r\t\n"
 #define ERR_CHANOPRIVSNEEDED(nick, chnl, hostname)            ":" + std::string(hostname) + " 482 " + std::string(nick) + " " + std::string(chnl) + " :You're not a channel operator\r\t\n"
-#define ERR_NOTREGISTERED(nick, hostname)                     ":" + std::string(hostname) + " 451 " + std::string(nick) + " :You have not registered"
+#define ERR_NOTREGISTERED(nick, hostname)                     ":" + std::string(hostname) + " 451 " + std::string(nick) + " :You have not registered\r\t\n"
 
 //>>>>>>>> TOPIC --------------------------------------------------------->>>>>>>>>>>>>>>>>>
 #define RPL_NOTOPIC(clt, chnl, hostname)                      ":" + std::string(hostname) + " 332 " + std::string(clt) + " " + std::string(chnl) + " :No topic is set\r\t\n"
