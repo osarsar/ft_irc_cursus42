@@ -29,10 +29,7 @@ void    executables(size_t &i, std::string data, int fd, client &client)
 
     if (!server.database[i - 1].registration_check && (command == KICK || command == TOPIC || command == INVITE ||\
         command == JOIN || command == PRIVMSG || command == MODE))
-    {
         server.mysend(fd, ERR_NOTREGISTERED(std::to_string(fd), IP));//->HERE
-        throw(RED "Khasek lwra9 a m3alem sir tal gheda oji\n" RESET);
-    }
     else if (command == JOIN && server.database[i - 1].registration_check)
     {
         int args = 0;
