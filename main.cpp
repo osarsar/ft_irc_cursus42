@@ -6,10 +6,6 @@
 #include "./inc/topic.hpp"
 #include "./inc/invite.hpp"
 
-// join | creat a channel
-
-// privmsg #sdf SDFf | check if existe
-
 client Client;
 privmsg Privmsg;
 SERVSOCKET server;
@@ -20,8 +16,8 @@ Invite invite;
 
 void    executables(size_t &i, std::string data, int fd, client &client)
 {
-    server.trim(data); // Added by temsa (test: "    join")
-    std::string command = data.substr(0, data.find(" "));//--> HER find dosen't existe in cpp98
+    server.trim(data);
+    std::string command = data.substr(0, data.find(" "));
     toUpper(command);
     server.trim(command);
     Channel.NameVec.clear();
@@ -29,7 +25,7 @@ void    executables(size_t &i, std::string data, int fd, client &client)
 
     if (!server.database[i - 1].registration_check && (command == KICK || command == TOPIC || command == INVITE ||\
         command == JOIN || command == PRIVMSG || command == MODE))
-        server.mysend(fd, ERR_NOTREGISTERED(std::to_string(fd), IP));//->HERE
+        server.mysend(fd, ERR_NOTREGISTERED(std::to_string(fd), IP));
     else if (command == JOIN && server.database[i - 1].registration_check)
     {
         int args = 0;
@@ -66,77 +62,82 @@ int main(int ac, char** av)
         std::cerr << RED"Invalid arguments"RESET << std::endl;
         exit (1);
     }
-    // --> HERE
     if (!is_numeric(av[1]))
     {
         std::cerr << RED"Invalid port"RESET << std::endl;
         exit (1);
     }
-    std::string data;
-    std::string port;
+    try{
+        std::string data;
+        std::string port;
 
-    port = av[1];
-    server.servpass = av[2];
-    int server_fd = server.mysocket(AF_INET, SOCK_STREAM);
-    int value = f_stoi(port);
-    server.mybind(IP, value);
-    server.mylisten(5);
-    std::cout << GREEN << "------- MY SERVER ------" << RESET << std::endl;
-    std::cout << PURPLE << "Server Listening on port " << port << " ..." << RESET << std::endl;
-    
-    POLLFD vector;
-    int client_fd;
-    size_t i = 0;
+        port = av[1];
+        server.servpass = av[2];
+        int server_fd = server.mysocket(AF_INET, SOCK_STREAM);
+        int value = f_stoi(port);
+        server.mybind(IP, value);
+        server.mylisten(5);
+        std::cout << GREEN << "------- MY SERVER ------" << RESET << std::endl;
+        std::cout << PURPLE << "Server Listening on port " << port << " ..." << RESET << std::endl;
+        
+        POLLFD vector;
+        int client_fd;
+        size_t i = 0;
 
-    vector.push(server_fd, POLLIN, 0);
-    while (true)
-    {
-        try
+        vector.push(server_fd, POLLIN, 0);
+        while (true)
         {
-            if (poll(vector.vector.data(), vector.vector.size(), -1) == -1)
-                exit(1);
-            i = 0;
-            while (i < vector.vector.size())
+            try
             {
-                if (vector.vector[i].revents & POLLIN)
+                if (poll(vector.vector.data(), vector.vector.size(), -1) == -1)
+                    exit(1);
+                i = 0;
+                while (i < vector.vector.size())
                 {
-                    if (vector.vector[i].fd == server_fd)
+                    if (vector.vector[i].revents & POLLIN)
                     {
-                        client_fd = server.myaccept();
-                        vector.push(client_fd, POLLIN, 0);
-                        server.push();
-                    }
-                    else
-                    {
-                        int check = 0;
-                        data = server.Temsa_recv(1024, vector.vector[i].fd, check, server);
-                        if (check == 1)
+                        if (vector.vector[i].fd == server_fd)
                         {
-                            server.registration(vector.vector[i].fd, server.database[i - 1], data, server);
-                            server.nickname(vector.vector[i].fd, server.database[i - 1], data, server);
-                            server.username(vector.vector[i].fd, server.database[i - 1], data, server);
-                            server.upper(vector.vector[i].fd, data, server, server.database[i - 1]);
-                            executables(i, data, vector.vector[i].fd, server.database[i - 1]);
+                            client_fd = server.myaccept();
+                            vector.push(client_fd, POLLIN, 0);
+                            server.push();
+                        }
+                        else
+                        {
+                            int check = 0;
+                            data = server.Temsa_recv(1024, vector.vector[i].fd, check, server);
+                            if (check == 1)
+                            {
+                                server.registration(vector.vector[i].fd, server.database[i - 1], data, server);
+                                server.nickname(vector.vector[i].fd, server.database[i - 1], data, server);
+                                server.username(vector.vector[i].fd, server.database[i - 1], data, server);
+                                server.upper(vector.vector[i].fd, data, server, server.database[i - 1]);
+                                executables(i, data, vector.vector[i].fd, server.database[i - 1]);
+                            }
                         }
                     }
+                    i++;
                 }
-                i++;
             }
-        }
-        catch (std::exception &e)
-        {
-            std::cerr << e.what() << std::endl;
-            if (i)
+            catch (std::exception &e)
             {
-                close(vector.vector[i].fd);
-                vector.vector.erase(vector.vector.begin() + i);
-                server.database.erase(server.database.begin() + i - 1);
+                std::cerr << e.what() << std::endl;
+                if (i)
+                {
+                    close(vector.vector[i].fd);
+                    vector.vector.erase(vector.vector.begin() + i);
+                    server.database.erase(server.database.begin() + i - 1);
+                }
+            }
+            catch (const char *str)
+            {
+                server.mysend(vector.vector[i].fd, str);
             }
         }
-        catch (const char *str)
-        {
-            server.mysend(vector.vector[i].fd, str);
-        }
+    }
+    catch (std::exception &e)
+    {
+        std::cerr << e.what() << std::endl;
     }
     return 0;
 }

@@ -14,8 +14,6 @@
 #define TOPIC "TOPIC"
 #define INVITE "INVITE"
 
-//--------------------------------------------------->>> Temsa:
-
 class Kick
 {
 public:

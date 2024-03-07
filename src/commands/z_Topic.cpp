@@ -10,7 +10,6 @@ Topic::~Topic()
 
 void Topic::go_to_topic(std::string data, SERVSOCKET &server, int fd)
 {
-    std::cout << "data-> \"" << data << "\"\n";
     size_t	pos1;
     size_t	pos2;
     std::string newTopic;
@@ -64,9 +63,6 @@ void Topic::go_to_topic(std::string data, SERVSOCKET &server, int fd)
             newTopic = server.trim(newTopic);
             if (newTopic[0] == ':')
                 newTopic = newTopic.substr(1);
-            std::cout << "newTopic-> \"" << newTopic << "\"\n\n";
-
-
             if (!channel_name.empty())
             {
                 std::map <std::string, channel>::iterator iter_chnl;

@@ -3,22 +3,7 @@
 
 #include "channel.hpp"
 
-// clt -> client
-// chnl -> channel
-// cmd -> command
-// tpc -> topic
-// nik -> nick
-// setat -> setat
-
-#define IP "127.0.0.1"
-
-// "<client> <command> :Not enough parameters"
-// "<client> <channel> :No such channel"
-// "<client> <channel> :You're not on that channel"
-// "<client> <channel> :You're not channel operator"
-// "<client> <channel> :No topic is set"
-// "<client> <channel> :<topic>"
-// "<client> <channel> <nick> <setat>"
+#define IP "10.13.2.1"
 
 #define ERR_NEEDMOREPARAMS(cid, cmd, hostname)                ":" + std::string(hostname) + " 461 " + std::string(cid) + " " + std::string(cmd) + " :Not enough parameters\r\t\n"
 #define ERR_NOSUCHCHANNEL(nick, chnl, hostname)               ":" + std::string(hostname) + " 403 " + std::string(nick) + " " + std::string(chnl) + " :No such channel\r\t\n"
@@ -39,8 +24,6 @@
 #define RPL_KICK(hN, hU, ip, chnl, gN, reason)               ":" + std::string(hN) + "!~" + std::string(hU) + "@" + std::string(ip) + " KICK " + std::string(chnl) + " " + std::string(gN)  + " :" + std::string(reason) + "\r\t\n"
 
 //>>>>>>>> INVITE --------------------------------------------------------->>>>>>>>>>>>>>>>>>
-// #define ERR_NOSUCHNICK(nick, nameToDo, hostname)              ":" + std::string(hostname) + " 401 " + std::string(nick) + " " + std::string(nameToDo) + " :No such nick/channel\r\t\n"
-// #define ERR_USERONCHANNEL(nik1, nik2, chnl, hostname)         ":" + std::string(hostname) + " 443 " + std::string(nik1) + " " + std::string(nik2) + " " + std::string(chnl) + " :is already on channel\r\t\n"
 #define RPL_INVITING(nik, nik2, chnl, hostname)               ":" + std::string(hostname) + " 341 " + std::string(nik) + " " + std::string(nik2) + " " + std::string(chnl) + "\r\t\n"
 #define RPL_INVITELIST(hN, hU, ip, gN,chnl)         ":" + std::string(hN) + "!~" + std::string(hU) + "@" + std::string(ip) + " INVITE " + std::string(gN) + " :" + std::string(chnl) + "\r\t\n"
 #define RPL_ENDOFINVITELIST(nik)                    std::string(nik) + " :End of /INVITE list"

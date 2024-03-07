@@ -8,8 +8,6 @@
 #include "client.hpp"
 #include "error.hpp"
 
-//--------------------------------------------------->>> Temsa:
-
 class Invite
 {
 private:

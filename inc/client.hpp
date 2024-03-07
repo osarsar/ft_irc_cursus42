@@ -10,7 +10,6 @@ class SERVSOCKET;
 class client
 {
 	public :
-	// HERE Temsa
 		clock_t time;
 		std::string buff_data;
 		std::string username;

@@ -10,8 +10,6 @@
 #include "channel.hpp"
 #include "error.hpp"
 
-//--------------------------------------------------->>> Temsa:
-
 class Topic
 {
 private:

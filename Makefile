@@ -14,7 +14,7 @@ FLAGS = -Wall -Wextra -Werror -std=c++98
 NAME = ircserv
 OBJ =  $(SRCS:.cpp=.o)
 
-%.o : %.cpp ./inc/servsocket.hpp ./inc/channel.hpp ./inc/client.hpp inc/manage.hpp inc/privmsg.hpp inc/error.hpp inc/topic.hpp inc/invite.hpp inc/Kick.hpp inc/replies.hpp
+%.o : %.cpp ./inc/servsocket.hpp ./inc/channel.hpp ./inc/client.hpp inc/manage.hpp inc/privmsg.hpp inc/error.hpp inc/topic.hpp inc/invite.hpp inc/Kick.hpp
 	@c++ $(FLAGS) -c $< -o $@
 
 $(NAME) : $(OBJ)

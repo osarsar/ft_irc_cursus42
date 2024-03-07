@@ -3,7 +3,6 @@
 #include "../../inc/Kick.hpp"
 #include "../../inc/invite.hpp"
 
-
 //--------------------------HANDEL ERRORS--------------------------------//
 
 const char* SERVSOCKET::ErrorOnMySocket::what() const throw()
@@ -12,7 +11,7 @@ const char* SERVSOCKET::ErrorOnMySocket::what() const throw()
 }
 const char* SERVSOCKET::ErrorOnMyBind::what() const throw()
 {
-    return RED"Failed To Bind"RESET;
+    return (RED"Failed To Bind"RESET);
 }
 
 const char* SERVSOCKET::ErrorOnMyListen::what() const throw()
@@ -75,16 +74,17 @@ int SERVSOCKET::mysocket(int ipvs, const int type)
 
 void SERVSOCKET::mybind(std::string ip, int port)
 {
+    (void)ip;
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(port);
-    server_addr.sin_addr.s_addr = inet_addr(ip.c_str());
+    server_addr.sin_addr.s_addr = INADDR_ANY;
 
     int op = 1;
     setsockopt(socket_server,SOL_SOCKET,SO_REUSEADDR,(void *)&op, sizeof(op));
     if (bind(socket_server, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1)
     {
         close(socket_server);
-        throw ErrorOnMyBind();//exit()
+        throw ErrorOnMyBind();
     }
 }
 
@@ -108,8 +108,14 @@ int SERVSOCKET::myaccept()
         close(socket_server);
         throw ErrorOnMyAccept();
     }
-    inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
-    
+
+    const char* client_ip_str = inet_ntoa(client_addr.sin_addr);
+    if (client_ip_str == NULL)
+    {
+        throw ErrorOnMyAccept();
+    }
+    strncpy(client_ip, client_ip_str, INET_ADDRSTRLEN);
+
     return socket_client;
 }
 
@@ -153,7 +159,7 @@ std::string SERVSOCKET::Temsa_recv(unsigned int size, int fd, int &check, SERVSO
     }
     else
     {
-        num_read++;// car buffer[num_read - 1] = '\0'; supprime last element
+        num_read++;
         _else = 1;
     }
     
@@ -181,7 +187,6 @@ void SERVSOCKET::mysend(int fd, std::string data)
     if (send(fd, data.c_str(), data.length(), 0) == -1)
         throw ErrorOnMySend();
 }
-
 
 void POLLFD::push(int fd, short events, short revents)
 {

@@ -29,8 +29,7 @@ class POLLFD
 class SERVSOCKET
 {
     public:
-        std::map<int, std::string> fd_buff;//Temsa
-        
+        std::map<int, std::string> fd_buff;
         std::string servpass;
         sockaddr_in server_addr;
         int socket_server;
