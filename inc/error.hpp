@@ -3,7 +3,7 @@
 
 #include "channel.hpp"
 
-#define IP "10.13.2.1"
+#define IP "10.12.2.4"
 
 #define ERR_NEEDMOREPARAMS(cid, cmd, hostname)                ":" + std::string(hostname) + " 461 " + std::string(cid) + " " + std::string(cmd) + " :Not enough parameters\r\t\n"
 #define ERR_NOSUCHCHANNEL(nick, chnl, hostname)               ":" + std::string(hostname) + " 403 " + std::string(nick) + " " + std::string(chnl) + " :No such channel\r\t\n"
@@ -32,14 +32,15 @@
 #define ERR_NICKCOLLISION(hostname, nick, cmd)                                        ":" + std::string(hostname) + " 436 " + std::string(nick) + " " + std::string(cmd) + " :Nickname collision KILL\r\t\n"
 #define RPL_WELCOME(nick, hostname)                                         ":" + std::string(hostname) + " 001 " + nick + " :Welcome " + nick + " to the ft_irc network !\r\n"
 #define RPL_YOURHOST(nick, hostname)                                        ":" + std::string(hostname) + " 002 " + nick + " :Your host is " + std::string(hostname) + " running version 1.0 !\r\n"
-#define RPL_CREATED(nick, hostname)                                         ":" + std::string(hostname) + " 003 " + nick + " :This server was created 2024-03-02 !\r\n"
+#define RPL_CREATED(nick, hostname)                                         ":" + std::string(hostname) + " 003 " + nick + " :This server was created 2024-03-08 !\r\n"
 #define RPL_MYINFO(nick, hostname)                                          ":" + std::string(hostname) + " 004 " + nick + " :Host: " + std::string(hostname) + ", Version: 1.0, User mode: none, Channel modes: o, t, k, i !\r\n"
 
 #define ERR_PASSWDMISMATCH(hostname, cid)						                        ":" + std::string(hostname) + " 464 " + std::string(cid) + " :Password incorrect\r\t\n"
 #define ERR_ALREADYREGISTRED(hostname, cid)						                    ":" + std::string(hostname) + " 462 " + std::string(cid) + " :Unauthorized command (already registered)\r\t\n"
 #define	ERR_UNKNOWNCOMMAND(hostname, cid, cmd)						                ":" + std::string(hostname) + " 421 " + std::string(cid) + " " + std::string(cmd) + " :Unknown command\r\t\n" 
 #define	ERR_NICKNAMEINUSE(hostname, cid, nick)						                ":" + std::string(hostname) + " 433 " + std::string(cid) + " " + std::string(nick) + " :Nickname is already in use\r\t\n"
-# define ERR_BOT(hostname, nick)                                                    ":" + hostname + " 450 " + nick + "enter [BOT generate] to generate a joke" + "\r\n"
+# define ERR_BOT(hostname, nick)                                                    ":" + std::string(hostname) + " 450 " + std::string(nick) + " Not a valid arguments\r\n"
+# define RPL_BOT(upper)                                                             std::string(upper) + "\r\n"
 //>>>>>>>> JOIN --------------------------------------------------------->>>>>>>>>>>>>>>>>>
 # define RPL_JOIN(nick, username, channelname, ipaddress)                   ":" + nick + "!~" + username + "@" + ipaddress + " JOIN " + channelname + "\r\n"
 # define RPL_NAMREPLY(hostname, clients, channelname,nick)                  ":" + hostname + " 353 " + nick + " = " + channelname + " :" + clients + "\r\n"

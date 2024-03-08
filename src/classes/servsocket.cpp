@@ -410,19 +410,19 @@ void SERVSOCKET::upper(int client_fd, std::string data, SERVSOCKET server, clien
 
     if (commands[0] != "UPPER")
         return;
-
+    
     if (commands.size() == 1)
         commands = my_split(commands[0], '\t', server);
 
-    if (commands.size() > 2)
+    if (commands.size() > 2 || commands.size() == 1)
     {
-        server.mysend(client_fd, ERR_NEEDMOREPARAMS(client.ip, "USER", client.ip));
+        mysend(client_fd, ERR_BOT(client_ip ,client.nickname));
         return ;
     }
     trim(commands[1]);
     toUpper(commands[1]);
     if (commands[0] == "UPPER")
-        mysend(client_fd, ERR_BOT(commands[1], ));
+        mysend(client_fd, RPL_BOT(commands[1]));
 }
 
 void SERVSOCKET::push()
