@@ -97,11 +97,10 @@ bool isInAdminOf(std::string str, std::vector<std::string> _adminOf)
     return false;
 }
 
-void Invite::go_to_invite(std::string data, SERVSOCKET &server, int fd)
+void Invite::go_to_invite(std::string data, SERVSOCKET &server, int fd, channel &Channel3)
 {
     client *host;
     host = get_client(fd, server);
-
     std::string host_ni = host->nickname;
     std::string host_us = host->username;
 
@@ -147,8 +146,7 @@ void Invite::go_to_invite(std::string data, SERVSOCKET &server, int fd)
        server.mysend(fd, ERR_USERONCHANNEL(host_ni, guest->nickname ,channelName));
         return;
     }
-
-    if (channel->Iflag == true)
+    if (Channel3.Iflag == true)
     {
         if (!isInAdminOf(channelName, host->adminOf))
         {

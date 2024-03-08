@@ -16,7 +16,7 @@ public:
     Invite();
     ~Invite();
 
-    void 	go_to_invite(std::string data, SERVSOCKET &server, int fd);
+    void 	go_to_invite(std::string data, SERVSOCKET &server, int fd, channel &Channel);
 };
 
 std::vector<std::string>    my_split(const std::string& input, char delimiter, SERVSOCKET server);

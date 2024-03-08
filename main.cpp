@@ -43,7 +43,7 @@ void    executables(size_t &i, std::string data, int fd, client &client, privmsg
     else if (command == TOPIC)
         topic.go_to_topic(data, server, fd);
     else if (command == INVITE)
-        invite.go_to_invite(data, server, fd);
+        invite.go_to_invite(data, server, fd, Channel);
     else if ((command != "PASS" && command != "NICK" && command != "USER" && command != "UPPER") && !command.empty())
         server.mysend(fd, ERR_UNKNOWNCOMMAND(server.client_ip, client.ip ,command));
 }
