@@ -54,15 +54,36 @@ void Topic::go_to_topic(std::string data, SERVSOCKET &server, int fd)
         channel_name = server.trim(channel_name);
 	}
     //check (:);
-    if (pos1 != std::string::npos)
+    if (pos1 != std::string::npos || commands.size() >= 3)
     {
         data = server.trim(data);
         if (data[pos1 + 1] != '\0')
         {
+            std::string newTopic1;
+            std::string newTopic2;
             newTopic = data.substr(pos1 + 1);
             newTopic = server.trim(newTopic);
-            if (newTopic[0] == ':')
-                newTopic = newTopic.substr(1);
+            if (commands.size() >= 3)
+            {
+                newTopic1 = commands[commands.size() - 1];
+            }
+            int a = 1;
+            newTopic = data.substr(pos1 + 1);
+            size_t pos11 = newTopic.find(":");
+            if (pos11 != std::string::npos)
+            {
+                a = 2;
+                newTopic = newTopic.substr(pos11 + 1);
+                newTopic2 = server.trim(newTopic);
+            }
+            if (newTopic1[0] == ':')
+                newTopic1 = newTopic1.substr(1);
+            if (newTopic2[0] == ':')
+                newTopic2 = newTopic2.substr(1);
+            if (a == 2)
+                newTopic = newTopic2;
+            else
+                newTopic = newTopic1;
             if (!channel_name.empty())
             {
                 std::map <std::string, channel>::iterator iter_chnl;
@@ -84,7 +105,9 @@ void Topic::go_to_topic(std::string data, SERVSOCKET &server, int fd)
                                     }
                                 }
                                 iter_chnl->second.topic = newTopic;
-                                server.mysend(fd, RPL_TOPIC(host_ni, host_us, host->ip, newTopic, channel_name));// HERE send for all client in this channel
+                                privmsg obj;
+                                obj.msg_to_channel(server, RPL_TOPIC(host_ni, host_us, host->ip, newTopic, channel_name), channel_name, *host, true);
+                                server.mysend(fd, RPL_TOPIC(host_ni, host_us, host->ip, newTopic, channel_name));
                                 return;
                             }
                         }
@@ -119,6 +142,8 @@ void Topic::go_to_topic(std::string data, SERVSOCKET &server, int fd)
                                     }
                                 }
                                 iter_chnl->second.topic = "";
+                                privmsg obj;
+                                obj.msg_to_channel(server, RPL_TOPIC_CLEAR(host_ni, host_us, host->ip, channel_name), channel_name, *host, true);
                                 server.mysend(fd, RPL_TOPIC_CLEAR(host_ni, host_us, host->ip, channel_name));
                                 return;
                             }

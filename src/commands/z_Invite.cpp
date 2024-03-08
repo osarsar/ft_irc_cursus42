@@ -156,12 +156,9 @@ void Invite::go_to_invite(std::string data, SERVSOCKET &server, int fd)
             return;
         }
     }
-    
     channel->invited_users.push_back(guest->nickname);
 
     server.mysend(fd, RPL_INVITING(host_ni, guest->nickname, channelName, host->ip));
-
-    // HERE send for all client in this channel
     server.mysend(guest->fd, RPL_INVITELIST(host_ni, host_us, host->ip, guest->nickname ,channelName));
 
     return;
