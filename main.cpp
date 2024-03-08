@@ -6,15 +6,8 @@
 #include "./inc/topic.hpp"
 #include "./inc/invite.hpp"
 
-client Client;
-privmsg Privmsg;
-SERVSOCKET server;
-channel Channel;
-Kick kick;
-Topic topic;
-Invite invite;
 
-void    executables(size_t &i, std::string data, int fd, client &client)
+void    executables(size_t &i, std::string data, int fd, client &client, privmsg &Privmsg, SERVSOCKET &server, channel &Channel, Kick &kick, Topic &topic, Invite &invite)
 {
     server.trim(data);
     std::string command = data.substr(0, data.find(" "));
@@ -71,6 +64,13 @@ int main(int ac, char** av)
         std::string data;
         std::string port;
 
+        SERVSOCKET server;
+        privmsg Privmsg;
+        channel Channel;
+        Kick kick;
+        Topic topic;
+        Invite invite;
+    
         port = av[1];
         server.servpass = av[2];
         int server_fd = server.mysocket(AF_INET, SOCK_STREAM);
@@ -112,7 +112,7 @@ int main(int ac, char** av)
                                 server.nickname(vector.vector[i].fd, server.database[i - 1], data, server);
                                 server.username(vector.vector[i].fd, server.database[i - 1], data, server);
                                 server.upper(vector.vector[i].fd, data, server, server.database[i - 1]);
-                                executables(i, data, vector.vector[i].fd, server.database[i - 1]);
+                                executables(i, data, vector.vector[i].fd, server.database[i - 1], Privmsg, server, Channel, kick, topic, invite);
                             }
                         }
                     }
