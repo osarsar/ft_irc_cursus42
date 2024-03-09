@@ -3,7 +3,7 @@
 
 #include "channel.hpp"
 
-#define IP "10.12.2.4"
+#define IP "127.0.0.1"
 
 #define ERR_NEEDMOREPARAMS(cid, cmd, hostname)                ":" + std::string(hostname) + " 461 " + std::string(cid) + " " + std::string(cmd) + " :Not enough parameters\r\t\n"
 #define ERR_NOSUCHCHANNEL(nick, chnl, hostname)               ":" + std::string(hostname) + " 403 " + std::string(nick) + " " + std::string(chnl) + " :No such channel\r\t\n"
