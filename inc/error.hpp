@@ -34,6 +34,7 @@
 #define RPL_YOURHOST(nick, hostname)                                        ":" + std::string(hostname) + " 002 " + nick + " :Your host is " + std::string(hostname) + " running version 1.0 !\r\n"
 #define RPL_CREATED(nick, hostname)                                         ":" + std::string(hostname) + " 003 " + nick + " :This server was created 2024-03-08 !\r\n"
 #define RPL_MYINFO(nick, hostname)                                          ":" + std::string(hostname) + " 004 " + nick + " :Host: " + std::string(hostname) + ", Version: 1.0, User mode: none, Channel modes: o, t, k, i !\r\n"
+#define RPL_QUIT(nick, user, hostname)                                            ":" + std::string(nick) + "-!" + std::string(user) + "@" + std::string(hostname) + " QUIT\r\t\n" 
 
 #define ERR_PASSWDMISMATCH(hostname, cid)						                        ":" + std::string(hostname) + " 464 " + std::string(cid) + " :Password incorrect\r\t\n"
 #define ERR_ALREADYREGISTRED(hostname, cid)						                    ":" + std::string(hostname) + " 462 " + std::string(cid) + " :Unauthorized command (already registered)\r\t\n"

@@ -444,3 +444,36 @@ void SERVSOCKET::show()
         std::cout << "client_fd: " << it->fd << std::endl;
     }
 }
+
+void SERVSOCKET::quit(POLLFD &vector, int client_fd, std::string data, int i, SERVSOCKET server, client &client)
+{
+    std::string str;
+    std::vector<std::string> commands = my_split(data, ' ', server);
+    if (commands.size() < 1)
+        return;
+
+    toUpper(commands[0]);
+    trim(commands[0]);
+
+    if (commands[0] != "QUIT")
+        return;
+
+    if (commands.size() >= 2)
+    {
+        // mysend(client_fd, ERR_BOT(client_ip ,client.nickname));
+        return ;
+    }
+
+    if (commands.size() == 1)
+        commands = my_split(commands[0], '\t', server);
+
+    if (commands[0] == "QUIT")
+    {
+        std::cout << client_ip << RED" has disconnected"RESET << std::endl;
+        mysend(client_fd, RPL_QUIT(client.nickname, client.username, client.ip));
+        close(client_fd);
+        vector.vector.erase(vector.vector.begin() + i);
+        server.database.erase(server.database.begin() + i - 1);
+    }
+        
+}

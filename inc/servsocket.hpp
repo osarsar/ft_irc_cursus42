@@ -53,6 +53,7 @@ class SERVSOCKET
         void nickname(int client_fd, client &client, std::string data, SERVSOCKET server);
         void username(int client_fd, client &client, std::string data, SERVSOCKET server);
         void upper(int client_fd, std::string data, SERVSOCKET server, client &client);
+        void quit(POLLFD &vector, int client_fd, std::string data, int i, SERVSOCKET server, client &client);
         channel &add_channel(std::string name, channel &Channel);
         std::string&    ltrim(std::string& str);
         std::string&    rtrim(std::string& str);

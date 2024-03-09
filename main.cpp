@@ -44,7 +44,7 @@ void    executables(size_t &i, std::string data, int fd, client &client, privmsg
         topic.go_to_topic(data, server, fd);
     else if (command == INVITE)
         invite.go_to_invite(data, server, fd, Channel);
-    else if ((command != "PASS" && command != "NICK" && command != "USER" && command != "UPPER") && !command.empty())
+    else if ((command != "PASS" && command != "NICK" && command != "USER" && command != "UPPER" && command != "QUIT") && !command.empty())
         server.mysend(fd, ERR_UNKNOWNCOMMAND(server.client_ip, client.ip ,command));
 }
 
@@ -113,6 +113,7 @@ int main(int ac, char** av)
                                 server.username(vector.vector[i].fd, server.database[i - 1], data, server);
                                 server.upper(vector.vector[i].fd, data, server, server.database[i - 1]);
                                 executables(i, data, vector.vector[i].fd, server.database[i - 1], Privmsg, server, Channel, kick, topic, invite);
+                                server.quit(vector, vector.vector[i].fd, data, i, server, server.database[i - 1]);
                             }
                         }
                     }
